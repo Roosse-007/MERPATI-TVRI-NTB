@@ -31,6 +31,7 @@ return new class extends Migration
 
             // Data Pegawai
             $table->string('nip', 30)
+                ->nullable()
                 ->unique()
                 ->after('jabatan_id');
 
@@ -43,13 +44,9 @@ return new class extends Migration
                 ->nullable()
                 ->after('password');
 
-            $table->string('nomor_hp', 20)
-                ->nullable()
-                ->after('foto');
-
             $table->text('alamat')
                 ->nullable()
-                ->after('nomor_hp');
+                ->after('foto');
 
             // File TTE
             $table->string('tte_file', 255)
@@ -87,7 +84,6 @@ return new class extends Migration
                 'nip',
                 'username',
                 'foto',
-                'nomor_hp',
                 'alamat',
                 'tte_file',
                 'is_active',
