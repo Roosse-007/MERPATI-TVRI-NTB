@@ -44,14 +44,10 @@ return new class extends Migration
                 ->nullable()
                 ->after('password');
 
-            $table->text('alamat')
-                ->nullable()
-                ->after('foto');
-
-            // File TTE
+            // File Tanda Tangan Elektronik
             $table->string('tte_file', 255)
                 ->nullable()
-                ->after('alamat');
+                ->after('foto');
 
             // Status User
             $table->boolean('is_active')
@@ -84,7 +80,6 @@ return new class extends Migration
                 'nip',
                 'username',
                 'foto',
-                'alamat',
                 'tte_file',
                 'is_active',
                 'last_login',
