@@ -10,7 +10,8 @@ class Jabatan extends Model
     protected $table = 'jabatan';
 
     protected $fillable = [
-        'nama_jabatan',
+    'nama_jabatan',
+    'level_jabatan',
     ];
 
     public function users(): HasMany
