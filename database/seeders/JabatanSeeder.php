@@ -32,18 +32,9 @@ class JabatanSeeder extends Seeder
         ];
 
         foreach ($data as $jabatan) {
-
             Jabatan::updateOrCreate(
-
-                [
-                    'nama_jabatan' => $jabatan,
-                ],
-
-                [
-                    'deskripsi' => null,
-                    'is_active' => true,
-                ]
-
+                ['nama_jabatan' => $jabatan],
+                ['is_active' => true]
             );
         }
     }
