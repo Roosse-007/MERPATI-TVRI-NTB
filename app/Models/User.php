@@ -24,8 +24,6 @@ class User extends Authenticatable
         'nip',
         'username',
         'foto',
-        'nomor_hp',
-        'alamat',
         'tte_file',
         'is_active',
         'last_login',

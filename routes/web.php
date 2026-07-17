@@ -5,8 +5,9 @@ use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
 
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard.index');
 });
 
 // Resource Surat
@@ -73,3 +74,56 @@ Route::put('/surat/{id}/archive', [SuratController::class, 'archive'])
     ->name('surat.archive');
 Route::get('/archive', [SuratController::class, 'archiveList'])
     ->name('surat.archive.list');
+
+// LOGIN
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
+
+// PROFILE
+Route::get('/profile', function () {
+    return view('profile.index');
+});
+
+
+// SURAT
+// SURAT
+
+Route::get('/surat/inbox', function () {
+    return view('surat.inbox');
+});
+
+
+Route::get('/surat/draft', function () {
+    return view('surat.draft');
+});
+
+
+Route::get('/surat/baru', function () {
+    return view('surat.baru');
+});
+
+
+Route::get('/surat/terkirim', function () {
+    return view('surat.terkirim');
+});
+
+
+Route::get('/surat/approval', function () {
+    return view('surat.approval');
+});
+
+
+Route::get('/surat/disposisi', function () {
+    return view('surat.disposisi');
+});
+
+
+Route::get('/surat/arsip', function () {
+    return view('surat.arsip');
+});
+
+Route::get('/user', function () {
+    return view('user.index');
+});

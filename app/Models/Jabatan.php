@@ -11,7 +11,15 @@ class Jabatan extends Model
 
     protected $fillable = [
         'nama_jabatan',
+        'is_active',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function users(): HasMany
     {
