@@ -200,20 +200,9 @@ font-black
 text-slate-800
 ">
 
-120
+{{ $suratMasuk }}
 
 </h2>
-
-
-<span class="
-text-green-500
-text-sm
-font-bold
-">
-
-↑ 12% bulan ini
-
-</span>
 
 
 </div>
@@ -260,7 +249,7 @@ Draft
 
 <h2 class="text-4xl font-black">
 
-25
+{{ $draft }}
 
 </h2>
 
@@ -310,7 +299,7 @@ Approval
 
 <h2 class="text-4xl font-black">
 
-18
+{{ $approval }}
 
 </h2>
 
@@ -361,7 +350,7 @@ Arsip
 
 <h2 class="text-4xl font-black">
 
-500
+{{ $arsip }}
 
 </h2>
 

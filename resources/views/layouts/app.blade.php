@@ -14,9 +14,11 @@
 
     @vite(['resources/css/app.css','resources/js/app.js'])
 
+    <script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
 
-<body class="bg-slate-100">
+<body class="overflow-x-hidden">
 
 <div class="flex">
 
@@ -26,9 +28,13 @@
 
 @include('partials.navbar')
 
-<main class="p-8">
+<main class="
+ml-72
+px-8
+pt-6
+">
 
-@yield('content')
+    @yield('content')
 
 </main>
 

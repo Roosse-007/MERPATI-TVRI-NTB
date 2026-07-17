@@ -4,100 +4,50 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
-
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('dashboard.index');
 });
+// ==========================
+// HALAMAN DASHBOARD
+// ==========================
 
-// Resource Surat
-Route::resource('surat', SuratController::class);
+Route::get('/', 
+    [DashboardController::class,'index']
+)->name('dashboard');
 
-// Draft
-Route::get('/draft', [SuratController::class, 'draft'])
-    ->name('surat.draft');
 
-// Submit Draft
-Route::post('/surat/{id}/submit', [SuratController::class, 'submit'])
-    ->name('surat.submit');
+// ==========================
+// AUTH
+// ==========================
 
-// Inbox KPP
-Route::get('/inbox', [SuratController::class, 'inbox'])
-    ->name('surat.inbox');
-
-// Approval KPP
-Route::post('/approval/kpp/{id}', [ApprovalController::class, 'approveKpp']);
-Route::post('/approval/kpp/{id}/reject', [ApprovalController::class, 'rejectKpp']);
-
-// Approval KTU
-Route::post('/approval/ktu/{id}', [ApprovalController::class, 'approveKtu']);
-Route::post('/approval/ktu/{id}/reject', [ApprovalController::class, 'rejectKtu']);
-
-// Approval Kepala Stasiun
-Route::post('/approval/kepala-stasiun/{id}', [ApprovalController::class, 'approveKepalaStasiun']);
-Route::post('/approval/kepala-stasiun/{id}/reject', [ApprovalController::class, 'rejectKepalaStasiun']);
-
-// testing
-Route::get('/testing/approve-kpp/{id}', [ApprovalController::class, 'approveKpp']);
-Route::get('/testing/approve-ktu/{id}', [ApprovalController::class, 'approveKtu']);
-Route::get('/testing/approve-kepala-stasiun/{id}', [ApprovalController::class, 'approveKepalaStasiun']);
-
-//inbox ktu
-Route::get('/inbox/ktu', [SuratController::class, 'inboxKtu'])
-    ->name('surat.inbox.ktu');
-
-//inbox kepala stasiun
-Route::get('/inbox/kepala-stasiun', 
-[SuratController::class, 'inboxKepalaStasiun'])
-->name('surat.inbox.kepala');
-
-//disposisi
-Route::get('/disposisi',
-    [DisposisiController::class,'index']);
-
-Route::post('/disposisi',
-    [DisposisiController::class,'store']);
-
-Route::get('/disposisi/inbox/{userId}',
-    [DisposisiController::class,'inbox']);
-
-Route::get('/disposisi/{id}',
-    [DisposisiController::class,'show']);
-
-Route::put('/disposisi/{id}/read',
-    [DisposisiController::class,'read']);
-Route::put('/disposisi/{id}/finish',
-    [DisposisiController::class,'finish']);
-Route::get('/sent', [SuratController::class, 'sent'])
-    ->name('surat.sent');
-Route::put('/surat/{id}/archive', [SuratController::class, 'archive'])
-    ->name('surat.archive');
-Route::get('/archive', [SuratController::class, 'archiveList'])
-    ->name('surat.archive.list');
-
-// LOGIN
 Route::get('/login', function () {
     return view('auth.login');
 });
 
 
+// ==========================
 // PROFILE
+// ==========================
+
 Route::get('/profile', function () {
     return view('profile.index');
 });
 
 
-// SURAT
-// SURAT
+// ==========================
+// HALAMAN SURAT (BLADE)
+// ==========================
 
 Route::get('/surat/inbox', function () {
     return view('surat.inbox');
-});
+})->name('surat.inbox');
 
 
 Route::get('/surat/draft', function () {
     return view('surat.draft');
-});
+})->name('surat.draft');
 
 
 Route::get('/surat/baru', function () {
@@ -123,6 +73,155 @@ Route::get('/surat/disposisi', function () {
 Route::get('/surat/arsip', function () {
     return view('surat.arsip');
 });
+
+
+// ==========================
+// SURAT API / CONTROLLER
+// ==========================
+
+
+// Resource harus PALING BAWAH
+Route::resource('surat', SuratController::class)
+    ->whereNumber('surat');
+
+
+// Submit Draft
+Route::post('/surat/{id}/submit',
+    [SuratController::class,'submit']
+)->whereNumber('id')
+->name('surat.submit');
+
+
+// Arsip Surat
+Route::put('/surat/{id}/archive',
+    [SuratController::class,'archive']
+)->whereNumber('id')
+->name('surat.archive');
+
+
+// List Arsip
+Route::get('/archive',
+    [SuratController::class,'archiveList']
+)->name('surat.archive.list');
+
+
+// Surat Terkirim
+Route::get('/sent',
+    [SuratController::class,'sent']
+)->name('surat.sent');
+
+
+
+// ==========================
+// INBOX
+// ==========================
+
+Route::get('/inbox',
+    [SuratController::class,'inboxWeb']
+)->name('surat.inbox.web');
+
+
+Route::get('/inbox/ktu',
+    [SuratController::class,'inboxKtu']
+)->name('surat.inbox.ktu');
+
+
+Route::get('/inbox/kepala-stasiun',
+    [SuratController::class,'inboxKepalaStasiun']
+)->name('surat.inbox.kepala');
+
+
+
+// ==========================
+// APPROVAL
+// ==========================
+
+Route::post('/approval/kpp/{id}',
+    [ApprovalController::class,'approveKpp']
+)->whereNumber('id');
+
+
+Route::post('/approval/kpp/{id}/reject',
+    [ApprovalController::class,'rejectKpp']
+)->whereNumber('id');
+
+
+Route::post('/approval/ktu/{id}',
+    [ApprovalController::class,'approveKtu']
+)->whereNumber('id');
+
+
+Route::post('/approval/ktu/{id}/reject',
+    [ApprovalController::class,'rejectKtu']
+)->whereNumber('id');
+
+
+Route::post('/approval/kepala-stasiun/{id}',
+    [ApprovalController::class,'approveKepalaStasiun']
+)->whereNumber('id');
+
+
+Route::post('/approval/kepala-stasiun/{id}/reject',
+    [ApprovalController::class,'rejectKepalaStasiun']
+)->whereNumber('id');
+
+
+
+// TESTING APPROVAL
+
+Route::get('/testing/approve-kpp/{id}',
+    [ApprovalController::class,'approveKpp']
+)->whereNumber('id');
+
+
+Route::get('/testing/approve-ktu/{id}',
+    [ApprovalController::class,'approveKtu']
+)->whereNumber('id');
+
+
+Route::get('/testing/approve-kepala-stasiun/{id}',
+    [ApprovalController::class,'approveKepalaStasiun']
+)->whereNumber('id');
+
+
+
+// ==========================
+// DISPOSISI
+// ==========================
+
+Route::get('/disposisi',
+    [DisposisiController::class,'index']
+);
+
+
+Route::post('/disposisi',
+    [DisposisiController::class,'store']
+);
+
+
+// harus sebelum /disposisi/{id}
+Route::get('/disposisi/inbox/{userId}',
+    [DisposisiController::class,'inbox']
+)->whereNumber('userId');
+
+
+Route::put('/disposisi/{id}/read',
+    [DisposisiController::class,'read']
+)->whereNumber('id');
+
+
+Route::put('/disposisi/{id}/finish',
+    [DisposisiController::class,'finish']
+)->whereNumber('id');
+
+
+Route::get('/disposisi/{id}',
+    [DisposisiController::class,'show']
+)->whereNumber('id');
+
+
+
+// USER
 
 Route::get('/user', function () {
     return view('user.index');

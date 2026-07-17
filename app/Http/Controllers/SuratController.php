@@ -70,6 +70,14 @@ class SuratController extends Controller
         'data' => $draft
     ]);
 }
+public function draftWeb()
+{
+    $surat = Surat::where('status','Draft')
+        ->paginate(10);
+
+
+    return view('surat.draft', compact('surat'));
+}
 public function submit($id)
 {
     // Cari surat berdasarkan ID
@@ -153,6 +161,19 @@ public function inbox()
 
     ]);
 
+}
+public function inboxWeb()
+{
+    $surat = Surat::with([
+        'pengirim.jabatan',
+        'jenisSurat',
+        'prioritasSurat'
+    ])
+    ->where('status','!=','Draft')
+    ->paginate(10);
+
+
+    return view('surat.inbox', compact('surat'));
 }
 public function inboxKtu()
 {
