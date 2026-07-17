@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tambah Jabatan</title>
+    <title>Edit Jabatan</title>
 </head>
 
 <body>
 
-<h1>Tambah Jabatan</h1>
+<h1>Edit Jabatan</h1>
 
 
 @if($errors->any())
@@ -31,9 +31,10 @@
 
 
 
-<form action="{{ route('jabatan.store') }}" method="POST">
+<form action="{{ route('jabatan.update', $jabatan->id) }}" method="POST">
 
 @csrf
+@method('PUT')
 
 
 <p>
@@ -47,11 +48,12 @@ Nama Jabatan
 <input 
     type="text"
     name="nama_jabatan"
-    value="{{ old('nama_jabatan') }}"
+    value="{{ old('nama_jabatan', $jabatan->nama_jabatan) }}"
     required
 >
 
 </p>
+
 
 
 <p>
@@ -62,11 +64,10 @@ Deskripsi
 
 <br>
 
-<textarea 
-    name="deskripsi"
->{{ old('deskripsi') }}</textarea>
+<textarea name="deskripsi">{{ old('deskripsi', $jabatan->deskripsi) }}</textarea>
 
 </p>
+
 
 
 <p>
@@ -79,13 +80,18 @@ Status
 
 <select name="is_active" required>
 
-    <option value="1">
-        Aktif
-    </option>
 
-    <option value="0">
-        Nonaktif
-    </option>
+<option value="1"
+    {{ $jabatan->is_active ? 'selected' : '' }}>
+    Aktif
+</option>
+
+
+<option value="0"
+    {{ !$jabatan->is_active ? 'selected' : '' }}>
+    Nonaktif
+</option>
+
 
 </select>
 
@@ -94,7 +100,7 @@ Status
 
 
 <button type="submit">
-Simpan
+Update
 </button>
 
 

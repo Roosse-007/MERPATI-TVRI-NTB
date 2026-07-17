@@ -8,13 +8,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermission
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, $permission): Response
     {
+        if (!auth()->check()) {
+
+            abort(401);
+
+        }
+
+
+        if (!auth()->user()->can($permission)) {
+
+            abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
+
+        }
+
+
         return $next($request);
     }
 }

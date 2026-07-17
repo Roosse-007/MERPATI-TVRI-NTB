@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\UnitKerja;
 use App\Models\Jabatan;
 use Illuminate\Http\Request;

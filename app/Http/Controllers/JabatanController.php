@@ -31,25 +31,29 @@ class JabatanController extends Controller
      * Simpan jabatan baru
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'nama_jabatan' => 'required|max:255',
-        'level_jabatan' => 'required|max:255',
-    ]);
+    {
+        $request->validate([
+            'nama_jabatan' => 'required|max:255',
+            'deskripsi' => 'nullable',
+            'is_active' => 'required',
+        ]);
 
 
-    Jabatan::create([
-        'nama_jabatan' => $request->nama_jabatan,
-        'level_jabatan' => $request->level_jabatan,
-    ]);
+        Jabatan::create([
+            'nama_jabatan' => $request->nama_jabatan,
+            'deskripsi' => $request->deskripsi,
+            'is_active' => $request->is_active,
+        ]);
 
 
-    return redirect()
-        ->route('jabatan.index')
-        ->with('success', 'Jabatan berhasil ditambahkan.');
-}
+        return redirect()
+            ->route('jabatan.index')
+            ->with('success', 'Jabatan berhasil ditambahkan.');
+    }
+
+
     /**
-     * Detail
+     * Detail jabatan
      */
     public function show(string $id)
     {
@@ -58,7 +62,7 @@ class JabatanController extends Controller
 
 
     /**
-     * Form edit
+     * Form edit jabatan
      */
     public function edit(string $id)
     {
@@ -78,12 +82,15 @@ class JabatanController extends Controller
 
         $request->validate([
             'nama_jabatan' => 'required|max:255',
-            'level_jabatan' => 'required|max:255',
+            'deskripsi' => 'nullable',
+            'is_active' => 'required',
         ]);
 
 
         $jabatan->update([
             'nama_jabatan' => $request->nama_jabatan,
+            'deskripsi' => $request->deskripsi,
+            'is_active' => $request->is_active,
         ]);
 
 
