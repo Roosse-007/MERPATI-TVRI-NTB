@@ -16,19 +16,16 @@ return new class extends Migration
             $table->id();
 
             // Nama Jabatan
-            $table->string('nama_jabatan', 150);
+            $table->string('nama_jabatan', 150)->unique();
 
-            // Level Jabatan
-            $table->unsignedTinyInteger('level_jabatan')
-                ->comment('1=Staff, 2=Kepala Program, 3=Kepala Tata Usaha, 4=Kepala Stasiun');
-
-            // Keterangan
+            // Deskripsi
             $table->text('deskripsi')->nullable();
 
             // Status
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
+
         });
     }
 
