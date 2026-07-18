@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disposisi;
+use App\Models\Surat;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DisposisiController extends Controller
 {
@@ -25,16 +28,43 @@ class DisposisiController extends Controller
         ]);
     }
 
+    public function showWeb($id)
+    {
+        $surat = Surat::with([
+            'pengirim.jabatan',
+            'prioritasSurat',
+            'jenisSurat',
+            'sifatSurat',
+            'disposisi.dariUser.jabatan',
+            'disposisi.keUser.jabatan'
+        ])->findOrFail($id);
+
+        $users = User::with('jabatan')
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'surat.disposisi',
+            compact(
+                'surat',
+                'users'
+            )
+        );
+    }
+
 
     // Membuat disposisi
     public function store(Request $request)
     {
 
         $request->validate([
-            'surat_id' => 'required',
-            'dari_user_id' => 'required',
-            'ke_user_id' => 'required',
-            'instruksi' => 'required',
+
+            'surat_id' => 'required|exists:surat,id',
+
+            'ke_user_id' => 'required|exists:users,id',
+
+            'instruksi' => 'required|string|max:1000',
+
         ]);
 
 
@@ -42,7 +72,7 @@ class DisposisiController extends Controller
 
             'surat_id' => $request->surat_id,
 
-            'dari_user_id' => $request->dari_user_id,
+            'dari_user_id' => Auth::id(),
 
             'ke_user_id' => $request->ke_user_id,
 
@@ -68,8 +98,9 @@ class DisposisiController extends Controller
     {
 
         $disposisi = Disposisi::with([
-            'surat',
-            'dariUser.jabatan'
+            'surat.prioritasSurat',
+            'dariUser.jabatan',
+            'keUser.jabatan'
         ])
         ->where('ke_user_id',$userId)
         ->latest()
@@ -214,26 +245,68 @@ class DisposisiController extends Controller
     ]);
 
 }
-    public function finish($id)
+   public function finish($id)
 {
     $disposisi = Disposisi::find($id);
 
     if (!$disposisi) {
-return response()->json([
 
-    'success'=>true,
+        return response()->json([
+            'success' => false,
+            'message' => 'Disposisi tidak ditemukan.'
+        ],404);
 
-    'message'=>'Disposisi selesai.',
+    }
 
-    'data'=>[
+    $disposisi->update([
 
-        'id'=>$disposisi->id,
+        'status' => 'Selesai'
 
-        'status'=>$disposisi->status
+    ]);
 
-    ]
+    return response()->json([
 
-]);
+        'success' => true,
+
+        'message' => 'Disposisi selesai.',
+
+        'data' => $disposisi
+
+    ]);
+
 }
+
+public function storeWeb(Request $request)
+{
+    $request->validate([
+        'surat_id'   => 'required|exists:surat,id',
+        'ke_user_id' => 'required|exists:users,id',
+        'instruksi'  => 'required|string|max:1000',
+    ]);
+
+    Disposisi::create([
+        'surat_id'     => $request->surat_id,
+        'dari_user_id' => Auth::id(),
+        'ke_user_id'   => $request->ke_user_id,
+        'instruksi'    => $request->instruksi,
+        'status'       => 'Aktif',
+    ]);
+
+    return redirect()
+        ->route('surat.disposisi', $request->surat_id)
+        ->with('success', 'Disposisi berhasil dibuat.');
+}
+
+public function indexWeb()
+{
+    $disposisi = Disposisi::with([
+        'surat',
+        'dariUser.jabatan',
+        'keUser.jabatan'
+    ])
+    ->latest()
+    ->get();
+
+    return view('surat.disposisi-index', compact('disposisi'));
 }
 }

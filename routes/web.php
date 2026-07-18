@@ -123,39 +123,34 @@ Route::get('/profile', function () {
 
 
 // ==========================
-// HALAMAN SURAT (BLADE)
+// HALAMAN SURAT
 // ==========================
 
-Route::get('/surat/inbox', function () {
-    return view('surat.inbox');
-})->name('surat.inbox');
+// Kotak Masuk
+Route::get('/surat/inbox', [SuratController::class, 'inboxWeb'])
+    ->name('surat.inbox');
 
+// Draft
+Route::get('/surat/draft', [SuratController::class, 'draftWeb'])
+    ->name('surat.draft');
 
-Route::get('/surat/draft', function () {
-    return view('surat.draft');
-})->name('surat.draft');
-
-
+// Buat Surat
 Route::get('/surat/baru', function () {
     return view('surat.baru');
-});
+})->name('surat.create');
 
+// Surat Terkirim
+Route::get('/surat/terkirim', [SuratController::class, 'sent'])
+    ->name('surat.sent');
 
-Route::get('/surat/terkirim', function () {
-    return view('surat.terkirim');
-});
-
-
+// Approval
 Route::get('/surat/approval', function () {
     return view('surat.approval');
 });
 
+// Disposisi
 
-Route::get('/surat/disposisi', function () {
-    return view('surat.disposisi');
-});
-
-
+// Arsip
 Route::get('/surat/arsip', function () {
     return view('surat.arsip');
 });
@@ -164,7 +159,11 @@ Route::get('/surat/arsip', function () {
 // ==========================
 // SURAT API / CONTROLLER
 // ==========================
-
+Route::get(
+    '/surat/{id}/detail',
+    [SuratController::class,'showWeb']
+)->whereNumber('id')
+->name('surat.detail');
 
 // Resource harus PALING BAWAH
 Route::resource('surat', SuratController::class)
@@ -274,6 +273,19 @@ Route::get('/testing/approve-kepala-stasiun/{id}',
 // ==========================
 // DISPOSISI
 // ==========================
+Route::get(
+    '/surat/disposisi',
+    [DisposisiController::class, 'indexWeb']
+)->name('surat.disposisi.index');
+
+Route::get('/surat/{id}/disposisi', [DisposisiController::class, 'showWeb'])
+    ->whereNumber('id')
+    ->name('surat.disposisi');
+
+Route::post(
+    '/surat/disposisi/store',
+    [DisposisiController::class, 'storeWeb']
+)->name('surat.disposisi.store');
 
 Route::get('/disposisi',
     [DisposisiController::class,'index']

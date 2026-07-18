@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSuratRequest;
 use App\Models\Surat;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,28 @@ class SuratController extends Controller
         return response()->json($surat);
     }
 
+    public function indexWeb()
+    {
+        $surat = Surat::with([
+            'pengirim.jabatan',
+            'prioritasSurat',
+            'disposisi.dariUser',
+            'disposisi.keUser'
+        ])
+        ->where('status', 'Disetujui')
+        ->latest()
+        ->paginate(10);
+
+        $users = User::with('jabatan')
+            ->orderBy('name')
+            ->get();
+
+        return view('surat.disposisi', compact(
+            'surat',
+            'users'
+        ));
+    }
+
     public function store(StoreSuratRequest $request)
     {
         $data = $request->validated();
@@ -40,7 +63,7 @@ class SuratController extends Controller
         }
 
         // sementara pakai admin
-        $data['pengirim_id'] = 1;
+        $data['pengirim_id'] = Auth::id();
 
         $data['status'] = 'Draft';
         $data['is_archived'] = false;
@@ -81,15 +104,10 @@ public function draftWeb()
 public function submit($id)
 {
     // Cari surat berdasarkan ID
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     // Jika surat tidak ditemukan
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
-    }
+    
 
     // Hanya surat Draft yang boleh dikirim
     if ($surat->status !== 'Draft') {
@@ -112,12 +130,13 @@ public function submit($id)
 }
 public function inbox()
 {
-    $surat = Surat::with([
+        $surat = Surat::with([
         'pengirim.jabatan',
         'jenisSurat',
         'prioritasSurat'
     ])
-    ->where('status','!=','Draft')
+    ->where('pengirim_id', Auth::id())
+    ->latest('tanggal_kirim')
     ->paginate(10);
 
 
@@ -162,18 +181,61 @@ public function inbox()
     ]);
 
 }
-public function inboxWeb()
+public function inboxWeb(Request $request)
 {
-    $surat = Surat::with([
+    $query = Surat::with([
         'pengirim.jabatan',
         'jenisSurat',
         'prioritasSurat'
     ])
-    ->where('status','!=','Draft')
-    ->paginate(10);
+    ->where('status', '!=', 'Draft');
 
+    // Search
+    if ($request->filled('search')) {
 
-    return view('surat.inbox', compact('surat'));
+        $keyword = $request->search;
+
+        $query->where(function ($q) use ($keyword) {
+
+            $q->where('nomor_surat', 'like', "%{$keyword}%")
+              ->orWhere('perihal', 'like', "%{$keyword}%")
+              ->orWhere('ringkasan', 'like', "%{$keyword}%")
+              ->orWhereHas('pengirim', function ($user) use ($keyword) {
+
+                    $user->where('name', 'like', "%{$keyword}%");
+
+              });
+
+        });
+    }
+
+    // Filter Status
+    if ($request->filled('status')) {
+
+        $query->where('status', $request->status);
+
+    }
+
+    $surat = $query
+        ->latest('tanggal_surat')
+        ->paginate(10)
+        ->withQueryString();
+
+    $totalSurat = Surat::where('status', '!=', 'Draft')->count();
+
+    $diproses = Surat::where('status', 'Diproses')->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
+
+    $menungguApproval = Surat::where('status', 'like', 'Menunggu%')->count();
+
+    return view('surat.inbox', compact(
+        'surat',
+        'totalSurat',
+        'diproses',
+        'arsip',
+        'menungguApproval'
+    ));
 }
 public function inboxKtu()
 {
@@ -258,7 +320,7 @@ return response()->json([
 }
 public function archive($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
         return response()->json([
@@ -345,33 +407,18 @@ public function archiveList()
 public function show($id)
 {
     $surat = Surat::with([
-
         'pengirim.jabatan',
         'jenisSurat',
         'sifatSurat',
         'prioritasSurat',
         'templateSurat',
-
         'approval.approver.jabatan',
-
         'disposisi.dariUser.jabatan',
         'disposisi.keUser.jabatan'
-
-    ])
-    ->find($id);
+    ])->findOrFail($id);
 
 
-    if (!$surat) {
-
-        return response()->json([
-
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-
-        ],404);
-
-    }
-
+   
 
     return response()->json([
 
@@ -450,5 +497,21 @@ public function show($id)
         ]
 
     ]);
+}
+
+public function showWeb($id)
+{
+    $surat = Surat::with([
+        'pengirim.jabatan',
+        'jenisSurat',
+        'sifatSurat',
+        'prioritasSurat',
+        'templateSurat',
+        'approval.approver.jabatan',
+        'disposisi.dariUser.jabatan',
+        'disposisi.keUser.jabatan'
+    ])->findOrFail($id);
+
+    return view('surat.show', compact('surat'));
 }
 }

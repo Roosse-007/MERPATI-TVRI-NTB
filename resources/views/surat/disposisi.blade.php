@@ -85,31 +85,32 @@ items-start
 
 
 <p class="text-blue-100">
-
-Surat Aktif
-
+    Surat Aktif
 </p>
 
-
-<h2 class="
-text-3xl
-font-black
-mt-3
-">
-
-Permohonan Kerja Sama TVRI NTB
-
+<h2 class="text-3xl font-black mt-3">
+    {{ $surat->perihal }}
 </h2>
 
+<p class="mt-3 text-blue-100">
+    Nomor :
+    <span class="font-semibold">
+        {{ $surat->nomor_surat }}
+    </span>
+</p>
 
-<p class="
-mt-3
-text-blue-100
-">
+<p class="mt-2 text-blue-100">
+    Pengirim :
+    <span class="font-semibold">
+        {{ $surat->pengirim->name }}
+    </span>
+</p>
 
-Nomor:
-001/TVRI/NTB/VII/2026
-
+<p class="mt-2 text-blue-100">
+    Tanggal :
+    <span class="font-semibold">
+        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+    </span>
 </p>
 
 
@@ -125,7 +126,7 @@ rounded-2xl
 font-bold
 ">
 
-🔥 Prioritas Tinggi
+{{ $surat->prioritasSurat->nama_prioritas ?? '-' }}
 
 </span>
 
@@ -178,81 +179,39 @@ gap-6
 ">
 
 
-@foreach([
+@forelse($surat->disposisi as $item)
 
-[
-'icon'=>'📨',
-'title'=>'Surat Masuk',
-'name'=>'Admin'
-],
+<div class="relative bg-slate-50 rounded-[28px] p-6 text-center hover:-translate-y-2 transition">
 
-[
-'icon'=>'👨‍💼',
-'title'=>'Kepala Bagian',
-'name'=>'Budi Santoso'
-],
+    <div class="text-5xl">
 
-[
-'icon'=>'👨‍💻',
-'title'=>'Staff Pelaksana',
-'name'=>'Ahmad Rizki'
-],
+        👤
 
-[
-'icon'=>'✅',
-'title'=>'Selesai',
-'name'=>'Arsip'
-]
+    </div>
 
-] as $flow)
+    <h3 class="mt-4 font-black">
 
+        {{ $item->keUser->name }}
 
-<div class="
-relative
-bg-slate-50
-rounded-[28px]
-p-6
-text-center
-hover:-translate-y-2
-transition
-">
+    </h3>
 
+    <p class="text-slate-500 mt-2">
 
-<div class="
-text-5xl
-">
+        {{ $item->keUser->jabatan->nama_jabatan ?? '-' }}
 
-{{$flow['icon']}}
+    </p>
 
 </div>
 
+@empty
 
+<p class="text-slate-500">
 
-<h3 class="
-mt-4
-font-black
-">
-
-{{$flow['title']}}
-
-</h3>
-
-
-
-<p class="
-text-slate-500
-mt-2
-">
-
-{{$flow['name']}}
+Belum ada disposisi.
 
 </p>
 
-
-</div>
-
-
-@endforeach
+@endforelse
 
 
 </div>
@@ -311,7 +270,15 @@ text-slate-700
 ">
 
 
-"Lakukan pemeriksaan dokumen dan siapkan laporan tindak lanjut."
+@if($surat->disposisi->isNotEmpty())
+
+{{ $surat->disposisi->last()->instruksi }}
+
+@else
+
+Belum ada instruksi.
+
+@endif
 
 
 </div>
@@ -333,7 +300,7 @@ Dibuat oleh
 
 <p class="font-bold">
 
-Admin TVRI NTB
+{{ $surat->pengirim->name }}
 
 </p>
 
@@ -348,7 +315,7 @@ Admin TVRI NTB
 
 
 
-{{-- STATUS --}}
+{{-- STATUS DISPOSISI --}}
 
 <div class="
 bg-white
@@ -357,48 +324,57 @@ shadow-xl
 p-8
 ">
 
+    <h2 class="
+    text-2xl
+    font-black
+    mb-6
+    ">
+        Status Disposisi
+    </h2>
 
-<h2 class="
-text-2xl
-font-black
-mb-6
-">
+    <div class="space-y-5">
 
-Status Disposisi
+        @forelse($surat->disposisi as $item)
 
-</h2>
+            <div class="flex justify-between items-center bg-slate-50 rounded-2xl p-5">
 
+                <div>
 
+                    <p class="font-bold">
+                        {{ $item->keUser->name }}
+                    </p>
 
-<div class="space-y-5">
+                    <p class="text-sm text-slate-500">
+                        {{ $item->instruksi }}
+                    </p>
 
+                </div>
 
+                <span
+                    class="px-4 py-2 rounded-xl font-bold
+                    @if($item->status == 'Aktif')
+                        bg-blue-100 text-blue-700
+                    @elseif($item->status == 'Selesai')
+                        bg-green-100 text-green-700
+                    @else
+                        bg-gray-100 text-gray-700
+                    @endif">
 
-<div class="
-flex
-justify-between
-items-center
-bg-green-50
-rounded-2xl
-p-5
-">
+                    {{ $item->status }}
 
+                </span>
 
-<div>
+            </div>
 
-<p class="font-bold">
+        @empty
 
-Kepala Bagian
+            <p class="text-slate-500">
+                Belum ada disposisi.
+            </p>
 
-</p>
+        @endforelse
 
-
-<p class="text-sm text-slate-500">
-
-Sudah diproses
-
-</p>
-
+    </div>
 
 </div>
 
@@ -491,13 +467,23 @@ Pending
 {{-- BUAT DISPOSISI --}}
 
 
-<div class="
+<form
+method="POST"
+action="{{ route('surat.disposisi.store') }}"
+class="
 mt-10
 bg-white
 rounded-[32px]
 shadow-xl
 p-8
 ">
+
+@csrf
+
+<input
+type="hidden"
+name="surat_id"
+value="{{ $surat->id }}">
 
 
 <h2 class="
@@ -530,7 +516,9 @@ Tujuan Bagian
 </label>
 
 
-<select class="
+<select
+name="ke_user_id"
+class="
 mt-2
 w-full
 rounded-2xl
@@ -539,13 +527,20 @@ px-5
 py-4
 ">
 
-<option>
-Pilih bagian
+<option value="">Pilih Tujuan</option>
+
+@foreach($users as $user)
+
+<option value="{{ $user->id }}">
+    {{ $user->name }}
+    @if($user->jabatan)
+        - {{ $user->jabatan->nama_jabatan }}
+    @endif
 </option>
 
-<option>
-Keuangan
-</option>
+@endforeach
+
+</select>
 
 <option>
 Produksi
@@ -566,11 +561,6 @@ Administrasi
 <div>
 
 
-<label class="font-bold">
-
-Batas Waktu
-
-</label>
 
 
 <input
@@ -599,6 +589,7 @@ py-4
 
 
 <textarea
+name="instruksi"
 
 rows="4"
 
@@ -617,7 +608,9 @@ py-4
 
 
 
-<button class="
+<button
+type="submit"
+class="
 mt-6
 bg-gradient-to-r
 from-blue-600
@@ -638,11 +631,7 @@ Kirim Disposisi
 
 
 
-</div>
-
-
-
-</div>
+</form>
 
 
 @endsection

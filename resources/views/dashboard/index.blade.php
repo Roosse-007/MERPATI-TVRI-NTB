@@ -122,11 +122,11 @@ shadow-2xl
 
         {{-- Illustration --}}
 
-        <div class="
+     <div class="
         hidden
         lg:flex
         text-[140px]
-        animate-bounce
+        flying-bird
         ">
 
             🕊️
@@ -480,6 +480,40 @@ Selesai
 
 
 </div>
+
+<style>
+.flying-bird{
+    animation: fly 5s ease-in-out infinite;
+}
+
+@keyframes fly{
+
+    0%{
+        transform: translateX(0) translateY(0) rotate(-8deg);
+    }
+
+    20%{
+        transform: translateX(-20px) translateY(-12px) rotate(-4deg);
+    }
+
+    40%{
+        transform: translateX(15px) translateY(-20px) rotate(4deg);
+    }
+
+    60%{
+        transform: translateX(-10px) translateY(-8px) rotate(-2deg);
+    }
+
+    80%{
+        transform: translateX(20px) translateY(-15px) rotate(5deg);
+    }
+
+    100%{
+        transform: translateX(0) translateY(0) rotate(-8deg);
+    }
+
+}
+</style>
 
 
 @endsection
