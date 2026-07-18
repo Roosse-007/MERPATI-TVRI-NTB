@@ -142,5 +142,98 @@ button:hover{
 .card{
 
     border-radius:15px;
+/* MERPATI TERBANG */
 
+.bird-flight {
+
+    position: absolute;
+
+    right: 80px;
+    top: 60px;
+
+    animation: flyPath 6s infinite ease-in-out;
+
+}
+
+
+.bird {
+
+    font-size:140px;
+
+    animation: wingMove 1s infinite alternate;
+
+}
+
+
+
+/* jalur terbang */
+
+@keyframes flyPath {
+
+
+0% {
+
+    transform:
+    translate(0,0);
+
+}
+
+
+25% {
+
+    transform:
+    translate(-40px,-50px);
+
+}
+
+
+50% {
+
+    transform:
+    translate(-90px,10px);
+
+}
+
+
+75% {
+
+    transform:
+    translate(-40px,-30px);
+
+}
+
+
+100% {
+
+    transform:
+    translate(0,0);
+
+}
+
+
+}
+
+
+
+/* efek mengepak */
+
+@keyframes wingMove {
+
+
+from {
+
+    transform:
+    translateY(0);
+
+}
+
+
+to {
+
+    transform:
+    translateY(-15px);
+
+}
+
+}
 }

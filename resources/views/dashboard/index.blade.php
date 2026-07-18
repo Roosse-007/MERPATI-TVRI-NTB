@@ -98,17 +98,20 @@ shadow-2xl
 
 
             <button class="
-            mt-8
-            bg-white
-            text-blue-700
-            px-7
-            py-3
-            rounded-2xl
-            font-bold
-            shadow-lg
-            hover:scale-105
-            transition
-            ">
+mt-8
+bg-white
+text-slate-900
+px-8
+py-3
+rounded-2xl
+font-bold
+shadow-xl
+shadow-blue-900/20
+hover:scale-105
+hover:bg-blue-50
+transition-all
+duration-300
+">
 
                 Mulai Kelola Surat
 
@@ -120,20 +123,25 @@ shadow-2xl
 
 
 
-        {{-- Illustration --}}
+       {{-- Illustration Merpati Terbang --}}
 
         <div class="
         hidden
         lg:flex
-        text-[140px]
-        animate-bounce
+        bird-flight
         ">
 
-            🕊️
 
-        </div>
+    <div class="bird">
+
+        🕊️
+
+        
+
+    </div>
 
 
+</div>
     </div>
 
 

@@ -11,6 +11,10 @@ class DashboardController extends Controller
     public function index()
     {
 
+        $user = auth()->user();
+
+
+        // DATA DASHBOARD SURAT
         $data = [
 
             // semua surat selain draft
@@ -35,7 +39,33 @@ class DashboardController extends Controller
         ];
 
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD ADMIN
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $user &&
+            $user->jabatan &&
+            $user->jabatan->nama_jabatan === 'Admin'
+        ) {
+
+            return view('admin.dashboard', $data);
+
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD USER BIASA
+        |--------------------------------------------------------------------------
+        */
+
         return view('dashboard.index', $data);
+
 
     }
 
