@@ -15,6 +15,7 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
 
 
+
 // ==========================
 // HALAMAN AWAL
 // ==========================
@@ -27,9 +28,6 @@ use App\Http\Controllers\DisposisiController;
 */
 
 
-// Halaman utama langsung ke dashboard admin
-
-Route::redirect('/', '/admin/dashboard');
 
 
 
@@ -225,25 +223,29 @@ Route::get('/surat/terkirim', function () {
     return view('surat.terkirim');
 });
 
-Route::get('/surat/approval', function () {
-    return view('surat.approval');
-});
+Route::get('/surat/approval', [ApprovalController::class, 'index'])
+    ->name('surat.approval');
 
 Route::get('/surat/disposisi', function () {
     return view('surat.disposisi');
 });
 
-Route::get('/surat/arsip', function () {
-    return view('surat.arsip');
-});
+Route::get('/surat/arsip', [SuratController::class, 'archiveWeb'])
+    ->name('surat.arsip');
 
 
 // ==========================
 // SURAT CONTROLLER
 // ==========================
 
+
 Route::resource('surat', SuratController::class)
     ->whereNumber('surat');
+
+Route::get('/surat/{id}/detail',
+    [SuratController::class, 'showWeb']
+)->whereNumber('id')
+ ->name('surat.detail');
 
 Route::post('/surat/{id}/submit',
     [SuratController::class, 'submit']
@@ -265,6 +267,8 @@ Route::get('/archive',
 Route::get('/sent',
     [SuratController::class, 'sent']
 )->name('surat.sent');
+
+
 
 
 // ==========================

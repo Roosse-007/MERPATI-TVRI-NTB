@@ -56,56 +56,48 @@ Aksi
 
 <tbody>
 
+@forelse($surat as $item)
 
-@foreach([
-['001','Undangan Rapat'],
-['002','Laporan Tahunan'],
-['003','Permohonan Data']
-] as $item)
+<tr class="border-t hover:bg-slate-50">
 
+    <td class="p-4 font-bold">
+        {{ $item->nomor_surat }}
+    </td>
 
-<tr class="
-border-t
-hover:bg-slate-50
-">
+    <td>
+        {{ $item->perihal }}
+    </td>
 
+    <td>
+        {{ $item->tanggal_surat?->format('d M Y') }}
+    </td>
 
-<td class="p-4 font-bold">
-{{$item[0]}}
-</td>
+    <td class="text-center">
 
+        <a href="{{ route('surat.detail', $item->id) }}"
+           class="text-blue-600 hover:text-blue-800">
 
-<td>
-{{$item[1]}}
-</td>
+            <i data-lucide="eye" class="w-5 h-5"></i>
 
+        </a>
 
-<td>
-16 Juli 2026
-</td>
-
-
-<td>
-
-<button class="
-bg-blue-600
-text-white
-px-4 py-2
-rounded-xl
-">
-
-Lihat
-
-</button>
-
-</td>
-
+    </td>
 
 </tr>
 
+@empty
 
-@endforeach
+<tr>
 
+    <td colspan="4" class="text-center py-8 text-slate-500">
+
+        Belum ada surat yang diarsipkan.
+
+    </td>
+
+</tr>
+
+@endforelse
 
 </tbody>
 

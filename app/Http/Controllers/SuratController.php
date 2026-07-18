@@ -369,6 +369,7 @@ public function show($id)
             'message' => 'Surat tidak ditemukan.'
 
         ],404);
+    
 
     }
 
@@ -450,5 +451,36 @@ public function show($id)
         ]
 
     ]);
+    
+}
+public function showWeb($id)
+{
+    $surat = Surat::with([
+        'pengirim.jabatan',
+        'tujuan.user',
+        'jenisSurat',
+        'sifatSurat',
+        'prioritasSurat',
+        'templateSurat',
+        'approval.approver.jabatan',
+        'disposisi.dariUser.jabatan',
+        'disposisi.keUser.jabatan'
+    ])->findOrFail($id);
+
+    return view('surat.detail', compact('surat'));
+}
+public function archiveWeb()
+{
+    $surat = Surat::with([
+        'pengirim.jabatan',
+        'jenisSurat',
+        'tujuan.user'
+    ])
+    ->where('is_archived', true)
+    ->latest()
+    ->paginate(10);
+
+    return view('surat.arsip', compact('surat'));
 }
 }
+
