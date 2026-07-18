@@ -18,9 +18,6 @@ return new class extends Migration
             // Nama Jabatan
             $table->string('nama_jabatan', 150)->unique();
 
-            // Deskripsi
-            $table->text('deskripsi')->nullable();
-
             // Status
             $table->boolean('is_active')->default(true);
 

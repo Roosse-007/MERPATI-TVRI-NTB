@@ -2,19 +2,31 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    
+    public function handle(Request $request, Closure $next, $role)
     {
+        if (!auth()->check()) {
+            abort(401, 'Silakan login terlebih dahulu.');
+        }
+
+        $user = auth()->user();
+
+        if (!$user->is_active) {
+            abort(403, 'Akun tidak aktif.');
+        }
+
+        if (!$user->hasRole($role)) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
+
         return $next($request);
     }
 }

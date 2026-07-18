@@ -4,23 +4,31 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class CheckPermission
 {
-    public function handle(Request $request, Closure $next, $permission): Response
+    public function handle(Request $request, Closure $next, $permission)
     {
+        // Cek apakah user sudah login
         if (!auth()->check()) {
-
-            abort(401);
-
+            abort(401, 'Silakan login terlebih dahulu.');
         }
 
 
-        if (!auth()->user()->can($permission)) {
+        /** @var User $user */
+        $user = auth()->user();
 
-            abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
 
+        // Cek akun aktif
+        if (!$user->is_active) {
+            abort(403, 'Akun tidak aktif.');
+        }
+
+
+        // Cek permission Spatie
+        if (!$user->can($permission)) {
+            abort(403, 'Anda tidak memiliki izin.');
         }
 
 
