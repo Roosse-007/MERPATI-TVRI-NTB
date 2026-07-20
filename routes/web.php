@@ -19,9 +19,6 @@ use App\Http\Controllers\DisposisiController;
 
 
 
-// ==========================
-// HALAMAN AWAL
-// ==========================
 
 
 /*
@@ -31,86 +28,14 @@ use App\Http\Controllers\DisposisiController;
 */
 
 
-
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN ROUTES
-|--------------------------------------------------------------------------
-*/
-
-
-Route::prefix('admin')->group(function () {
-
-
-    // Dashboard
-
-    Route::view('/dashboard', 'admin.dashboard')
-        ->name('admin.dashboard');
-
-
-
-    // Kelola User
-
-    Route::view('/users', 'admin.users')
-        ->name('admin.users');
-
-
-
-    // Template Surat
-
-    Route::view('/template-surat', 'admin.template-surat')
-        ->name('admin.template');
-
-
-
-    // Nomor Surat
-
-    Route::view('/nomor-surat', 'admin.nomor-surat')
-        ->name('admin.nomor');
-
-
-
-    // Laporan
-
-    Route::view('/laporan', 'admin.laporan')
-        ->name('admin.laporan');
-
-
-
-    // Grafik
-
-    Route::view('/grafik', 'admin.grafik')
-        ->name('admin.grafik');
-
-
-
-    // Arsip
-
-    Route::view('/arsip', 'admin.arsip')
-        ->name('admin.arsip');
-
-
-
-    // Monitoring
-
-    Route::view('/monitoring', 'admin.monitoring')
-        ->name('admin.monitoring');
-
-
-
-    // Setting
-
-    Route::view('/setting', 'admin.setting')
-        ->name('admin.setting');
-}); //
-
-Route::get('/', function () {
+Route::get('/', function(){
 
     return redirect()->route('login');
 
 });
+
+
+
 
 
 
@@ -124,28 +49,35 @@ Route::get('/', function () {
 
 
 Route::get('/login',
+[
+    AuthController::class,
+    'showLogin'
 
-    [AuthController::class,'showLogin']
-
-)->name('login');
+])
+->name('login');
 
 
 
 
 Route::post('/login',
+[
+    AuthController::class,
+    'login'
 
-    [AuthController::class,'login']
-
-)->name('login.process');
+])
+->name('login.process');
 
 
 
 
 Route::post('/logout',
+[
+    AuthController::class,
+    'logout'
 
-    [AuthController::class,'logout']
+])
+->name('logout');
 
-)->name('logout');
 
 
 
@@ -162,13 +94,13 @@ Route::post('/logout',
 
 
 Route::get('/dashboard',
+[
+    DashboardController::class,
+    'index'
 
-    [DashboardController::class,'index']
-
-)
+])
 ->middleware('auth')
 ->name('dashboard');
-
 
 
 
@@ -185,67 +117,78 @@ Route::get('/dashboard',
 */
 
 
-Route::prefix('admin')->group(function(){
+Route::prefix('admin')
+->middleware('auth')
+->group(function(){
 
 
 
-    Route::view('/dashboard',
+    Route::view(
+        '/dashboard',
         'admin.dashboard'
     )
     ->name('admin.dashboard');
 
 
 
-    Route::view('/users',
+    Route::view(
+        '/users',
         'admin.users'
     )
     ->name('admin.users');
 
 
 
-    Route::view('/template-surat',
+    Route::view(
+        '/template-surat',
         'admin.template-surat'
     )
     ->name('admin.template');
 
 
 
-    Route::view('/nomor-surat',
+    Route::view(
+        '/nomor-surat',
         'admin.nomor-surat'
     )
     ->name('admin.nomor');
 
 
 
-    Route::view('/laporan',
+    Route::view(
+        '/laporan',
         'admin.laporan'
     )
     ->name('admin.laporan');
 
 
 
-    Route::view('/grafik',
+    Route::view(
+        '/grafik',
         'admin.grafik'
     )
     ->name('admin.grafik');
 
 
 
-    Route::view('/arsip',
+    Route::view(
+        '/arsip',
         'admin.arsip'
     )
     ->name('admin.arsip');
 
 
 
-    Route::view('/monitoring',
+    Route::view(
+        '/monitoring',
         'admin.monitoring'
     )
     ->name('admin.monitoring');
 
 
 
-    Route::view('/setting',
+    Route::view(
+        '/setting',
         'admin.setting'
     )
     ->name('admin.setting');
@@ -269,12 +212,13 @@ Route::prefix('admin')->group(function(){
 */
 
 
-Route::resource('users',
-
+Route::resource(
+    'users',
     UserController::class
-
 )
 ->middleware('auth');
+
+
 
 
 
@@ -289,40 +233,36 @@ Route::resource('users',
 */
 
 
-Route::resource('unit-kerja',
-
+Route::resource(
+    'unit-kerja',
     UnitKerjaController::class
-
 )
 ->middleware('auth');
 
 
 
 
-Route::resource('jabatan',
-
+Route::resource(
+    'jabatan',
     JabatanController::class
-
 )
 ->middleware('auth');
 
 
 
 
-Route::resource('role',
-
+Route::resource(
+    'role',
     RoleController::class
-
 )
 ->middleware('auth');
 
 
 
 
-Route::resource('permission',
-
+Route::resource(
+    'permission',
     PermissionController::class
-
 )
 ->middleware('auth');
 
@@ -349,35 +289,6 @@ Route::get('/profile',function(){
 ->middleware('auth');
 
 
-// ==========================
-// HALAMAN SURAT
-// ==========================
-
-Route::get('/surat/inbox', function () {
-    return view('surat.inbox');
-})->name('surat.inbox');
-
-Route::get('/surat/draft', function () {
-    return view('surat.draft');
-})->name('surat.draft');
-
-Route::get('/surat/baru', function () {
-    return view('surat.baru');
-});
-
-Route::get('/surat/terkirim', function () {
-    return view('surat.terkirim');
-});
-
-Route::get('/surat/approval', [ApprovalController::class, 'index'])
-    ->name('surat.approval');
-
-Route::get('/surat/disposisi', function () {
-    return view('surat.disposisi');
-});
-
-Route::get('/surat/arsip', [SuratController::class, 'archiveWeb'])
-    ->name('surat.arsip');
 
 
 
@@ -392,13 +303,14 @@ Route::get('/surat/arsip', [SuratController::class, 'archiveWeb'])
 */
 
 
-// halaman buat surat baru
+// Buat surat baru
 
-Route::get('/surat/create',
+Route::get('/surat/baru',
+[
+    SuratController::class,
+    'create'
 
-    [SuratController::class,'create']
-
-)
+])
 ->middleware('auth')
 ->name('surat.create');
 
@@ -406,13 +318,14 @@ Route::get('/surat/create',
 
 
 
-// simpan surat sebagai draft
+// Simpan surat
 
 Route::post('/surat',
+[
+    SuratController::class,
+    'store'
 
-    [SuratController::class,'store']
-
-)
+])
 ->middleware('auth')
 ->name('surat.store');
 
@@ -420,15 +333,14 @@ Route::post('/surat',
 
 
 
-
-
-// daftar draft
+// Draft surat
 
 Route::get('/surat/draft',
+[
+    SuratController::class,
+    'draft'
 
-    [SuratController::class,'draft']
-
-)
+])
 ->middleware('auth')
 ->name('surat.draft');
 
@@ -436,120 +348,108 @@ Route::get('/surat/draft',
 
 
 
-
-
-// edit draft
+// Edit draft
 
 Route::get('/surat/{id}/edit',
+[
+    SuratController::class,
+    'edit'
 
-    [SuratController::class,'edit']
-
-)
+])
 ->middleware('auth')
+->whereNumber('id')
 ->name('surat.edit');
 
 
 
 
 
-
-
-// update draft
+// Update draft
 
 Route::put('/surat/{id}',
+[
+    SuratController::class,
+    'update'
 
-    [SuratController::class,'update']
-
-)
+])
 ->middleware('auth')
+->whereNumber('id')
 ->name('surat.update');
 
 
 
 
 
-
-
-// hapus draft
+// Hapus draft
 
 Route::delete('/surat/{id}',
+[
+    SuratController::class,
+    'destroy'
 
-    [SuratController::class,'destroy']
-
-)
+])
 ->middleware('auth')
+->whereNumber('id')
 ->name('surat.destroy');
 
 
 
 
 
-
-
-// kirim surat
-Route::resource('surat', SuratController::class)
-    ->whereNumber('surat');
-
-Route::get('/surat/{id}/detail',
-    [SuratController::class, 'showWeb']
-)->whereNumber('id')
- ->name('surat.detail');
+// Kirim surat approval
 
 Route::post('/surat/{id}/submit',
+[
+    SuratController::class,
+    'submit'
 
-    [SuratController::class,'submit']
-
-)
+])
 ->middleware('auth')
+->whereNumber('id')
 ->name('surat.submit');
 
 
 
 
-// halaman buat surat baru
 
-Route::get('/surat/baru',
+// Detail surat web
 
-[SuratController::class,'create']
+Route::get('/surat/{id}/detail',
+[
+    SuratController::class,
+    'showWeb'
 
-)
-->middleware('auth')
-->name('surat.baru');
-
-
-// detail surat
-
-Route::get('/surat/{id}',
-
-    [SuratController::class,'show']
-
-)
+])
 ->middleware('auth')
 ->whereNumber('id')
-->name('surat.show');
+->name('surat.detail');
 
 
 
 
 
+// Detail API
 
+Route::get('/api/surat/{id}',
+[
+    SuratController::class,
+    'show'
 
-
-
-/*
-|--------------------------------------------------------------------------
-| INBOX
-|--------------------------------------------------------------------------
-*/
+])
+->whereNumber('id');
+// ==========================
+// INBOX SURAT
+// ==========================
 
 
 Route::get('/inbox',
+[
+    SuratController::class,
+    'inboxWeb'
 
-    [SuratController::class,'inboxWeb']
-
-)
+])
 ->middleware('auth')
-->name('surat.inbox.web');
+->name('surat.inbox');
 
 
 
@@ -557,22 +457,19 @@ Route::get('/inbox',
 
 
 
-/*
-|--------------------------------------------------------------------------
-| TERKIRIM
-|--------------------------------------------------------------------------
-*/
+// ==========================
+// SURAT TERKIRIM
+// ==========================
 
 
-Route::get('/surat/terkirim',
+Route::get('/sent',
+[
+    SuratController::class,
+    'sent'
 
-function(){
-
-    return view('surat.terkirim');
-
-})
+])
 ->middleware('auth')
-->name('surat.terkirim');
+->name('surat.sent');
 
 
 
@@ -580,45 +477,50 @@ function(){
 
 
 
-
-/*
-|--------------------------------------------------------------------------
-| APPROVAL PAGE
-|--------------------------------------------------------------------------
-*/
+// ==========================
+// ARSIP SURAT
+// ==========================
 
 
-Route::get('/surat/approval',
+// arsipkan surat
 
-function(){
+Route::put('/surat/{id}/archive',
+[
+    SuratController::class,
+    'archive'
 
-    return view('surat.approval');
-
-})
+])
 ->middleware('auth')
-->name('surat.approval');
+->whereNumber('id')
+->name('surat.archive');
 
 
 
 
 
+// list arsip API
+
+Route::get('/archive',
+[
+    SuratController::class,
+    'archiveList'
+
+])
+->middleware('auth')
+->name('surat.archive.list');
 
 
 
-/*
-|--------------------------------------------------------------------------
-| ARSIP
-|--------------------------------------------------------------------------
-*/
 
+
+// halaman arsip
 
 Route::get('/surat/arsip',
+[
+    SuratController::class,
+    'archiveWeb'
 
-function(){
-
-    return view('surat.arsip');
-
-})
+])
 ->middleware('auth')
 ->name('surat.arsip');
 
@@ -629,197 +531,216 @@ function(){
 
 
 
-/*
-|--------------------------------------------------------------------------
-| ARCHIVE
-|--------------------------------------------------------------------------
-*/
-
-
-Route::put('/surat/{id}/archive',
-
-    [SuratController::class,'archive']
-
-)
-->middleware('auth')
-->name('surat.archive');
-
-
-
-
-Route::get('/archive',
-
-    [SuratController::class,'archiveList']
-
-)
-->middleware('auth')
-->name('surat.archive.list');
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| SENT
-|--------------------------------------------------------------------------
-*/
-
-
-Route::get('/sent',
-
-    [SuratController::class,'sent']
-
-)
-->middleware('auth')
-->name('surat.sent');
-
-
-
 
 // ==========================
-// INBOX
+// APPROVAL ACTION
 // ==========================
-
-Route::get('/inbox',
-    [SuratController::class,'inboxWeb']
-)->name('surat.inbox.web');
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| APPROVAL ACTION
-|--------------------------------------------------------------------------
-*/
 
 
 Route::post('/approval/kpp/{id}',
+[
+    ApprovalController::class,
+    'approveKpp'
 
-    [ApprovalController::class,'approveKpp']
+])
+->middleware('auth');
 
-);
 
 
 
 Route::post('/approval/kpp/{id}/reject',
+[
+    ApprovalController::class,
+    'rejectKpp'
 
-    [ApprovalController::class,'rejectKpp']
+])
+->middleware('auth');
 
-);
 
 
 
 
 Route::post('/approval/ktu/{id}',
+[
+    ApprovalController::class,
+    'approveKtu'
 
-    [ApprovalController::class,'approveKtu']
-
-);
+])
+->middleware('auth');
 
 
 
 
 Route::post('/approval/ktu/{id}/reject',
+[
+    ApprovalController::class,
+    'rejectKtu'
 
-    [ApprovalController::class,'rejectKtu']
+])
+->middleware('auth');
 
-);
 
 
 
 
 Route::post('/approval/kepala-stasiun/{id}',
+[
+    ApprovalController::class,
+    'approveKepalaStasiun'
 
-    [ApprovalController::class,'approveKepalaStasiun']
+])
+->middleware('auth');
 
-);
 
 
 
 
 Route::post('/approval/kepala-stasiun/{id}/reject',
+[
+    ApprovalController::class,
+    'rejectKepalaStasiun'
 
-    [ApprovalController::class,'rejectKepalaStasiun']
-
-);
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| DISPOSISI
-|--------------------------------------------------------------------------
-*/
-
-
-Route::get('/disposisi',
-
-    [DisposisiController::class,'index']
-
-)
+])
 ->middleware('auth');
 
 
 
 
-Route::post('/disposisi',
-
-    [DisposisiController::class,'store']
-
-)
-->middleware('auth');
 
 
 
 
-Route::get('/disposisi/inbox/{userId}',
 
-    [DisposisiController::class,'inbox']
+// ==========================
+// HALAMAN APPROVAL
+// ==========================
 
-)
+
+Route::get('/surat/approval',
+[
+    SuratController::class,
+    'approval'
+])
+->middleware('auth')
+->name('surat.approval');
+
+
+
+
+
+
+
+
+
+// ==========================
+// DISPOSISI
+// ==========================
+
+
+// Halaman daftar disposisi
+
+Route::get('/surat/disposisi',
+[
+    DisposisiController::class,
+    'indexWeb'
+
+])
+->middleware('auth')
+->name('disposisi.index');
+
+
+
+
+
+// Form buat disposisi dari surat
+
+Route::get('/surat/{id}/disposisi',
+[
+    DisposisiController::class,
+    'showWeb'
+
+])
+->middleware('auth')
+->whereNumber('id')
+->name('surat.disposisi');
+
+
+
+
+
+// Simpan disposisi dari form
+
+Route::post('/surat/disposisi',
+[
+    DisposisiController::class,
+    'storeWeb'
+
+])
+->middleware('auth')
+->name('disposisi.store');
+
+
+
+
+
+// Detail disposisi
+
+Route::get('/surat/disposisi/{id}',
+[
+    DisposisiController::class,
+    'show'
+
+])
+->middleware('auth')
+->whereNumber('id')
+->name('disposisi.show');
+
+
+
+
+
+// Inbox disposisi user
+
+Route::get('/surat/disposisi/inbox/{userId}',
+[
+    DisposisiController::class,
+    'inbox'
+
+])
 ->middleware('auth')
 ->whereNumber('userId');
 
 
 
 
-Route::put('/disposisi/{id}/read',
 
-    [DisposisiController::class,'read']
+// Tandai dibaca
 
-)
-->middleware('auth');
+Route::put('/surat/disposisi/{id}/read',
+[
+    DisposisiController::class,
+    'read'
 
-
-
-
-Route::put('/disposisi/{id}/finish',
-
-    [DisposisiController::class,'finish']
-
-)
-->middleware('auth');
+])
+->middleware('auth')
+->whereNumber('id');
 
 
 
 
-Route::get('/disposisi/{id}',
 
-    [DisposisiController::class,'show']
+// Selesaikan disposisi
 
-)
-->middleware('auth');
+Route::put('/surat/disposisi/{id}/finish',
+[
+    DisposisiController::class,
+    'finish'
+
+])
+->middleware('auth')
+->whereNumber('id');
+
+
+// ==========================
+// SELESAI
+// ==========================

@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disposisi;
+use App\Models\Surat;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DisposisiController extends Controller
 {
 
-    // Semua disposisi
+
+    /*
+    |--------------------------------------------------------------------------
+    | API SEMUA DISPOSISI
+    |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
+
         $disposisi = Disposisi::with([
             'surat',
             'dariUser.jabatan',
@@ -19,221 +29,417 @@ class DisposisiController extends Controller
         ->latest()
         ->paginate(10);
 
+
+
         return response()->json([
-            'success' => true,
-            'data' => $disposisi
+
+            'success'=>true,
+
+            'data'=>$disposisi
+
         ]);
+
     }
 
 
-    // Membuat disposisi
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HALAMAN DETAIL BUAT DISPOSISI
+    |--------------------------------------------------------------------------
+    */
+
+    public function showWeb($id)
+    {
+
+        $surat = Surat::with([
+
+            'pengirim.jabatan',
+            'prioritasSurat',
+            'jenisSurat',
+            'sifatSurat',
+            'disposisi.dariUser.jabatan',
+            'disposisi.keUser.jabatan'
+
+        ])
+        ->findOrFail($id);
+
+
+
+        $users = User::with('jabatan')
+            ->orderBy('name')
+            ->get();
+
+
+
+        return view(
+            'surat.disposisi',
+            compact(
+                'surat',
+                'users'
+            )
+        );
+
+    }
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN DISPOSISI API
+    |--------------------------------------------------------------------------
+    */
+
     public function store(Request $request)
     {
 
         $request->validate([
-            'surat_id' => 'required',
-            'dari_user_id' => 'required',
-            'ke_user_id' => 'required',
-            'instruksi' => 'required',
+
+            'surat_id'=>'required|exists:surat,id',
+
+            'ke_user_id'=>'required|exists:users,id',
+
+            'instruksi'=>'required|string|max:1000',
+
         ]);
+
 
 
         $disposisi = Disposisi::create([
 
-            'surat_id' => $request->surat_id,
+            'surat_id'=>$request->surat_id,
 
-            'dari_user_id' => $request->dari_user_id,
+            'dari_user_id'=>Auth::id(),
 
-            'ke_user_id' => $request->ke_user_id,
+            'ke_user_id'=>$request->ke_user_id,
 
-            'instruksi' => $request->instruksi,
+            'instruksi'=>$request->instruksi,
 
-            'status' => 'Aktif'
+            'status'=>'Aktif',
 
         ]);
 
 
+
         return response()->json([
-            'success' => true,
-            'message' => 'Disposisi berhasil dibuat',
-            'data' => $disposisi
+
+            'success'=>true,
+
+            'message'=>'Disposisi berhasil dibuat',
+
+            'data'=>$disposisi
+
         ],201);
 
     }
 
 
 
-    // Inbox disposisi user tujuan
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INBOX DISPOSISI USER
+    |--------------------------------------------------------------------------
+    */
+
     public function inbox($userId)
     {
 
+
         $disposisi = Disposisi::with([
-            'surat',
-            'dariUser.jabatan'
+
+            'surat.prioritasSurat',
+
+            'dariUser.jabatan',
+
+            'keUser.jabatan'
+
         ])
         ->where('ke_user_id',$userId)
         ->latest()
         ->paginate(10);
 
 
-        return response()->json([
-
-    'success'=>true,
-
-    'message'=>'Inbox Disposisi',
-
-    'data'=>$disposisi->through(function($item){
-
-        return [
-
-            'id'=>$item->id,
-
-
-            'surat'=>[
-
-                'id'=>$item->surat->id ?? null,
-
-                'nomor_surat'=>$item->surat->nomor_surat ?? null,
-
-                'perihal'=>$item->surat->perihal ?? null,
-
-                'status'=>$item->surat->status ?? null
-
-            ],
-
-
-
-            'dari'=>[
-
-                'nama'=>$item->dariUser->name ?? null,
-
-                'jabatan'=>$item->dariUser->jabatan->nama_jabatan ?? null
-
-            ],
-
-
-
-            'instruksi'=>$item->instruksi,
-
-
-            'status'=>$item->status,
-
-
-            'dibaca'=>$item->dibaca,
-
-
-            'dibaca_at'=>$item->dibaca_at
-
-        ];
-
-    })
-
-]);
-    }
-
-
-
-    // Detail disposisi
-    public function show($id)
-    {
-
-        $disposisi = Disposisi::with([
-            'surat',
-            'dariUser.jabatan',
-            'keUser.jabatan'
-        ])
-        ->find($id);
-
-
-        if(!$disposisi){
-
-            return response()->json([
-                'success'=>false,
-                'message'=>'Disposisi tidak ditemukan'
-            ],404);
-
-        }
-
 
         return response()->json([
+
             'success'=>true,
+
+            'message'=>'Inbox Disposisi',
+
             'data'=>$disposisi
+
         ]);
 
     }
 
 
 
-    // Tandai sudah dibaca
-    public function read($id)
-{
-
-    $disposisi = Disposisi::find($id);
 
 
-    if(!$disposisi){
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL DISPOSISI API
+    |--------------------------------------------------------------------------
+    */
+
+    public function show($id)
+    {
+
+        $disposisi = Disposisi::with([
+
+            'surat',
+
+            'dariUser.jabatan',
+
+            'keUser.jabatan'
+
+        ])
+        ->find($id);
+
+
+
+        if(!$disposisi){
+
+            return response()->json([
+
+                'success'=>false,
+
+                'message'=>'Disposisi tidak ditemukan'
+
+            ],404);
+
+        }
+
+
 
         return response()->json([
 
-            'success'=>false,
+            'success'=>true,
 
-            'message'=>'Disposisi tidak ditemukan.'
+            'data'=>$disposisi
 
-        ],404);
+        ]);
 
     }
 
 
 
-    $disposisi->update([
-
-        'dibaca'=>true,
-
-        'dibaca_at'=>now()
-
-    ]);
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | TANDAI DIBACA
+    |--------------------------------------------------------------------------
+    */
 
-    return response()->json([
+    public function read($id)
+    {
 
-        'success'=>true,
+        $disposisi = Disposisi::find($id);
 
-        'message'=>'Disposisi ditandai sudah dibaca.',
 
-        'data'=>[
 
-            'id'=>$disposisi->id,
+        if(!$disposisi){
 
-            'dibaca'=>$disposisi->dibaca,
+            return response()->json([
 
-            'dibaca_at'=>$disposisi->dibaca_at
+                'success'=>false,
 
-        ]
+                'message'=>'Disposisi tidak ditemukan'
 
-    ]);
+            ],404);
 
-}
+        }
+
+
+
+        $disposisi->update([
+
+            'dibaca'=>true,
+
+            'dibaca_at'=>now()
+
+        ]);
+
+
+
+        return response()->json([
+
+            'success'=>true,
+
+            'message'=>'Disposisi dibaca'
+
+        ]);
+
+    }
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SELESAIKAN DISPOSISI
+    |--------------------------------------------------------------------------
+    */
+
     public function finish($id)
-{
-    $disposisi = Disposisi::find($id);
+    {
 
-    if (!$disposisi) {
-return response()->json([
+        $disposisi = Disposisi::find($id);
 
-    'success'=>true,
 
-    'message'=>'Disposisi selesai.',
 
-    'data'=>[
+        if(!$disposisi){
 
-        'id'=>$disposisi->id,
+            return response()->json([
 
-        'status'=>$disposisi->status
+                'success'=>false,
 
-    ]
+                'message'=>'Disposisi tidak ditemukan'
 
-]);
-}
-}
+            ],404);
+
+        }
+
+
+
+        $disposisi->update([
+
+            'status'=>'Selesai'
+
+        ]);
+
+
+
+        return response()->json([
+
+            'success'=>true,
+
+            'message'=>'Disposisi selesai',
+
+            'data'=>$disposisi
+
+        ]);
+
+    }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN DISPOSISI DARI WEB
+    |--------------------------------------------------------------------------
+    */
+
+    public function storeWeb(Request $request)
+    {
+
+
+        $request->validate([
+
+            'surat_id'=>'required|exists:surat,id',
+
+            'ke_user_id'=>'required|exists:users,id',
+
+            'instruksi'=>'required|string|max:1000',
+
+        ]);
+
+
+
+
+        Disposisi::create([
+
+
+            'surat_id'=>$request->surat_id,
+
+
+            'dari_user_id'=>Auth::id(),
+
+
+            'ke_user_id'=>$request->ke_user_id,
+
+
+            'instruksi'=>$request->instruksi,
+
+
+            'status'=>'Aktif',
+
+
+        ]);
+
+
+
+
+
+        return redirect()
+
+            ->route('disposisi.index')
+
+            ->with(
+
+                'success',
+
+                'Disposisi berhasil dibuat.'
+
+            );
+
+    }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HALAMAN LIST DISPOSISI WEB
+    |--------------------------------------------------------------------------
+    */
+
+    public function indexWeb()
+    {
+
+
+        $disposisi = Disposisi::with([
+
+            'surat',
+
+            'dariUser.jabatan',
+
+            'keUser.jabatan'
+
+        ])
+        ->latest()
+        ->paginate(10);
+
+
+
+
+        return view(
+
+            'surat.disposisi-index',
+
+            compact('disposisi')
+
+        );
+
+
+    }
+
+
 }

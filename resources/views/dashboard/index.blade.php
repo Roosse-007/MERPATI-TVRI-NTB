@@ -20,84 +20,93 @@ shadow-2xl
 ">
 
 
-    {{-- Decorative Circle --}}
-    <div class="
-    absolute
-    -top-20
-    -right-20
-    w-72
-    h-72
-    bg-white/20
-    rounded-full
-    blur-3xl
-    "></div>
-
-
-    <div class="
-    absolute
-    bottom-0
-    left-0
-    w-60
-    h-60
-    bg-cyan-200/20
-    rounded-full
-    blur-3xl
-    "></div>
+<div class="
+absolute
+-top-20
+-right-20
+w-72
+h-72
+bg-white/20
+rounded-full
+blur-3xl
+">
+</div>
 
 
 
-    <div class="
-    relative
-    flex
-    justify-between
-    items-center
-    ">
-
-
-        <div>
-
-
-            <p class="
-            text-blue-100
-            text-lg
-            ">
-
-                Selamat Datang 👋
-
-            </p>
+<div class="
+absolute
+bottom-0
+left-0
+w-60
+h-60
+bg-cyan-200/20
+rounded-full
+blur-3xl
+">
+</div>
 
 
 
-            <h1 class="
-            text-5xl
-            font-black
-            mt-3
-            ">
-
-                Sistem E-Surat
-                <br>
-
-                MERPATI TVRI NTB
-
-            </h1>
 
 
+<div class="
+relative
+flex
+justify-between
+items-center
+">
 
-            <p class="
-            mt-5
-            text-blue-100
-            max-w-xl
-            ">
 
-                Kelola surat masuk, surat keluar,
-                approval dan disposisi dengan sistem
-                digital yang cepat dan modern.
+<div>
 
-            </p>
+
+<p class="
+text-blue-100
+text-lg
+">
+
+Selamat Datang 👋
+
+</p>
 
 
 
-            <button class="
+
+<h1 class="
+text-5xl
+font-black
+mt-3
+">
+
+Sistem E-Surat
+<br>
+MERPATI TVRI NTB
+
+</h1>
+
+
+
+
+<p class="
+mt-5
+text-blue-100
+max-w-xl
+">
+
+Kelola surat masuk, surat keluar,
+approval dan disposisi dengan sistem
+digital yang cepat dan modern.
+
+</p>
+
+
+
+
+<a href="/surat/create"
+
+class="
+inline-block
 mt-8
 bg-white
 text-slate-900
@@ -106,43 +115,46 @@ py-3
 rounded-2xl
 font-bold
 shadow-xl
-shadow-blue-900/20
 hover:scale-105
 hover:bg-blue-50
-transition-all
-duration-300
+transition
 ">
 
-                Mulai Kelola Surat
+Mulai Kelola Surat
 
-            </button>
-
-
-
-        </div>
-
-
-
-       {{-- Illustration Merpati Terbang --}}
-
-        <div class="
-        hidden
-        lg:flex
-        bird-flight
-        ">
-
-
-    <div class="bird">
-
-        🕊️
-
-        
-
-    </div>
+</a>
 
 
 </div>
-    </div>
+
+
+
+
+
+
+{{-- BURUNG TERBANG --}}
+
+<div class="
+hidden
+lg:flex
+text-[140px]
+flying-bird
+">
+
+
+<div class="bird">
+
+🕊️
+
+</div>
+
+
+</div>
+
+
+
+
+</div>
 
 
 </section>
@@ -150,7 +162,12 @@ duration-300
 
 
 
+
+
+
+
 {{-- STATISTIC CARD --}}
+
 
 <div class="
 grid
@@ -162,7 +179,11 @@ mt-10
 ">
 
 
-{{-- CARD 1 --}}
+
+
+
+
+{{-- SURAT MASUK --}}
 
 <div class="
 rounded-[28px]
@@ -192,6 +213,7 @@ text-3xl
 </div>
 
 
+
 <p class="
 mt-5
 text-slate-500
@@ -202,13 +224,14 @@ Surat Masuk
 </p>
 
 
+
 <h2 class="
 text-4xl
 font-black
 text-slate-800
 ">
 
-{{ $suratMasuk }}
+{{ $suratMasuk ?? 0 }}
 
 </h2>
 
@@ -218,7 +241,11 @@ text-slate-800
 
 
 
-{{-- CARD 2 --}}
+
+
+
+{{-- DRAFT --}}
+
 
 <div class="
 rounded-[28px]
@@ -248,16 +275,23 @@ text-3xl
 </div>
 
 
-<p class="mt-5 text-slate-500">
+<p class="
+mt-5
+text-slate-500
+">
 
 Draft
 
 </p>
 
 
-<h2 class="text-4xl font-black">
 
-{{ $draft }}
+<h2 class="
+text-4xl
+font-black
+">
+
+{{ $draft ?? 0 }}
 
 </h2>
 
@@ -268,7 +302,10 @@ Draft
 
 
 
-{{-- CARD 3 --}}
+
+
+{{-- APPROVAL --}}
+
 
 <div class="
 rounded-[28px]
@@ -298,16 +335,22 @@ text-3xl
 </div>
 
 
-<p class="mt-5 text-slate-500">
+<p class="
+mt-5
+text-slate-500
+">
 
 Approval
 
 </p>
 
 
-<h2 class="text-4xl font-black">
+<h2 class="
+text-4xl
+font-black
+">
 
-{{ $approval }}
+{{ $approval ?? 0 }}
 
 </h2>
 
@@ -319,7 +362,10 @@ Approval
 
 
 
-{{-- CARD 4 --}}
+
+
+{{-- ARSIP --}}
+
 
 <div class="
 rounded-[28px]
@@ -349,16 +395,24 @@ text-3xl
 </div>
 
 
-<p class="mt-5 text-slate-500">
+
+<p class="
+mt-5
+text-slate-500
+">
 
 Arsip
 
 </p>
 
 
-<h2 class="text-4xl font-black">
 
-{{ $arsip }}
+<h2 class="
+text-4xl
+font-black
+">
+
+{{ $arsip ?? 0 }}
 
 </h2>
 
@@ -373,7 +427,11 @@ Arsip
 
 
 
-{{-- ACTIVITY SECTION --}}
+
+
+
+{{-- AKTIVITAS TERBARU --}}
+
 
 <div class="
 mt-10
@@ -395,7 +453,13 @@ Aktivitas Terbaru
 </h2>
 
 
-<div class="mt-6 space-y-4">
+
+
+
+<div class="
+mt-6
+space-y-4
+">
 
 
 <div class="
@@ -407,21 +471,29 @@ p-5
 rounded-2xl
 ">
 
+
 <div>
+
 
 <p class="font-bold">
 
-Surat masuk baru diterima
+Surat terbaru masuk
 
 </p>
 
-<p class="text-sm text-slate-500">
 
-10 menit yang lalu
+<p class="
+text-sm
+text-slate-500
+">
+
+Data terbaru dari sistem
 
 </p>
+
 
 </div>
+
 
 
 <span class="
@@ -437,7 +509,11 @@ Baru
 </span>
 
 
+
 </div>
+
+
+
 
 
 <div class="
@@ -452,19 +528,26 @@ rounded-2xl
 
 <div>
 
+
 <p class="font-bold">
 
-Surat berhasil disetujui
+Proses approval surat
 
 </p>
 
-<p class="text-sm text-slate-500">
 
-1 jam yang lalu
+<p class="
+text-sm
+text-slate-500
+">
+
+Monitoring persetujuan surat
 
 </p>
+
 
 </div>
+
 
 
 <span class="
@@ -475,19 +558,113 @@ py-2
 rounded-xl
 ">
 
-Selesai
+Aktif
 
 </span>
 
 
-</div>
-
-
 
 </div>
 
 
+
+
 </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<style>
+
+.flying-bird{
+
+animation: fly 5s ease-in-out infinite;
+
+}
+
+
+
+@keyframes fly{
+
+
+0%{
+
+transform:
+translateX(0)
+translateY(0)
+rotate(-8deg);
+
+}
+
+
+
+20%{
+
+transform:
+translateX(-20px)
+translateY(-12px)
+rotate(-4deg);
+
+}
+
+
+
+40%{
+
+transform:
+translateX(15px)
+translateY(-20px)
+rotate(4deg);
+
+}
+
+
+
+60%{
+
+transform:
+translateX(-10px)
+translateY(-8px)
+rotate(-2deg);
+
+}
+
+
+
+80%{
+
+transform:
+translateX(20px)
+translateY(-15px)
+rotate(5deg);
+
+}
+
+
+
+100%{
+
+transform:
+translateX(0)
+translateY(0)
+rotate(-8deg);
+
+}
+
+
+
+}
+
+
+</style>
+
 
 
 @endsection
