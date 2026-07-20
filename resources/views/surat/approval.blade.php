@@ -38,239 +38,197 @@ Pantau perjalanan persetujuan surat secara real-time
 
 
 
-{{-- HEADER CARD --}}
+{{-- STATISTIK --}}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-<div class="
-bg-gradient-to-r
-from-blue-700
-to-cyan-400
-rounded-[32px]
-p-8
-text-white
-shadow-xl
-">
+    {{-- Total Surat --}}
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
+        <div class="flex items-center gap-2 text-slate-300 text-sm">
+            <i data-lucide="files" class="w-5 h-5"></i>
+            <span>Total Surat</span>
+        </div>
 
-<p class="text-blue-100">
-Surat Aktif
-</p>
+        <h2 class="text-5xl font-black mt-3">
+            {{ $totalSurat }}
+        </h2>
 
+    </div>
 
-<h2 class="
-text-3xl
-font-black
-mt-2
-">
+    {{-- Menunggu --}}
+    <div class="bg-gradient-to-br from-amber-900 via-yellow-900 to-orange-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
-Surat Permohonan Kerja Sama
+        <div class="flex items-center gap-2 text-amber-200 text-sm">
+            <i data-lucide="clock-3" class="w-5 h-5"></i>
+            <span>Menunggu</span>
+        </div>
 
-</h2>
+        <h2 class="text-5xl font-black mt-3">
+            {{ $menunggu }}
+        </h2>
 
+    </div>
 
-<div class="
-mt-5
-flex
-gap-4
-">
+    {{-- Disetujui --}}
+    <div class="bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
+        <div class="flex items-center gap-2 text-emerald-200 text-sm">
+            <i data-lucide="circle-check-big" class="w-5 h-5"></i>
+            <span>Disetujui</span>
+        </div>
 
-<span class="
-bg-white/20
-px-4
-py-2
-rounded-xl
-">
+        <h2 class="text-5xl font-black mt-3">
+            {{ $disetujui }}
+        </h2>
 
-📄 001/TVRI/2026
+    </div>
 
-</span>
+    {{-- Ditolak --}}
+    <div class="bg-gradient-to-br from-rose-900 via-red-900 to-red-800 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
+        <div class="flex items-center gap-2 text-red-200 text-sm">
+            <i data-lucide="circle-x" class="w-5 h-5"></i>
+            <span>Ditolak</span>
+        </div>
 
-<span class="
-bg-white/20
-px-4
-py-2
-rounded-xl
-">
+        <h2 class="text-5xl font-black mt-3">
+            {{ $ditolak }}
+        </h2>
 
-Berjalan
-
-</span>
-
-
-</div>
-
+    </div>
 
 </div>
 
 
+<div class="bg-white rounded-[32px] shadow-xl overflow-hidden">
 
+    {{-- HEADER TABLE --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 p-8 border-b">
 
+        <div>
 
+            <h2 class="text-2xl font-black text-slate-800">
+                Daftar Approval Surat
+            </h2>
 
+            <p class="text-slate-500 mt-1">
+                Seluruh proses approval surat TVRI NTB
+            </p>
 
-{{-- TIMELINE --}}
+        </div>
 
-<div class="
-mt-10
-bg-white
-rounded-[32px]
-shadow-xl
-p-10
-">
+    </div>
 
 
-<h2 class="
-text-2xl
-font-black
-mb-10
-">
 
-Progress Approval
 
-</h2>
 
+    <div class="overflow-x-auto">
 
+        <table class="w-full">
 
-<div class="relative">
+            <thead class="bg-slate-50">
 
+                <tr>
 
-{{-- garis --}}
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        No
+                    </th>
 
-<div class="
-absolute
-left-6
-top-0
-bottom-0
-w-1
-bg-blue-200
-">
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        Nomor Surat
+                    </th>
 
-</div>
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        Perihal
+                    </th>
 
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        Pengirim
+                    </th>
 
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        Tujuan
+                    </th>
 
+                    <th class="px-6 py-5 text-left font-bold text-slate-600">
+                        Tanggal
+                    </th>
 
+                    <th class="px-6 py-5 text-center font-bold text-slate-600">
+                        Status
+                    </th>
 
-@foreach([
+                </tr>
 
-[
-'title'=>'Surat dibuat',
-'name'=>'Admin Staff',
-'status'=>'Selesai'
-],
+            </thead>
 
-[
-'title'=>'Pemeriksaan Kepala Bagian',
-'name'=>'Budi Santoso',
-'status'=>'Disetujui'
-],
+            <tbody>
 
-[
-'title'=>'Persetujuan Direktur',
-'name'=>'Direktur TVRI NTB',
-'status'=>'Menunggu'
-]
+@foreach($surat as $item)
 
+<tr class="border-b hover:bg-sky-50 duration-300">
 
-] as $step)
+    <td class="px-6 py-5 font-semibold">
+        {{ $loop->iteration }}
+    </td>
 
+    <td class="px-6 py-5 font-bold text-blue-600">
+        {{ $item->nomor_surat }}
+    </td>
 
+    <td class="px-6 py-5">
+        {{ $item->perihal }}
+    </td>
 
-<div class="
-relative
-flex
-gap-6
-mb-10
-">
+    <td class="px-6 py-5">
+        {{ $item->pengirim->name ?? '-' }}
+    </td>
 
+    <td class="px-6 py-5">
+        {{ optional($item->tujuan->first()?->user)->name ?? '-' }}
+    </td>
 
-<div class="
-relative
-z-10
-w-12
-h-12
-rounded-full
-bg-gradient-to-br
-from-blue-600
-to-cyan-400
-text-white
-flex
-items-center
-justify-center
-font-bold
-shadow-lg
-">
+    <td class="px-6 py-5">
+        {{ $item->tanggal_surat?->format('d M Y') }}
+    </td>
 
-✓
+    <td class="px-6 py-5 text-center">
 
-</div>
+        @switch($item->status)
 
+            @case('Disetujui')
+                <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-bold">
+                    Disetujui
+                </span>
+            @break
 
+            @case('Ditolak')
+                <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-bold">
+                    Ditolak
+                </span>
+            @break
 
+            @default
+                <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-bold">
+                    {{ $item->status }}
+                </span>
 
-<div class="
-flex-1
-bg-slate-50
-rounded-2xl
-p-5
-">
+        @endswitch
 
+    </td>
 
-<div class="
-flex
-justify-between
-">
-
-
-<div>
-
-<h3 class="
-font-black
-text-lg
-">
-
-{{$step['title']}}
-
-</h3>
-
-
-<p class="text-slate-500">
-
-{{$step['name']}}
-
-</p>
-
-
-</div>
-
-
-
-<span class="
-bg-blue-100
-text-blue-600
-px-4
-py-2
-rounded-xl
-font-bold
-">
-
-{{$step['status']}}
-
-</span>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
+</tr>
 
 @endforeach
+
+</tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 
 

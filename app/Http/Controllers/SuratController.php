@@ -322,13 +322,6 @@ public function archive($id)
 {
     $surat = Surat::findOrFail($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
-    }
-
 
     if ($surat->status !== 'Disetujui') {
         return response()->json([
@@ -419,6 +412,7 @@ public function show($id)
 
 
    
+    
 
     return response()->json([
 
@@ -497,12 +491,14 @@ public function show($id)
         ]
 
     ]);
+    
 }
 
 public function showWeb($id)
 {
     $surat = Surat::with([
         'pengirim.jabatan',
+        'tujuan.user',
         'jenisSurat',
         'sifatSurat',
         'prioritasSurat',
@@ -513,5 +509,19 @@ public function showWeb($id)
     ])->findOrFail($id);
 
     return view('surat.show', compact('surat'));
+}
+
+public function archiveWeb()
+{
+    $surat = Surat::with([
+        'pengirim.jabatan',
+        'jenisSurat',
+        'tujuan.user'
+    ])
+    ->where('is_archived', true)
+    ->latest()
+    ->paginate(10);
+
+    return view('surat.arsip', compact('surat'));
 }
 }

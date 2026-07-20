@@ -7,7 +7,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
 <title>
 Login - MERPATI TVRI NTB
 </title>
@@ -18,13 +17,10 @@ Login - MERPATI TVRI NTB
 'resources/js/app.js'
 ])
 
-
 </head>
 
 
-
 <body>
-
 
 
 <div class="
@@ -41,9 +37,7 @@ to-cyan-500
 ">
 
 
-
 {{-- BACKGROUND GLOW --}}
-
 
 <div class="
 absolute
@@ -56,7 +50,6 @@ top-0
 left-0
 ">
 </div>
-
 
 
 <div class="
@@ -73,12 +66,7 @@ right-0
 
 
 
-
-
-
-
 {{-- BURUNG MERPATI --}}
-
 
 <div class="
 absolute
@@ -96,11 +84,7 @@ dove-login
 
 
 
-
-
-
 {{-- LOGIN CARD --}}
-
 
 <div class="
 relative
@@ -114,15 +98,9 @@ p-10
 ">
 
 
-
-
-
 {{-- LOGO --}}
 
-
-<div class="
-text-center
-">
+<div class="text-center">
 
 
 <div class="
@@ -145,8 +123,6 @@ shadow-xl
 </div>
 
 
-
-
 <h1 class="
 mt-6
 text-5xl
@@ -160,7 +136,6 @@ MERPATI
 </h1>
 
 
-
 <p class="
 text-slate-500
 mt-2
@@ -169,7 +144,6 @@ mt-2
 Sistem E-Surat Digital
 
 </p>
-
 
 
 <p class="
@@ -188,17 +162,44 @@ TVRI NUSA TENGGARA BARAT
 
 
 
+{{-- ERROR MESSAGE --}}
+
+@if ($errors->any())
+
+<div class="
+mt-6
+bg-red-100
+text-red-600
+p-4
+rounded-xl
+text-sm
+">
+
+{{ $errors->first() }}
+
+</div>
+
+@endif
+
+
+
 
 
 {{-- FORM --}}
 
-
-<form class="
+<form 
+action="{{ route('login.process') }}"
+method="POST"
+class="
 mt-10
 space-y-6
 ">
 
+@csrf
 
+
+
+{{-- USERNAME --}}
 
 <div>
 
@@ -208,7 +209,7 @@ font-bold
 text-slate-700
 ">
 
-Email
+Username
 
 </label>
 
@@ -222,7 +223,7 @@ left-4
 top-4
 ">
 
-📧
+👤
 
 </span>
 
@@ -230,9 +231,15 @@ top-4
 
 <input
 
-type="email"
+type="text"
 
-placeholder="nama@email.com"
+name="username"
+
+value="{{ old('username') }}"
+
+placeholder="Masukkan username"
+
+required
 
 class="
 w-full
@@ -260,7 +267,7 @@ transition
 
 
 
-
+{{-- PASSWORD --}}
 
 <div>
 
@@ -294,7 +301,11 @@ top-4
 
 type="password"
 
+name="password"
+
 placeholder="********"
+
+required
 
 class="
 w-full
@@ -323,9 +334,9 @@ transition
 
 
 
-
-
 <button
+
+type="submit"
 
 class="
 w-full
@@ -351,8 +362,8 @@ Masuk
 
 
 
-
 </form>
+
 
 
 
@@ -366,25 +377,19 @@ text-sm
 text-slate-400
 ">
 
-© {{date('Y')}} MERPATI TVRI NTB
+© {{ date('Y') }} MERPATI TVRI NTB
 
 </div>
-
-
-
-
-</div>
-
-
 
 
 
 </div>
 
 
+
+</div>
 
 
 </body>
-
 
 </html>

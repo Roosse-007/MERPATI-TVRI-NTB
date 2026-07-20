@@ -109,71 +109,59 @@ z-50
 
 @php
 
-
 $current = request()->path();
 
+$menus = [
 
+    [
+        'icon' => 'layout-dashboard',
+        'name' => 'Dashboard',
+        'url'  => 'dashboard'
+    ],
 
-$menus=[
+    [
+        'icon' => 'inbox',
+        'name' => 'Kotak Masuk',
+        'url'  => 'surat/inbox'
+    ],
 
+    [
+        'icon' => 'file-pen-line',
+        'name' => 'Draft',
+        'url'  => 'surat/draft'
+    ],
 
-[
-'icon'=>'layout-dashboard',
-'name'=>'Dashboard',
-'url'=>''
-],
+    [
+        'icon' => 'file-plus',
+        'name' => 'Surat Baru',
+        'url'  => 'surat/baru'
+    ],
 
+    [
+        'icon' => 'circle-check-big',
+        'name' => 'Approval',
+        'url'  => 'surat/approval'
+    ],
 
-[
-'icon'=>'inbox',
-'name'=>'Kotak Masuk',
-'url'=>'surat/inbox'
-],
+    [
+        'icon' => 'send',
+        'name' => 'Disposisi',
+        'url'  => 'surat/disposisi'
+    ],
 
+    [
+        'icon' => 'archive',
+        'name' => 'Arsip',
+        'url'  => 'surat/arsip'
+    ],
 
-[
-'icon'=>'file-pen-line',
-'name'=>'Draft',
-'url'=>'surat/draft'
-],
-
-
-[
-'icon'=>'file-plus',
-'name'=>'Surat Baru',
-'url'=>'surat/baru'
-],
-
-
-[
-'icon'=>'circle-check-big',
-'name'=>'Approval',
-'url'=>'surat/approval'
-],
-
-
-[
-'icon'=>'send',
-'name'=>'Disposisi',
-'url'=>'surat/disposisi'
-],
-
-
-[
-'icon'=>'archive',
-'name'=>'Arsip',
-'url'=>'surat/arsip'
-],
-
-
-[
-'icon'=>'user-round',
-'name'=>'Profil',
-'url'=>'profile'
-]
+    [
+        'icon' => 'user-round',
+        'name' => 'Profil',
+        'url'  => 'profile'
+    ],
 
 ];
-
 
 @endphp
 
