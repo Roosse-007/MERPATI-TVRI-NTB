@@ -72,25 +72,22 @@ body{
 }
 
 
-
 /* LOGO */
 
 .sidebar-logo{
 
     padding:25px;
 
-    border-bottom:
-    1px solid rgba(255,255,255,.2);
+    border-bottom:1px solid rgba(255,255,255,.2);
 
 }
-
 
 
 .sidebar-logo h1{
 
     font-size:30px;
 
-    font-weight:bold;
+    font-weight:800;
 
     margin:0;
 
@@ -105,8 +102,6 @@ body{
 
 
 
-
-
 /* MENU */
 
 .sidebar-menu{
@@ -118,9 +113,7 @@ body{
 }
 
 
-
 .sidebar a{
-
 
     display:flex;
 
@@ -140,52 +133,54 @@ body{
 
     transition:.3s;
 
-
 }
-
 
 
 .sidebar a:hover{
 
-
-    background:
-    rgba(255,255,255,.15);
-
+    background:rgba(255,255,255,.15);
 
     transform:translateX(8px);
-
 
 }
 
 
 
+/* LABEL MENU */
+
+.menu-title{
+
+    padding:15px 25px 5px;
+
+    color:#bfdbfe;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+}
 
 
-/* FOOTER SIDEBAR */
+
+/* FOOTER */
 
 
 .sidebar-footer{
 
-
     margin:20px;
-
 
     background:
     rgba(255,255,255,.15);
 
-
     backdrop-filter:blur(10px);
-
 
     padding:15px 20px;
 
-
     border-radius:20px;
 
-
 }
-
-
 
 
 
@@ -194,33 +189,24 @@ body{
 
 .content{
 
-
     margin-left:280px;
-
 
 }
 
 
 
-
-
 .navbar-custom{
-
 
     background:white;
 
     box-shadow:
     0 3px 10px rgba(0,0,0,.1);
 
-
 }
 
 
 
-
-
 footer{
-
 
     text-align:center;
 
@@ -228,9 +214,7 @@ footer{
 
     color:#666;
 
-
 }
-
 
 
 </style>
@@ -276,6 +260,8 @@ TVRI NTB
 
 
 
+{{-- DASHBOARD --}}
+
 <a href="/admin/dashboard">
 
 <i class="bi bi-grid fs-5"></i>
@@ -284,6 +270,106 @@ Dashboard
 
 </a>
 
+
+
+
+{{-- =====================
+MENU SURAT
+===================== --}}
+
+
+<div class="menu-title">
+
+SURAT
+
+</div>
+
+
+
+<a href="/inbox">
+
+<i class="bi bi-inbox fs-5"></i>
+
+Kotak Masuk
+
+</a>
+
+
+
+<a href="/surat/draft">
+
+<i class="bi bi-file-earmark-text fs-5"></i>
+
+Draft
+
+</a>
+
+
+
+<a href="/surat/baru">
+
+<i class="bi bi-file-earmark-plus fs-5"></i>
+
+Surat Baru
+
+</a>
+
+
+
+<a href="/surat/approval">
+
+<i class="bi bi-check-circle fs-5"></i>
+
+Approval
+
+</a>
+
+
+
+<a href="/surat/disposisi">
+
+<i class="bi bi-send fs-5"></i>
+
+Disposisi
+
+</a>
+
+
+
+<a href="/surat/arsip">
+
+<i class="bi bi-archive fs-5"></i>
+
+Arsip
+
+</a>
+
+
+
+<a href="/profile">
+
+<i class="bi bi-person fs-5"></i>
+
+Profil
+
+</a>
+
+
+
+
+
+
+{{-- =====================
+ADMIN
+===================== --}}
+
+
+
+<div class="menu-title">
+
+ADMINISTRATOR
+
+</div>
 
 
 
@@ -299,7 +385,6 @@ Kelola User
 
 
 
-
 <a href="/admin/template-surat">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -307,7 +392,6 @@ Kelola User
 Template Surat
 
 </a>
-
 
 
 
@@ -323,7 +407,6 @@ Nomor Surat
 
 
 
-
 <a href="/admin/laporan">
 
 <i class="bi bi-file-earmark-bar-graph fs-5"></i>
@@ -331,7 +414,6 @@ Nomor Surat
 Laporan
 
 </a>
-
 
 
 
@@ -347,19 +429,6 @@ Grafik
 
 
 
-
-<a href="/admin/arsip">
-
-<i class="bi bi-archive fs-5"></i>
-
-Arsip
-
-</a>
-
-
-
-
-
 <a href="/admin/monitoring">
 
 <i class="bi bi-activity fs-5"></i>
@@ -367,7 +436,6 @@ Arsip
 Monitoring
 
 </a>
-
 
 
 
@@ -382,8 +450,8 @@ Setting
 
 
 
-</div>
 
+</div>
 
 
 
@@ -411,7 +479,6 @@ TVRI NTB
 
 
 </div>
-
 
 
 
@@ -467,7 +534,7 @@ TVRI NTB
 
 <img
 
-src="https://ui-avatars.com/api/?name=Admin"
+src="https://ui-avatars.com/api/?name={{ auth()->user()->name ?? 'Admin' }}"
 
 width="40"
 
@@ -513,6 +580,7 @@ class="rounded-circle"
 
 
 </footer>
+
 
 
 

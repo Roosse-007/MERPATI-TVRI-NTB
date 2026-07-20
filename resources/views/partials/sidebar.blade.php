@@ -109,27 +109,24 @@ z-50
 
 @php
 
-
 $current = request()->path();
 
+$user = auth()->user();
 
 
-$menus=[
-
+$menus = [
 
 [
 'icon'=>'layout-dashboard',
 'name'=>'Dashboard',
-'url'=>''
+'url'=>'dashboard'
 ],
-
 
 [
 'icon'=>'inbox',
 'name'=>'Kotak Masuk',
-'url'=>'surat/inbox'
+'url'=>'inbox'
 ],
-
 
 [
 'icon'=>'file-pen-line',
@@ -137,13 +134,11 @@ $menus=[
 'url'=>'surat/draft'
 ],
 
-
 [
 'icon'=>'file-plus',
 'name'=>'Surat Baru',
 'url'=>'surat/baru'
 ],
-
 
 [
 'icon'=>'circle-check-big',
@@ -151,13 +146,11 @@ $menus=[
 'url'=>'surat/approval'
 ],
 
-
 [
 'icon'=>'send',
 'name'=>'Disposisi',
 'url'=>'surat/disposisi'
 ],
-
 
 [
 'icon'=>'archive',
@@ -170,9 +163,79 @@ $menus=[
 'icon'=>'user-round',
 'name'=>'Profil',
 'url'=>'profile'
-]
+],
+
 
 ];
+
+
+
+$isAdmin =
+$user &&
+$user->jabatan &&
+$user->jabatan->nama_jabatan == 'Admin';
+
+
+
+if($isAdmin){
+
+
+$menus = array_merge($menus,[
+
+
+[
+'icon'=>'users',
+'name'=>'Kelola User',
+'url'=>'admin/users'
+],
+
+
+[
+'icon'=>'file-text',
+'name'=>'Template Surat',
+'url'=>'admin/template-surat'
+],
+
+
+[
+'icon'=>'hash',
+'name'=>'Nomor Surat',
+'url'=>'admin/nomor-surat'
+],
+
+
+[
+'icon'=>'monitor',
+'name'=>'Monitoring',
+'url'=>'admin/monitoring'
+],
+
+
+[
+'icon'=>'file-bar-chart',
+'name'=>'Laporan',
+'url'=>'admin/laporan'
+],
+
+
+[
+'icon'=>'chart-column',
+'name'=>'Grafik',
+'url'=>'admin/grafik'
+],
+
+
+[
+'icon'=>'settings',
+'name'=>'Setting',
+'url'=>'admin/setting'
+],
+
+
+]);
+
+
+}
 
 
 @endphp

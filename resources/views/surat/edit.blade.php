@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 
-@section('title','Surat Baru')
+@section('title','Edit Draft Surat')
+
 
 
 @section('content')
@@ -10,24 +11,31 @@
 <div class="max-w-6xl mx-auto">
 
 
+
 {{-- HEADER --}}
 
 <div class="mb-8">
+
 
 <h1 class="
 text-4xl
 font-black
 text-slate-800
 ">
-✉️ Buat Surat Baru
+
+✏️ Edit Draft Surat
+
 </h1>
+
 
 
 <p class="
 text-slate-500
 mt-2
 ">
-Buat surat resmi melalui sistem MERPATI TVRI NTB
+
+Perbarui surat sebelum dikirim untuk proses approval.
+
 </p>
 
 
@@ -37,7 +45,7 @@ Buat surat resmi melalui sistem MERPATI TVRI NTB
 
 
 
-{{-- CARD --}}
+
 
 <div class="
 bg-white
@@ -48,20 +56,28 @@ p-8
 
 
 
+
+
+
+{{-- FORM UPDATE --}}
+
+
 <form
 
-action="{{ route('surat.store') }}"
+action="{{route('surat.update',$draft->id)}}"
 
 method="POST"
 
 enctype="multipart/form-data"
 
-class="space-y-8"
-
 >
 
 
 @csrf
+
+@method('PUT')
+
+
 
 
 
@@ -70,16 +86,16 @@ class="space-y-8"
 {{-- INFORMASI SURAT --}}
 
 
-<div>
-
-
 <h2 class="
 text-2xl
 font-black
 mb-6
 ">
+
 Informasi Surat
+
 </h2>
+
 
 
 
@@ -90,10 +106,14 @@ gap-6
 ">
 
 
+
 <div>
 
-<label class="font-semibold">
+
+<label class="font-bold">
+
 Nomor Surat
+
 </label>
 
 
@@ -101,20 +121,20 @@ Nomor Surat
 
 type="text"
 
-placeholder="Nomor otomatis"
+value="{{$draft->nomor_surat}}"
 
 readonly
 
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
 >
+
 
 </div>
 
@@ -125,26 +145,27 @@ py-4
 <div>
 
 
-<label class="font-semibold">
+<label class="font-bold">
+
 Tanggal Surat
+
 </label>
 
 
 <input
 
-type="date"
+type="text"
 
-name="tanggal_surat"
+value="{{\Carbon\Carbon::parse($draft->tanggal_surat)->translatedFormat('d F Y')}}"
 
-value="{{date('Y-m-d')}}"
+readonly
 
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
 >
@@ -153,8 +174,6 @@ py-4
 </div>
 
 
-</div>
-
 
 </div>
 
@@ -163,25 +182,32 @@ py-4
 
 
 
-{{-- TUJUAN --}}
 
 
-<div>
+
+{{-- TUJUAN SURAT --}}
 
 
 <h2 class="
 text-2xl
 font-black
+mt-10
 mb-6
 ">
+
 Tujuan Surat
+
 </h2>
 
 
 
-<label class="font-semibold">
+
+<label class="font-bold">
+
 Kepada
+
 </label>
+
 
 
 
@@ -189,31 +215,45 @@ Kepada
 
 name="tujuan_id"
 
-required
-
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
 >
 
 
 <option value="">
+
 -- Pilih Tujuan --
+
 </option>
+
 
 
 
 @foreach($users as $user)
 
-<option value="{{$user->id}}">
+
+<option
+
+value="{{$user->id}}"
+
+
+@if(optional($draft->tujuan->first())->user_id == $user->id)
+
+selected
+
+@endif
+
+>
+
 
 {{$user->name}}
+
 
 @if($user->jabatan)
 
@@ -225,14 +265,14 @@ py-4
 </option>
 
 
+
 @endforeach
+
 
 
 </select>
 
 
-
-</div>
 
 
 
@@ -243,22 +283,26 @@ py-4
 {{-- DETAIL SURAT --}}
 
 
-<div>
-
 
 <h2 class="
 text-2xl
 font-black
+mt-10
 mb-6
 ">
+
 Detail Surat
+
 </h2>
 
 
 
 
-<label class="font-semibold">
+
+<label class="font-bold">
+
 Perihal
+
 </label>
 
 
@@ -268,17 +312,14 @@ type="text"
 
 name="perihal"
 
-required
-
-placeholder="Masukkan perihal surat"
+value="{{$draft->perihal}}"
 
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
 >
@@ -287,16 +328,12 @@ py-4
 
 
 
-<label class="
-font-semibold
-block
-mt-6
-">
+
+<label class="font-bold block mt-6">
 
 Ringkasan
 
 </label>
-
 
 
 <textarea
@@ -305,29 +342,22 @@ name="ringkasan"
 
 rows="3"
 
-placeholder="Ringkasan surat"
-
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
-></textarea>
+>{{$draft->ringkasan}}</textarea>
 
 
 
 
 
 
-<label class="
-font-semibold
-block
-mt-6
-">
+<label class="font-bold block mt-6">
 
 Isi Surat
 
@@ -339,26 +369,17 @@ Isi Surat
 
 name="isi_surat"
 
-rows="8"
-
-required
-
-placeholder="Tulis isi surat..."
+rows="10"
 
 class="
-mt-2
 w-full
-rounded-2xl
+mt-2
 bg-slate-100
-px-5
-py-4
+rounded-xl
+p-4
 "
 
-></textarea>
-
-
-
-</div>
+>{{$draft->isi_surat}}</textarea>
 
 
 
@@ -366,21 +387,25 @@ py-4
 
 
 
-{{-- LAMPIRAN --}}
 
 
-<div>
+{{-- LAMPIRAN DOKUMEN --}}
+
+
+<div class="mt-8">
 
 
 <h2 class="
 text-2xl
 font-black
+text-slate-800
 mb-5
 ">
 
 Lampiran Dokumen
 
 </h2>
+
 
 
 
@@ -392,11 +417,16 @@ rounded-[28px]
 p-10
 text-center
 bg-blue-50
+hover:bg-blue-100
+transition
 ">
 
 
+
 <div class="text-5xl">
+
 📂
+
 </div>
 
 
@@ -410,7 +440,6 @@ text-slate-700
 Upload File Surat
 
 </p>
-
 
 
 
@@ -444,7 +473,49 @@ block
 
 
 
-</div>
+
+
+@if($draft->file_surat)
+
+
+<div class="
+mt-5
+bg-white
+rounded-xl
+p-4
+inline-block
+">
+
+
+<p class="
+font-bold
+text-slate-700
+">
+
+File Saat Ini:
+
+</p>
+
+
+
+
+<a
+
+href="{{asset('storage/'.$draft->file_surat)}}"
+
+target="_blank"
+
+class="
+text-blue-600
+font-bold
+hover:underline
+"
+
+>
+
+📄 Lihat File Lama
+
+</a>
 
 
 
@@ -452,21 +523,35 @@ block
 
 
 
+@endif
 
 
 
 
-{{-- BUTTON --}}
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{{-- BUTTON UPDATE --}}
+
 
 
 <div class="
 flex
 justify-end
 gap-4
-pt-5
+mt-10
 ">
-
-
 
 
 
@@ -475,18 +560,16 @@ pt-5
 href="{{route('surat.draft')}}"
 
 class="
-px-8
-py-4
-rounded-2xl
-bg-slate-100
+bg-slate-200
+px-6
+py-3
+rounded-xl
 font-bold
-hover:bg-slate-200
-transition
 "
 
 >
 
-← Batal
+← Kembali
 
 </a>
 
@@ -494,67 +577,25 @@ transition
 
 
 
-
-
 <button
 
 type="submit"
 
-name="action"
-
-value="draft"
-
 class="
-px-8
-py-4
-rounded-2xl
 bg-blue-600
 text-white
-font-bold
-shadow-lg
-hover:bg-blue-700
-transition
-"
-
->
-
-💾 Simpan Draft
-
-</button>
-
-
-
-
-
-
-
-<button
-
-type="submit"
-
-name="action"
-
-value="kirim"
-
-class="
 px-8
-py-4
-rounded-2xl
-bg-green-600
-text-white
+py-3
+rounded-xl
 font-bold
-shadow-lg
-hover:bg-green-700
-transition
+hover:bg-blue-700
 "
 
 >
 
-📨 Kirim Surat
+💾 Simpan Perubahan
 
 </button>
-
-
 
 
 
@@ -569,7 +610,76 @@ transition
 
 
 
+
+
+
+
+
+
+{{-- FORM KIRIM SURAT --}}
+
+
+<div class="
+border-t
+mt-8
+pt-8
+flex
+justify-end
+">
+
+
+
+<form
+
+action="{{route('surat.submit',$draft->id)}}"
+
+method="POST"
+
+onsubmit="return confirm('Kirim surat untuk proses approval?')"
+
+>
+
+
+@csrf
+
+
+
+<button
+
+type="submit"
+
+class="
+bg-green-600
+text-white
+px-8
+py-3
+rounded-xl
+font-bold
+hover:bg-green-700
+"
+
+>
+
+📨 Kirim Surat
+
+</button>
+
+
+
+</form>
+
+
 </div>
+
+
+
+
+
+
+
+</div>
+
+
 
 
 
