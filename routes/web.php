@@ -19,12 +19,92 @@ use App\Http\Controllers\DisposisiController;
 
 
 
+// ==========================
+// HALAMAN AWAL
+// ==========================
+
+
 /*
 |--------------------------------------------------------------------------
 | HALAMAN AWAL
 |--------------------------------------------------------------------------
 */
 
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+
+
+Route::prefix('admin')->group(function () {
+
+
+    // Dashboard
+
+    Route::view('/dashboard', 'admin.dashboard')
+        ->name('admin.dashboard');
+
+
+
+    // Kelola User
+
+    Route::view('/users', 'admin.users')
+        ->name('admin.users');
+
+
+
+    // Template Surat
+
+    Route::view('/template-surat', 'admin.template-surat')
+        ->name('admin.template');
+
+
+
+    // Nomor Surat
+
+    Route::view('/nomor-surat', 'admin.nomor-surat')
+        ->name('admin.nomor');
+
+
+
+    // Laporan
+
+    Route::view('/laporan', 'admin.laporan')
+        ->name('admin.laporan');
+
+
+
+    // Grafik
+
+    Route::view('/grafik', 'admin.grafik')
+        ->name('admin.grafik');
+
+
+
+    // Arsip
+
+    Route::view('/arsip', 'admin.arsip')
+        ->name('admin.arsip');
+
+
+
+    // Monitoring
+
+    Route::view('/monitoring', 'admin.monitoring')
+        ->name('admin.monitoring');
+
+
+
+    // Setting
+
+    Route::view('/setting', 'admin.setting')
+        ->name('admin.setting');
+}); //
 
 Route::get('/', function () {
 
@@ -269,6 +349,35 @@ Route::get('/profile',function(){
 ->middleware('auth');
 
 
+// ==========================
+// HALAMAN SURAT
+// ==========================
+
+Route::get('/surat/inbox', function () {
+    return view('surat.inbox');
+})->name('surat.inbox');
+
+Route::get('/surat/draft', function () {
+    return view('surat.draft');
+})->name('surat.draft');
+
+Route::get('/surat/baru', function () {
+    return view('surat.baru');
+});
+
+Route::get('/surat/terkirim', function () {
+    return view('surat.terkirim');
+});
+
+Route::get('/surat/approval', [ApprovalController::class, 'index'])
+    ->name('surat.approval');
+
+Route::get('/surat/disposisi', function () {
+    return view('surat.disposisi');
+});
+
+Route::get('/surat/arsip', [SuratController::class, 'archiveWeb'])
+    ->name('surat.arsip');
 
 
 
@@ -378,6 +487,13 @@ Route::delete('/surat/{id}',
 
 
 // kirim surat
+Route::resource('surat', SuratController::class)
+    ->whereNumber('surat');
+
+Route::get('/surat/{id}/detail',
+    [SuratController::class, 'showWeb']
+)->whereNumber('id')
+ ->name('surat.detail');
 
 Route::post('/surat/{id}/submit',
 
@@ -562,6 +678,15 @@ Route::get('/sent',
 ->name('surat.sent');
 
 
+
+
+// ==========================
+// INBOX
+// ==========================
+
+Route::get('/inbox',
+    [SuratController::class,'inboxWeb']
+)->name('surat.inbox.web');
 
 
 

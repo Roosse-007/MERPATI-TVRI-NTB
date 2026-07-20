@@ -8,6 +8,34 @@ use Illuminate\Http\Request;
 
 class ApprovalController extends Controller
 {
+
+public function index()
+{
+    $totalSurat = Surat::count();
+
+    $menunggu = Surat::whereIn('status', [
+        'Menunggu Verifikasi KPP',
+        'Menunggu Paraf KTU',
+        'Menunggu Persetujuan Kepala Stasiun'
+    ])->count();
+
+    $disetujui = Surat::where('status', 'Disetujui')->count();
+
+    $ditolak = Surat::where('status', 'Ditolak')->count();
+
+    $surat = Surat::with([
+        'pengirim',
+        'tujuan.user'
+    ])->latest()->get();
+
+    return view('surat.approval', compact(
+        'totalSurat',
+        'menunggu',
+        'disetujui',
+        'ditolak',
+        'surat'
+    ));
+}
 public function approveKpp($id)
 {
     $surat = Surat::find($id);
