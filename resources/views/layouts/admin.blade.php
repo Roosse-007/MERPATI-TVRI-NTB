@@ -9,22 +9,25 @@
 
 
 <title>
-@yield('title') | MERPATI TVRI NTB
+    @yield('title') | MERPATI TVRI NTB
 </title>
 
-
+<!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
+<!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+<!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
+<!-- Vite -->
 @vite(['resources/css/app.css','resources/js/app.js'])
 
-
+@stack('styles')
 
 <style>
 
@@ -575,28 +578,48 @@ class="rounded-circle"
 
 <footer>
 
-
-© {{date('Y')}} MERPATI TVRI NTB
-
+© {{ date('Y') }} MERPATI TVRI NTB
 
 </footer>
 
-
-
-
-
 </div>
 
-
-
-
-
-
+<!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+{{-- Script tambahan dari setiap halaman --}}
+@stack('scripts')
+
+{{-- Notifikasi Success --}}
+@if(session('success'))
+<script>
+Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: '{{ session("success") }}',
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true
+});
+</script>
+@endif
+
+{{-- Notifikasi Error --}}
+@if(session('error'))
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Terjadi Kesalahan',
+    text: '{{ session("error") }}',
+    confirmButtonColor: '#dc2626'
+});
+</script>
+@endif
 
 </body>
-
 
 </html>

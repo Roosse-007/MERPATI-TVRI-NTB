@@ -50,98 +50,316 @@ transition">
 
 
 {{-- STAT CARD --}}
-
-{{-- STAT CARD --}}
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
 
-    {{-- Total Surat --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-blue-500 hover:-translate-y-1 transition">
+
+    {{-- TOTAL SURAT --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-blue-600
+        to-cyan-400
+        hover:-translate-y-1
+        transition
+        duration-300
+    ">
+
+        <div class="absolute -right-10 -top-10
+            w-32 h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
 
         <div class="flex items-center justify-between">
+
+
             <div>
-                <p class="text-slate-500">
+
+                <p class="text-white/80 font-medium">
                     Total Surat
                 </p>
 
-                <h2 class="text-4xl font-black mt-2 text-slate-800">
+
+                <h2 class="text-5xl font-black mt-3">
                     {{ $totalSurat }}
                 </h2>
+
+
+                <p class="text-sm text-white/80 mt-4">
+                    Jumlah surat masuk
+                </p>
+
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                📩
+
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+                text-3xl
+                shadow-inner
+            ">
+
+                <i class="bi bi-envelope-paper-fill"></i>
+
             </div>
+
+
         </div>
 
     </div>
 
-    {{-- Menunggu Approval --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-yellow-500 hover:-translate-y-1 transition">
+
+
+
+
+
+    {{-- MENUNGGU APPROVAL --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-amber-500
+        to-orange-400
+        hover:-translate-y-1
+        transition
+        duration-300
+    ">
+
+
+        <div class="absolute -right-10 -top-10
+            w-32 h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+
 
         <div class="flex items-center justify-between">
+
+
             <div>
-                <p class="text-slate-500">
+
+                <p class="text-white/80 font-medium">
                     Menunggu Approval
                 </p>
 
-                <h2 class="text-4xl font-black mt-2 text-yellow-600">
+
+                <h2 class="text-5xl font-black mt-3">
                     {{ $menungguApproval }}
                 </h2>
-            </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
-                ⏳
-            </div>
-        </div>
 
-    </div>
-
-    {{-- Diproses --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-green-500 hover:-translate-y-1 transition">
-
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-slate-500">
-                    Diproses
+                <p class="text-sm text-white/80 mt-4">
+                    Surat menunggu persetujuan
                 </p>
 
-                <h2 class="text-4xl font-black mt-2 text-green-600">
-                    {{ $diproses }}
-                </h2>
+
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
-                ⚙️
+
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+                text-3xl
+            ">
+
+                <i class="bi bi-clock-history"></i>
+
             </div>
+
+
         </div>
+
 
     </div>
 
-    {{-- Arsip --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-purple-500 hover:-translate-y-1 transition">
+
+
+
+
+
+
+
+    {{-- DITOLAK --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-red-500
+        to-rose-600
+        hover:-translate-y-1
+        transition
+        duration-300
+    ">
+
+
+        <div class="absolute -right-10 -top-10
+            w-32 h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+
 
         <div class="flex items-center justify-between">
+
+
             <div>
-                <p class="text-slate-500">
-                    Arsip
+
+                <p class="text-white/80 font-medium">
+                    Ditolak
                 </p>
 
-                <h2 class="text-4xl font-black mt-2 text-purple-600">
-                    {{ $arsip }}
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $ditolak }}
                 </h2>
+
+
+                <p class="text-sm text-white/80 mt-4">
+                    Surat yang ditolak
+                </p>
+
+
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
-                🗂️
+
+
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+                text-3xl
+            ">
+
+                <i class="bi bi-file-earmark-x-fill"></i>
+
             </div>
+
+
         </div>
 
+
     </div>
+
+
+
+
+
+
+
+
+
+    {{-- DISPOSISI --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-purple-600
+        to-indigo-500
+        hover:-translate-y-1
+        transition
+        duration-300
+    ">
+
+
+        <div class="absolute -right-10 -top-10
+            w-32 h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+
+
+
+        <div class="flex items-center justify-between">
+
+
+            <div>
+
+                <p class="text-white/80 font-medium">
+                    Disposisi
+                </p>
+
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $disposisi }}
+                </h2>
+
+
+                <p class="text-sm text-white/80 mt-4">
+                    Surat yang didisposisi
+                </p>
+
+
+            </div>
+
+
+
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+                text-3xl
+            ">
+
+                <i class="bi bi-diagram-3-fill"></i>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
 
 </div>
-
-
-
 
 
 {{-- SEARCH FILTER --}}

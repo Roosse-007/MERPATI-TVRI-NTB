@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Surat;
 use App\Models\User;
+use App\Models\Approval;
+use App\Models\Disposisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -643,38 +645,28 @@ class SuratController extends Controller
 
 
 
-        $totalSurat = Surat::where(
+        // STATISTIK KOTAK MASUK
 
-            'status',
-
-            '!=',
-
-            'Draft'
-
-        )->count();
+$totalSurat = Surat::where(
+    'status',
+    '!=',
+    'Draft'
+)->count();
 
 
+$menungguApproval = Approval::where(
+    'status',
+    'Menunggu'
+)->count();
 
 
-        $diproses = Surat::where(
-
-            'status',
-
-            'Menunggu Approval'
-
-        )->count();
+$ditolak = Surat::where(
+    'status',
+    'Ditolak'
+)->count();
 
 
-
-
-        $arsip = Surat::where(
-
-            'is_archived',
-
-            true
-
-        )->count();
-
+$disposisi = Disposisi::count();
 
 
 
@@ -700,18 +692,12 @@ class SuratController extends Controller
             'surat.inbox',
 
             compact(
-
-                'surat',
-
-                'totalSurat',
-
-                'diproses',
-
-                'arsip',
-
-                'menungguApproval'
-
-            )
+            'surat',
+            'totalSurat',
+            'menungguApproval',
+            'ditolak',
+            'disposisi'
+        )
 
         );
 

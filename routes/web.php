@@ -131,10 +131,7 @@ Route::prefix('admin')
 
 
 
-    Route::view(
-        '/users',
-        'admin.users'
-    )
+    Route::get('/users', [UserController::class, 'index'])
     ->name('admin.users');
 
 
