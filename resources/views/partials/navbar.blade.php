@@ -73,63 +73,6 @@ TVRI NTB
 
 
 
-
-
-{{-- SEARCH --}}
-
-<div class="relative">
-
-
-<i data-lucide="search"
-class="
-absolute
-left-4
-top-3.5
-w-5
-h-5
-text-slate-400
-">
-</i>
-
-
-<input
-
-type="text"
-
-placeholder="Cari surat..."
-
-class="
-pl-12
-pr-5
-py-3
-w-72
-
-rounded-2xl
-
-bg-slate-100
-
-border-none
-
-outline-none
-
-focus:ring-2
-focus:ring-blue-500
-
-transition
-
-"
-
->
-
-
-</div>
-
-
-
-
-
-
-
 {{-- NOTIFICATION --}}
 
 <button

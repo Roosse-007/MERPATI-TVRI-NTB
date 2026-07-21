@@ -432,7 +432,6 @@ font-black
 
 {{-- AKTIVITAS TERBARU --}}
 
-
 <div class="
 mt-10
 bg-white
@@ -441,139 +440,106 @@ p-8
 shadow-lg
 ">
 
+    <h2 class="
+    text-2xl
+    font-black
+    text-slate-800
+    ">
+        Aktivitas Terbaru
+    </h2>
 
-<h2 class="
-text-2xl
-font-black
-text-slate-800
-">
+    <div class="
+    mt-6
+    space-y-4
+    ">
 
-Aktivitas Terbaru
+        @forelse($aktivitas as $item)
 
-</h2>
+            <div class="
+            flex
+            items-center
+            justify-between
+            bg-slate-50
+            p-5
+            rounded-2xl
+            ">
 
+                <div>
 
+                    <p class="font-bold">
+                        {{ $item['judul'] }}
+                    </p>
 
+                    <p class="
+                    text-sm
+                    text-slate-500
+                    ">
+                        {{ $item['deskripsi'] }}
+                    </p>
 
+                    <p class="
+                    text-xs
+                    text-slate-400
+                    mt-2
+                    ">
+                        {{ $item['waktu']->diffForHumans() }}
+                    </p>
 
-<div class="
-mt-6
-space-y-4
-">
+                </div>
 
+                <span
+                class="
+                px-4
+                py-2
+                rounded-xl
+                font-bold
 
-<div class="
-flex
-items-center
-justify-between
-bg-slate-50
-p-5
-rounded-2xl
-">
+                @if($item['status'] == 'Baru')
+                    bg-blue-100 text-blue-600
 
+                @elseif($item['status'] == 'Menunggu')
+                    bg-yellow-100 text-yellow-700
 
-<div>
+                @elseif($item['status'] == 'Disetujui')
+                    bg-green-100 text-green-700
 
+                @elseif($item['status'] == 'Ditolak')
+                    bg-red-100 text-red-700
 
-<p class="font-bold">
+                @elseif($item['status'] == 'Disposisi')
+                    bg-purple-100 text-purple-700
 
-Surat terbaru masuk
+                @elseif($item['status'] == 'Arsip')
+                    bg-orange-100 text-orange-700
 
-</p>
+                @else
+                    bg-gray-100 text-gray-700
+                @endif
+                ">
 
+                    {{ $item['status'] }}
 
-<p class="
-text-sm
-text-slate-500
-">
+                </span>
 
-Data terbaru dari sistem
+            </div>
 
-</p>
+        @empty
 
+            <div class="
+            text-center
+            text-slate-500
+            py-10
+            ">
 
-</div>
+                Belum ada aktivitas terbaru.
 
+            </div>
 
+        @endforelse
 
-<span class="
-bg-blue-100
-text-blue-600
-px-4
-py-2
-rounded-xl
-">
-
-Baru
-
-</span>
-
-
-
-</div>
-
-
-
-
-
-<div class="
-flex
-items-center
-justify-between
-bg-slate-50
-p-5
-rounded-2xl
-">
-
-
-<div>
-
-
-<p class="font-bold">
-
-Proses approval surat
-
-</p>
-
-
-<p class="
-text-sm
-text-slate-500
-">
-
-Monitoring persetujuan surat
-
-</p>
-
+    </div>
 
 </div>
-
-
-
-<span class="
-bg-green-100
-text-green-600
-px-4
-py-2
-rounded-xl
-">
-
-Aktif
-
-</span>
-
-
-
-</div>
-
-
-
-
-</div>
-
-
-</div>
-
 
 
 

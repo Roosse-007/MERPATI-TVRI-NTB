@@ -533,94 +533,79 @@ Route::get('/surat/arsip',
 // APPROVAL ACTION
 // ==========================
 
+// --------------------------
+// KPP
+// --------------------------
 
-Route::post('/approval/kpp/{id}',
-[
+Route::post('/approval/kpp/{id}', [
     ApprovalController::class,
     'approveKpp'
-
 ])
-->middleware('auth');
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kpp.approve');
 
-
-
-
-Route::post('/approval/kpp/{id}/reject',
-[
+Route::post('/approval/kpp/{id}/reject', [
     ApprovalController::class,
     'rejectKpp'
-
 ])
-->middleware('auth');
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kpp.reject');
 
 
+// --------------------------
+// KTU
+// --------------------------
 
-
-
-Route::post('/approval/ktu/{id}',
-[
+Route::post('/approval/ktu/{id}', [
     ApprovalController::class,
     'approveKtu'
-
 ])
-->middleware('auth');
+->middleware('auth')
+->whereNumber('id')
+->name('approval.ktu.approve');
 
-
-
-
-Route::post('/approval/ktu/{id}/reject',
-[
+Route::post('/approval/ktu/{id}/reject', [
     ApprovalController::class,
     'rejectKtu'
-
 ])
-->middleware('auth');
+->middleware('auth')
+->whereNumber('id')
+->name('approval.ktu.reject');
 
 
+// --------------------------
+// KEPALA STASIUN
+// --------------------------
 
-
-
-Route::post('/approval/kepala-stasiun/{id}',
-[
+Route::post('/approval/kepala-stasiun/{id}', [
     ApprovalController::class,
     'approveKepalaStasiun'
-
 ])
-->middleware('auth');
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kepala.approve');
 
-
-
-
-
-Route::post('/approval/kepala-stasiun/{id}/reject',
-[
+Route::post('/approval/kepala-stasiun/{id}/reject', [
     ApprovalController::class,
     'rejectKepalaStasiun'
-
 ])
-->middleware('auth');
-
-
-
-
-
-
-
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kepala.reject');
 
 
 // ==========================
 // HALAMAN APPROVAL
 // ==========================
 
-
-Route::get('/surat/approval',
-[
+Route::get('/surat/approval', [
     SuratController::class,
     'approval'
 ])
 ->middleware('auth')
 ->name('surat.approval');
-
 
 
 

@@ -5,19 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Approval;
 use App\Models\Surat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ApprovalController extends Controller
 {
 
 public function index()
 {
+    $approvalDisetujui = Approval::where('status', 'Disetujui')->count();
+    $approvalDitolak   = Approval::where('status', 'Ditolak')->count();
+    $approvalDiproses  = Approval::whereIn('status', ['Disetujui', 'Ditolak'])->count();
     $totalSurat = Surat::count();
 
     $menunggu = Surat::whereIn('status', [
-        'Menunggu Verifikasi KPP',
-        'Menunggu Paraf KTU',
-        'Menunggu Persetujuan Kepala Stasiun'
-    ])->count();
+    'Menunggu Approval KPP',
+    'Menunggu Approval KTU',
+    'Menunggu Approval Kepala Stasiun'
+])->count();
 
     $disetujui = Surat::where('status', 'Disetujui')->count();
 
@@ -38,186 +43,182 @@ public function index()
 }
 public function approveKpp($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
 
-    if ($surat->status !== 'Menunggu Verifikasi KPP') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
+    if ($surat->status !== 'Menunggu Approval KPP') {
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Status surat tidak sesuai.');
     }
+
+    $cek = Approval::where('surat_id', $surat->id)
+    ->where('urutan', 1)
+    ->exists();
+
+if ($cek) {
+    return redirect()
+        ->route('surat.approval')
+        ->with('error', 'Surat sudah pernah diproses.');
+}
+DB::transaction(function () use ($surat) {
 Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 2, // sementara, nanti diganti Auth::id()
+    'approver_id' => auth()->id(),// sementara, nanti diganti Auth::id()
     'urutan'      => 1,
     'status'      => 'Disetujui',
     'approved_at' => now(),
 ]);
-    $surat->status = 'Menunggu Paraf KTU';
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat berhasil diverifikasi KPP.',
-        'data' => $surat
-    ]);
+    $surat->update([
+    'status' => 'Menunggu Approval KTU'
+]);
+});
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Surat berhasil disetujui oleh KPP.');
 }
 public function rejectKpp($id)
 {
-    $surat = Surat::find($id);
+   $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
+    DB::transaction(function () use ($surat) {
     Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 2,
+    'approver_id' => auth()->id(),
     'urutan'      => 1,
     'status'      => 'Ditolak',
     'approved_at' => now(),
 ]);
+    });
+    $surat->update([
+    'status' => 'Ditolak'
+]);
 
-    $surat->status = 'Ditolak';
-
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh KPP.',
-        'data' => $surat
-    ]);
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Surat ditolak oleh KPP.');
     
 }
 public function approveKtu($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
 
-    if ($surat->status !== 'Menunggu Paraf KTU') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
+    if ($surat->status !== 'Menunggu Approval KTU') {
+       return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Status surat tidak sesuai.');
     }
+    DB::transaction(function () use ($surat) {
 Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 3,
+    'approver_id' => auth()->id(),
     'urutan'      => 2,
     'status'      => 'Disetujui',
     'approved_at' => now(),
 ]);
-    $surat->status = 'Menunggu Persetujuan Kepala Stasiun';
-
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Paraf KTU berhasil.',
-        'data' => $surat
-    ]);
+    $surat->update([
+    'status' => 'Menunggu Approval Kepala Stasiun'
+]);
+    });
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Paraf KTU berhasil.');
 }
 public function rejectKtu($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
+    DB::transaction(function () use ($surat) {
 Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 3,
+    'approver_id' => auth()->id(),
     'urutan'      => 2,
     'status'      => 'Ditolak',
     'approved_at' => now(),
 ]);
-    $surat->status = 'Ditolak';
-
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh KTU.',
-        'data' => $surat
-    ]);
+    $surat->update([
+    'status' => 'Ditolak'
+]);
+    });
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Surat berhasil disetujui oleh KTU.');
 }
 public function approveKepalaStasiun($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+       return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
 
-    if ($surat->status !== 'Menunggu Persetujuan Kepala Stasiun') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
+    if ($surat->status !== 'Menunggu Approval Kepala Stasiun') {
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Status surat tidak sesuai.');
     }
+    DB::transaction(function () use ($surat) {
 Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 4,
+    'approver_id' => auth()->id(),
     'urutan'      => 3,
     'status'      => 'Disetujui',
     'approved_at' => now(),
 ]);
-    $surat->status = 'Disetujui';
-
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat disetujui Kepala Stasiun.',
-        'data' => $surat
-    ]);
+   $surat->update([
+    'status' => 'Disetujui'
+]);
+    });
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Surat disetujui Kepala Stasiun.');
 }
 public function rejectKepalaStasiun($id)
 {
-    $surat = Surat::find($id);
+    $surat = Surat::findOrFail($id);
 
     if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        return redirect()
+    ->route('surat.approval')
+    ->with('error', 'Surat tidak ditemukan.');
     }
+    DB::transaction(function () use ($surat) {
 Approval::create([
     'surat_id'    => $surat->id,
-    'approver_id' => 4,
+    'approver_id' => auth()->id(),
     'urutan'      => 3,
     'status'      => 'Ditolak',
     'approved_at' => now(),
 ]);
-    $surat->status = 'Ditolak';
-
-    $surat->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh Kepala Stasiun.',
-        'data' => $surat
-    ]);
+    $surat->update([
+    'status' => 'Ditolak'
+]);
+    });
+return redirect()
+    ->route('surat.approval')
+    ->with('success', 'Surat ditolak oleh Kepala Stasiun.');
 }
 }
