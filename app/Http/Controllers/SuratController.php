@@ -6,6 +6,9 @@ namespace App\Http\Controllers;
 use App\Models\Surat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\SuratTujuan;
+use App\Models\JenisSurat;
+use App\Models\SifatSurat;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -19,68 +22,28 @@ class SuratController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function index()
-    {
-
-        $surat = Surat::with([
-
-            'pengirim',
-            'jenisSurat',
-            'sifatSurat',
-            'prioritasSurat'
-
-        ])
-
-        ->latest()
-
-        ->paginate(10);
-
-
-
-        return response()->json($surat);
-
-    }
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FORM BUAT SURAT BARU
-    |--------------------------------------------------------------------------
-    */
-
-    public function create()
-    {
-
-
-        $users = User::with('jabatan')
-
+public function create()
+{
+    $users = User::with('jabatan')
         ->where('is_active',1)
-
         ->get();
 
+    $jenisSurat = JenisSurat::where('is_active',1)
+        ->orderBy('id')
+        ->get();
 
+    $sifatSurat = SifatSurat::orderBy('nama_sifat')
+        ->get();
 
-        return view(
-
-            'surat.baru',
-
-            compact('users')
-
-        );
-
-    }
-
-
-
-
-
-
-
-
+    return view(
+        'surat.baru',
+        compact(
+            'users',
+            'jenisSurat',
+            'sifatSurat'
+        )
+    );
+}
     /*
     |--------------------------------------------------------------------------
     | SIMPAN SURAT / DRAFT
@@ -91,19 +54,16 @@ class SuratController extends Controller
     {
 
 
-        $request->validate([
-
-
-            'perihal'=>'required',
-
-
-            'isi_surat'=>'required',
-
-
-            'file_surat'=>'nullable|mimes:pdf|max:10240'
-
-
-        ]);
+$request->validate([
+    'jenis_surat_id' => 'required|exists:jenis_surat,id',
+    'sifat_surat_id' => 'required|exists:sifat_surat,id',
+    'nomor_surat' => 'required|unique:surat,nomor_surat',
+    'tanggal_surat' => 'required|date',
+    'deadline' => 'nullable|date',
+    'tujuan_id' => 'required|exists:users,id',
+    'perihal' => 'required|max:255',
+    'file_surat' => 'nullable|mimes:pdf,doc,docx|max:10240',
+]);
 
 
 
@@ -127,18 +87,17 @@ class SuratController extends Controller
         }
 
 
-
+        $status = $request->action == 'kirim'
+    ? 'Menunggu Approval KPP'
+    : 'Draft';
 
 
         $surat = Surat::create([
 
 
 
-            'jenis_surat_id'=>3,
-
-
-            'sifat_surat_id'=>1,
-
+            'jenis_surat_id' => $request->jenis_surat_id,
+            'sifat_surat_id' => $request->sifat_surat_id,
 
             'prioritas_surat_id'=>2,
 
@@ -147,39 +106,27 @@ class SuratController extends Controller
 
 
 
-            'nomor_surat'=>
+            'nomor_surat' => $request->nomor_surat,
 
-                'DRAFT-TVRI-'
+            'tanggal_surat' => $request->tanggal_surat,
+            'deadline' => $request->deadline,
 
-                .date('Y')
+            'tanggal_kirim' => $status == 'Draft'
+            ? null
+            : now(),
 
-                .'-'
-
-                .rand(1000,9999),
-
-
-
-            'tanggal_surat'=>now(),
+            'status' => $status,
 
 
 
             'perihal'=>$request->perihal,
 
 
-
-            'ringkasan'=>$request->ringkasan,
-
-
-
-            'isi_surat'=>$request->isi_surat,
-
-
-
             'file_surat'=>$file,
 
 
 
-            'status'=>'Draft',
+            
 
 
 
@@ -190,22 +137,26 @@ class SuratController extends Controller
         ]);
 
 
+        SuratTujuan::create([
+            'surat_id' => $surat->id,
+            'user_id'  => $request->tujuan_id,
+            'dibaca'   => false,
+        ]);
 
 
 
 
+        if ($status == 'Draft') {
 
-        return redirect()
-
+    return redirect()
         ->route('surat.draft')
+        ->with('success','Draft berhasil disimpan.');
 
-        ->with(
+}
 
-            'success',
-
-            'Draft surat berhasil dibuat.'
-
-        );
+return redirect()
+    ->route('surat.approval')
+    ->with('success','Surat berhasil dikirim.');
 
 
     }
@@ -346,19 +297,13 @@ class SuratController extends Controller
     {
 
 
-        $request->validate([
+        $surat->update([
 
+        'perihal' => $request->perihal,
 
-            'perihal'=>'required',
+        'file_surat' => $file,
 
-
-            'isi_surat'=>'required',
-
-
-            'file_surat'=>'nullable|mimes:pdf|max:10240'
-
-
-        ]);
+    ]);
 
 
 
@@ -388,34 +333,6 @@ class SuratController extends Controller
 
 
         }
-
-
-
-
-
-
-        $surat->update([
-
-
-            'perihal'=>$request->perihal,
-
-
-            'ringkasan'=>$request->ringkasan,
-
-
-            'isi_surat'=>$request->isi_surat,
-
-
-            'file_surat'=>$file
-
-
-        ]);
-
-
-
-
-
-
 
         return redirect()
 
@@ -506,15 +423,9 @@ class SuratController extends Controller
 
 
         $surat->update([
-
-
-            'status'=>'Menunggu Approval',
-
-
-            'tanggal_kirim'=>now()
-
-
-        ]);
+        'status' => 'Menunggu Approval KPP',
+        'tanggal_kirim' => now()
+    ]);
 
 
 
@@ -548,175 +459,65 @@ class SuratController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function inboxWeb(Request $request)
-    {
+public function inboxWeb(Request $request)
+{
+    $query = Surat::with([
+        'pengirim.jabatan',
+        'jenisSurat',
+        'prioritasSurat'
+    ])->where('status', '!=', 'Draft');
 
+    // SEARCH
+    $search = trim($request->input('search', ''));
 
-        $query = Surat::with([
+    if ($search !== '') {
 
+        $query->where(function ($q) use ($search) {
 
-            'pengirim.jabatan',
+            $q->where('nomor_surat', 'like', "%{$search}%")
+              ->orWhere('perihal', 'like', "%{$search}%")
+              ->orWhereHas('pengirim', function ($user) use ($search) {
 
+                    $user->where('name', 'like', "%{$search}%");
 
-            'jenisSurat',
+              });
 
-
-            'prioritasSurat'
-
-
-        ])
-
-        ->where('status','!=','Draft');
-
-
-
-
-
-
-
-        if($request->filled('search'))
-        {
-
-
-            $keyword = $request->search;
-
-
-
-            $query->where(function($q) use($keyword){
-
-
-                $q->where(
-                    'nomor_surat',
-                    'like',
-                    "%$keyword%"
-                )
-
-
-                ->orWhere(
-                    'perihal',
-                    'like',
-                    "%$keyword%"
-                );
-
-
-            });
-
-
-        }
-
-
-
-
-
-
-
-        if($request->filled('status'))
-        {
-
-            $query->where(
-
-                'status',
-
-                $request->status
-
-            );
-
-        }
-
-
-
-
-
-
-
-        $surat = $query
-
-        ->latest()
-
-        ->paginate(10)
-
-        ->withQueryString();
-
-
-
-
-
-
-
-        $totalSurat = Surat::where(
-
-            'status',
-
-            '!=',
-
-            'Draft'
-
-        )->count();
-
-
-
-
-        $diproses = Surat::where(
-
-            'status',
-
-            'Menunggu Approval'
-
-        )->count();
-
-
-
-
-        $arsip = Surat::where(
-
-            'is_archived',
-
-            true
-
-        )->count();
-
-
-
-
-
-        $menungguApproval = Surat::where(
-
-            'status',
-
-            'like',
-
-            'Menunggu%'
-
-        )->count();
-
-
-
-
-
-
-
-        return view(
-
-            'surat.inbox',
-
-            compact(
-
-                'surat',
-
-                'totalSurat',
-
-                'diproses',
-
-                'arsip',
-
-                'menungguApproval'
-
-            )
-
-        );
-
+        });
 
     }
+
+    // FILTER STATUS
+    if ($request->filled('status')) {
+
+        $query->where('status', $request->status);
+
+    }
+
+    $surat = $query
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    $totalSurat = Surat::where('status', '!=', 'Draft')->count();
+
+    $diproses = Surat::whereIn('status', [
+    'Menunggu Approval KPP',
+    'Menunggu Approval KTU',
+    'Menunggu Approval Kepala Stasiun',
+])->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
+
+    $menungguApproval = Surat::where('status', 'like', 'Menunggu%')->count();
+
+    return view('surat.inbox', compact(
+        'surat',
+        'totalSurat',
+        'diproses',
+        'arsip',
+        'menungguApproval'
+    ));
+}
 
 
 
@@ -1076,7 +877,7 @@ class SuratController extends Controller
 
             'status',
 
-            'Menunggu Paraf KTU'
+            'Menunggu Approval KTU'
 
         )
 
@@ -1122,7 +923,7 @@ class SuratController extends Controller
 
             'status',
 
-            'Menunggu Persetujuan Kepala Stasiun'
+            'Menunggu Approval Kepala Stasiun'
 
         )
 
@@ -1148,39 +949,25 @@ class SuratController extends Controller
 
 public function approval()
 {
-
     $surat = Surat::with([
         'pengirim',
-        'jenisSurat',
+        'tujuan.user',
         'approval'
     ])
-    ->where('status','Menunggu Approval')
     ->latest()
     ->paginate(10);
 
-
-
     $totalSurat = Surat::count();
 
+    $menunggu = Surat::whereIn('status', [
+        'Menunggu Approval KPP',
+        'Menunggu Approval KTU',
+        'Menunggu Approval Kepala Stasiun'
+    ])->count();
 
-    $menunggu = Surat::where(
-        'status',
-        'Menunggu Approval'
-    )->count();
+    $disetujui = Surat::where('status', 'Disetujui')->count();
 
-
-    $disetujui = Surat::where(
-        'status',
-        'Disetujui'
-    )->count();
-
-
-    $ditolak = Surat::where(
-        'status',
-        'Ditolak'
-    )->count();
-
-
+    $ditolak = Surat::where('status', 'Ditolak')->count();
 
     return view('surat.approval', compact(
         'surat',
@@ -1189,6 +976,5 @@ public function approval()
         'disetujui',
         'ditolak'
     ));
-
 }
 }

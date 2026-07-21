@@ -15,28 +15,28 @@ class Surat extends Model
     protected $table = 'surat';
 
     protected $fillable = [
-        'jenis_surat_id',
-        'sifat_surat_id',
-        'prioritas_surat_id',
-        'template_surat_id',
-        'pengirim_id',
-        'nomor_surat',
-        'perihal',
-        'ringkasan',
-        'isi_surat',
-        'tanggal_surat',
-        'tanggal_kirim',
-        'tanggal_selesai',
-        'status',
-        'catatan',
-        'file_surat',
-        'is_archived',
-    ];
+    'jenis_surat_id',
+    'sifat_surat_id',
+    'prioritas_surat_id',
+    'template_surat_id',
+    'pengirim_id',
+    'nomor_surat',
+    'perihal',
+    'tanggal_surat',
+    'deadline',
+    'tanggal_kirim',
+    'tanggal_selesai',
+    'status',
+    'catatan',
+    'file_surat',
+    'is_archived',
+];
 
     protected function casts(): array
     {
         return [
             'tanggal_surat' => 'date',
+            'deadline' => 'date',
             'tanggal_kirim' => 'datetime',
             'tanggal_selesai' => 'datetime',
             'is_archived' => 'boolean',

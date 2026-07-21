@@ -146,11 +146,16 @@ transition">
 
 {{-- SEARCH FILTER --}}
 
-<form method="GET" action="{{ route('surat.inbox') }}" class="mt-10 bg-white rounded-[28px] p-6 shadow-lg">
+<form
+id="searchForm"
+method="GET"
+action="{{ route('surat.inbox') }}"
+class="mt-10 bg-white rounded-[28px] p-6 shadow-lg">
 
 <div class="flex flex-col md:flex-row gap-4">
 
 <input
+id="searchInput"
 type="text"
 name="search"
 value="{{ request('search') }}"
@@ -158,6 +163,7 @@ placeholder="Cari nomor surat, perihal, atau pengirim..."
 class="flex-1 bg-slate-100 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-blue-500">
 
 <select
+id="statusFilter"
 name="status"
 class="bg-slate-100 rounded-2xl px-5 py-4 outline-none">
 
@@ -168,14 +174,19 @@ class="bg-slate-100 rounded-2xl px-5 py-4 outline-none">
         Draft
     </option>
 
-    <option value="Menunggu Verifikasi KPP"
-        @selected(request('status')=='Menunggu Verifikasi KPP')>
-        Menunggu Verifikasi KPP
+    <option value="Menunggu Approval KPP"
+        @selected(request('status')=='Menunggu Approval KPP')>
+        Menunggu Approval KPP
     </option>
 
-    <option value="Diproses"
-        @selected(request('status')=='Diproses')>
-        Diproses
+    <option value="Menunggu Approval KTU"
+        @selected(request('status')=='Menunggu Approval KTU')>
+        Menunggu Approval KTU
+    </option>
+
+    <option value="Menunggu Approval Kepala Stasiun"
+        @selected(request('status')=='Menunggu Approval Kepala Stasiun')>
+        Menunggu Approval Kepala Stasiun
     </option>
 
     <option value="Disetujui"
@@ -309,13 +320,17 @@ text-sm
 
 bg-gray-100 text-gray-700
 
-@elseif($item->status=='Menunggu Verifikasi KPP')
+@elseif($item->status=='Menunggu Approval KPP')
 
 bg-yellow-100 text-yellow-700
 
-@elseif($item->status=='Diproses')
+@elseif($item->status=='Menunggu Approval KTU')
 
-bg-blue-100 text-blue-700
+bg-orange-100 text-orange-700
+
+@elseif($item->status=='Menunggu Approval Kepala Stasiun')
+
+bg-indigo-100 text-indigo-700
 
 @elseif($item->status=='Disetujui')
 
@@ -324,10 +339,6 @@ bg-green-100 text-green-700
 @elseif($item->status=='Ditolak')
 
 bg-red-100 text-red-700
-
-@elseif($item->status=='Selesai')
-
-bg-emerald-100 text-emerald-700
 
 @else
 
@@ -408,6 +419,27 @@ Belum ada data surat.
     {{ $surat->links() }}
 </div>
 
+<script>
+const form = document.getElementById('searchForm');
+const search = document.getElementById('searchInput');
+const status = document.getElementById('statusFilter');
+
+let timer;
+
+search.addEventListener('input', function () {
+
+    clearTimeout(timer);
+
+    timer = setTimeout(function () {
+        form.submit();
+    }, 500);
+
+});
+
+status.addEventListener('change', function () {
+    form.submit();
+});
+</script>
 
 
 @endsection

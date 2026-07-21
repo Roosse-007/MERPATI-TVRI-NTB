@@ -159,6 +159,10 @@ Pantau perjalanan persetujuan surat secara real-time
                         Status
                     </th>
 
+                    <th class="px-6 py-5 text-center font-bold text-slate-600">
+                        Aksi
+                    </th>
+
                 </tr>
 
             </thead>
@@ -217,6 +221,87 @@ Pantau perjalanan persetujuan surat secara real-time
         @endswitch
 
     </td>
+
+    <td class="px-6 py-5 text-center">
+
+    {{-- Tahap KPP --}}
+    @if($item->status == 'Menunggu Approval KPP')
+
+        <div class="flex justify-center gap-2">
+
+            <form method="POST" action="{{ route('approval.kpp.approve', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
+                    ✓ Setujui
+                </button>
+            </form>
+
+            <form method="POST" action="{{ route('approval.kpp.reject', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
+                    ✕ Tolak
+                </button>
+            </form>
+
+        </div>
+
+    {{-- Tahap KTU --}}
+    @elseif($item->status == 'Menunggu Approval KTU')
+
+        <div class="flex justify-center gap-2">
+
+            <form method="POST" action="{{ route('approval.ktu.approve', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
+                    ✓ Setujui
+                </button>
+            </form>
+
+            <form method="POST" action="{{ route('approval.ktu.reject', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
+                    ✕ Tolak
+                </button>
+            </form>
+
+        </div>
+
+    {{-- Tahap Kepala Stasiun --}}
+    @elseif($item->status == 'Menunggu Approval Kepala Stasiun')
+
+        <div class="flex justify-center gap-2">
+
+            <form method="POST" action="{{ route('approval.kepala.approve', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
+                    ✓ Setujui
+                </button>
+            </form>
+
+            <form method="POST" action="{{ route('approval.kepala.reject', $item->id) }}">
+                @csrf
+                <button
+                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
+                    ✕ Tolak
+                </button>
+            </form>
+
+        </div>
+
+    @else
+
+        <span class="text-slate-400 font-semibold">
+            Selesai
+        </span>
+
+    @endif
+
+</td>
 
 </tr>
 
