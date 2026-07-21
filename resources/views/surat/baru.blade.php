@@ -173,6 +173,24 @@
     </div>
 
     {{-- Deadline --}}
+<div>
+
+    <label class="font-semibold">
+        Deadline
+        <span class="text-slate-400 font-normal">(Opsional)</span>
+    </label>
+
+    <input
+        type="date"
+        name="deadline"
+        value="{{ old('deadline') }}"
+        class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+    <p class="mt-2 text-sm text-slate-500">
+        Kosongkan jika surat tidak memiliki batas waktu.
+    </p>
+
+</div>
     
 </div>
 
