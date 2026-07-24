@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Approval;
 use App\Models\Surat;
 use App\Models\User;
 use App\Models\ActivityLog;
+use App\Models\Disposisi;
+use App\Models\SuratTujuan;
+use App\Models\JenisSurat;
+use App\Models\SifatSurat;
+use App\Models\TemplateSurat;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class SuratController extends Controller
@@ -20,14 +29,19 @@ class SuratController extends Controller
     |--------------------------------------------------------------------------
     */
 
+
     public function index()
     {
+
 
         $surat = Surat::with([
 
             'pengirim',
+
             'jenisSurat',
+
             'sifatSurat',
+
             'prioritasSurat'
 
         ])
@@ -40,7 +54,9 @@ class SuratController extends Controller
 
         return response()->json($surat);
 
+
     }
+
 
 
 
@@ -52,30 +68,92 @@ class SuratController extends Controller
     | FORM BUAT SURAT BARU
     |--------------------------------------------------------------------------
     */
-public function create()
-{
 
-    $users = User::with('jabatan')
+
+    public function create()
+    {
+
+
+        $users = User::with('jabatan')
+
+            ->where('is_active',1)
+
+            ->get();
+
+
+
+
+
+        $jenisSurat = JenisSurat::where(
+
+            'is_active',
+
+            1
+
+        )
+
+        ->orderBy('id')
+
         ->get();
 
 
-    $templates = TemplateSurat::where(
-        'is_active',
-        true
-    )
-    ->get();
 
 
 
-    return view(
-        'surat.baru',
-        compact(
-            'users',
-            'templates'
+
+        $sifatSurat = SifatSurat::orderBy(
+
+            'nama_sifat'
+
         )
-    );
 
-}
+        ->get();
+
+
+
+
+
+
+        $templates = TemplateSurat::where(
+
+            'is_active',
+
+            true
+
+        )
+
+        ->get();
+
+
+
+
+
+
+
+        return view(
+
+            'surat.baru',
+
+            compact(
+
+                'users',
+
+                'jenisSurat',
+
+                'sifatSurat',
+
+                'templates'
+
+            )
+
+        );
+
+
+    }
+
+
+
+
 
 
 
@@ -87,94 +165,409 @@ public function create()
     |--------------------------------------------------------------------------
     */
 
-public function store(Request $request)
-{
 
-    $request->validate([
-
-        'template_surat_id'=>'required',
-
-        'perihal'=>'required',
-
-        'isi_surat'=>'required',
-
-    ]);
+    public function store(Request $request)
+    {
 
 
+        $request->validate([
 
 
+            'template_surat_id'
 
-    /*
-    |--------------------------------------------------------------------------
-    | SIMPAN DATA SURAT
-    |--------------------------------------------------------------------------
-    */
+                =>
 
-
-    $surat = Surat::create([
-
-
-        'template_surat_id'=>$request->template_surat_id,
-
-
-        'nomor_surat'=>$request->nomor_surat,
-
-
-        'perihal'=>$request->perihal,
-
-
-        'isi_surat'=>$request->isi_surat,
-
-
-        'tanggal_surat'=>now(),
-
-
-        'status'=>'Draft',
-
-
-        'pengirim_id'=>auth()->id(),
-
-
-    ]);
+            'required',
 
 
 
+            'jenis_surat_id'
+
+                =>
+
+            'required|exists:jenis_surat,id',
+
+
+
+            'sifat_surat_id'
+
+                =>
+
+            'required|exists:sifat_surat,id',
+
+
+
+            'nomor_surat'
+
+                =>
+
+            'required|unique:surat,nomor_surat',
+
+
+
+            'tanggal_surat'
+
+                =>
+
+            'required|date',
+
+
+
+            'deadline'
+
+                =>
+
+            'nullable|date',
+
+
+
+            'tujuan_id'
+
+                =>
+
+            'required|exists:users,id',
+
+
+
+            'perihal'
+
+                =>
+
+            'required|max:255',
+
+
+
+            'isi_surat'
+
+                =>
+
+            'required',
+
+
+
+            'file_surat'
+
+                =>
+
+            'nullable|mimes:pdf,doc,docx|max:10240'
+
+
+        ]);
 
 
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | GENERATE FILE DOCX DARI TEMPLATE
-    |--------------------------------------------------------------------------
-    */
-
-
-    app(
-        \App\Services\SuratGeneratorService::class
-    )
-    ->generate($surat);
 
 
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS SURAT
+        |--------------------------------------------------------------------------
+        */
+
+
+        $status =
+
+            $request->action == 'kirim'
+
+            ?
+
+            'Menunggu Approval KPP'
+
+            :
+
+            'Draft';
 
 
 
-    return redirect()
 
-        ->route(
-            'surat.detail',
-            $surat->id
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPLOAD FILE
+        |--------------------------------------------------------------------------
+        */
+
+
+        $file = null;
+
+
+
+        if($request->hasFile('file_surat'))
+        {
+
+
+            $file = $request
+
+                ->file('file_surat')
+
+                ->store(
+
+                    'surat',
+
+                    'public'
+
+                );
+
+
+        }
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN SURAT
+        |--------------------------------------------------------------------------
+        */
+
+
+        $surat = Surat::create([
+
+
+
+            'template_surat_id'
+
+                =>
+
+            $request->template_surat_id,
+
+
+
+            'jenis_surat_id'
+
+                =>
+
+            $request->jenis_surat_id,
+
+
+
+            'sifat_surat_id'
+
+                =>
+
+            $request->sifat_surat_id,
+
+
+
+            'nomor_surat'
+
+                =>
+
+            $request->nomor_surat,
+
+
+
+            'tanggal_surat'
+
+                =>
+
+            $request->tanggal_surat,
+
+
+
+            'tanggal_kirim'
+
+                =>
+
+            $status == 'Draft'
+
+            ?
+
+            null
+
+            :
+
+            now(),
+
+
+
+            'deadline'
+
+                =>
+
+            $request->deadline,
+
+
+
+            'perihal'
+
+                =>
+
+            $request->perihal,
+
+
+
+            'isi_surat'
+
+                =>
+
+            $request->isi_surat,
+
+
+
+            'file_surat'
+
+                =>
+
+            $file,
+
+
+
+            'pengirim_id'
+
+                =>
+
+            Auth::id(),
+
+
+
+            'status'
+
+                =>
+
+            $status,
+
+
+
+            'is_archived'
+
+                =>
+
+            false
+
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GENERATE DOCX TEMPLATE
+        |--------------------------------------------------------------------------
+        */
+
+
+        app(
+
+            \App\Services\SuratGeneratorService::class
+
         )
 
-        ->with(
-            'success',
-            'Surat berhasil dibuat.'
-        );
+        ->generate($surat);
 
 
-}
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN TUJUAN
+        |--------------------------------------------------------------------------
+        */
+
+
+        SuratTujuan::create([
+
+
+            'surat_id'
+
+                =>
+
+            $surat->id,
+
+
+
+            'user_id'
+
+                =>
+
+            $request->tujuan_id,
+
+
+
+            'dibaca'
+
+                =>
+
+            false
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        if($status == 'Draft')
+        {
+
+
+            return redirect()
+
+                ->route('surat.draft')
+
+                ->with(
+
+                    'success',
+
+                    'Draft berhasil disimpan.'
+
+                );
+
+
+        }
+
+
+
+
+
+
+
+        return redirect()
+
+            ->route('surat.approval')
+
+            ->with(
+
+                'success',
+
+                'Surat berhasil dikirim.'
+
+            );
+
+
+    }
+
+
+
+
+
+
 
 
 
@@ -183,6 +576,7 @@ public function store(Request $request)
     | DAFTAR DRAFT
     |--------------------------------------------------------------------------
     */
+
 
     public function draft()
     {
@@ -196,7 +590,6 @@ public function store(Request $request)
 
         ])
 
-
         ->where(
 
             'pengirim_id',
@@ -204,7 +597,6 @@ public function store(Request $request)
             Auth::id()
 
         )
-
 
         ->where(
 
@@ -214,11 +606,11 @@ public function store(Request $request)
 
         )
 
-
         ->latest()
 
-
         ->get();
+
+
 
 
 
@@ -234,20 +626,12 @@ public function store(Request $request)
 
 
     }
-
-
-
-
-
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | EDIT DRAFT
     |--------------------------------------------------------------------------
     */
+
 
     public function edit($id)
     {
@@ -255,7 +639,7 @@ public function store(Request $request)
 
         $draft = Surat::with('tujuan')
 
-        ->findOrFail($id);
+            ->findOrFail($id);
 
 
 
@@ -263,9 +647,25 @@ public function store(Request $request)
 
         $users = User::with('jabatan')
 
-        ->where('is_active',1)
+            ->where('is_active',1)
+
+            ->get();
+
+
+
+
+
+        $templates = TemplateSurat::where(
+
+            'is_active',
+
+            true
+
+        )
 
         ->get();
+
+
 
 
 
@@ -279,7 +679,9 @@ public function store(Request $request)
 
                 'draft',
 
-                'users'
+                'users',
+
+                'templates'
 
             )
 
@@ -302,29 +704,50 @@ public function store(Request $request)
     |--------------------------------------------------------------------------
     */
 
-    public function update(Request $request,$id)
+
+    public function update(
+        Request $request,
+        $id
+    )
     {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
 
 
         $request->validate([
 
 
-            'perihal'=>'required',
+            'perihal'
+
+                =>
+
+            'required',
 
 
-            'isi_surat'=>'required',
+
+            'isi_surat'
+
+                =>
+
+            'required',
 
 
-            'file_surat'=>'nullable|mimes:pdf|max:10240'
+
+            'file_surat'
+
+                =>
+
+            'nullable|file|max:10240'
 
 
         ]);
 
 
 
-
-
-        $surat = Surat::findOrFail($id);
 
 
 
@@ -340,11 +763,30 @@ public function store(Request $request)
         {
 
 
+            if($file)
+            {
+
+                Storage::disk('public')
+
+                    ->delete($file);
+
+            }
+
+
+
+
+
             $file = $request
 
-            ->file('file_surat')
+                ->file('file_surat')
 
-            ->store('surat','public');
+                ->store(
+
+                    'surat',
+
+                    'public'
+
+                );
 
 
         }
@@ -354,19 +796,33 @@ public function store(Request $request)
 
 
 
+
         $surat->update([
 
 
-            'perihal'=>$request->perihal,
+
+            'perihal'
+
+                =>
+
+            $request->perihal,
 
 
-            'ringkasan'=>$request->ringkasan,
+
+            'isi_surat'
+
+                =>
+
+            $request->isi_surat,
 
 
-            'isi_surat'=>$request->isi_surat,
 
+            'file_surat'
 
-            'file_surat'=>$file
+                =>
+
+            $file
+
 
 
         ]);
@@ -379,15 +835,15 @@ public function store(Request $request)
 
         return redirect()
 
-        ->route('surat.draft')
+            ->route('surat.draft')
 
-        ->with(
+            ->with(
 
-            'success',
+                'success',
 
-            'Draft berhasil diperbarui.'
+                'Draft berhasil diperbarui.'
 
-        );
+            );
 
 
     }
@@ -402,9 +858,10 @@ public function store(Request $request)
 
     /*
     |--------------------------------------------------------------------------
-    | HAPUS DRAFT
+    | HAPUS SURAT
     |--------------------------------------------------------------------------
     */
+
 
     public function destroy($id)
     {
@@ -414,111 +871,221 @@ public function store(Request $request)
 
 
 
+
+
+        if($surat->file_surat)
+        {
+
+
+            Storage::disk('public')
+
+                ->delete(
+
+                    $surat->file_surat
+
+                );
+
+
+        }
+
+
+
+
+
         $surat->delete();
 
 
 
 
+
+
+
         return redirect()
 
-        ->route('surat.draft')
+            ->route('surat.draft')
 
-        ->with(
-
-            'success',
-
-            'Draft berhasil dihapus.'
-
-        );
-
-
-    } 
-
-    /*
-|--------------------------------------------------------------------------
-| KIRIM SURAT KE APPROVAL
-|--------------------------------------------------------------------------
-*//*
-|--------------------------------------------------------------------------
-| KIRIM SURAT KE APPROVAL
-|--------------------------------------------------------------------------
-*/
-
-public function submit($id)
-{
-
-    $surat = Surat::findOrFail($id);
-
-
-
-    if($surat->status !== 'Draft')
-    {
-
-        return redirect()
-            ->back()
             ->with(
-                'error',
-                'Surat sudah diproses.'
+
+                'success',
+
+                'Surat berhasil dihapus.'
+
             );
+
 
     }
 
 
 
-    // Update status surat
-
-    $surat->update([
-
-        'status'=>'Menunggu Approval',
-
-        'tanggal_kirim'=>now()
-
-    ]);
 
 
 
 
 
-    // Buat approval pertama
-
-    Approval::create([
-
-        'surat_id'=>$surat->id,
-
-        // Kepala TVRI Stasiun NTB
-        'approver_id'=>2,
-
-        'urutan'=>1,
-
-        'status'=>'Menunggu',
-
-        'catatan'=>null,
-
-    ]);
-
-
-
-
-
-    return redirect()
-
-        ->route('surat.draft')
-
-        ->with(
-
-            'success',
-
-            'Surat berhasil dikirim untuk approval.'
-
-        );
-
-}
 
     /*
     |--------------------------------------------------------------------------
-    | KOTAK MASUK WEB
+    | KIRIM SURAT KE APPROVAL
     |--------------------------------------------------------------------------
     */
+
+
+    public function submit($id)
+    {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+
+
+
+        if($surat->status !== 'Draft')
+        {
+
+
+            return back()
+
+                ->with(
+
+                    'error',
+
+                    'Surat sudah diproses.'
+
+                );
+
+
+        }
+
+
+
+
+
+
+
+
+
+        $surat->update([
+
+
+
+            'status'
+
+                =>
+
+            'Menunggu Approval KPP',
+
+
+
+            'tanggal_kirim'
+
+                =>
+
+            now()
+
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BUAT APPROVAL PERTAMA
+        |--------------------------------------------------------------------------
+        */
+
+
+        Approval::create([
+
+
+
+            'surat_id'
+
+                =>
+
+            $surat->id,
+
+
+
+            'approver_id'
+
+                =>
+
+            2,
+
+
+
+            'urutan'
+
+                =>
+
+            1,
+
+
+
+            'status'
+
+                =>
+
+            'Menunggu',
+
+
+
+            'catatan'
+
+                =>
+
+            null
+
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        return redirect()
+
+            ->route('surat.draft')
+
+            ->with(
+
+                'success',
+
+                'Surat berhasil dikirim untuk approval.'
+
+            );
+
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KOTAK MASUK
+    |--------------------------------------------------------------------------
+    */
+
 
     public function inboxWeb(Request $request)
     {
@@ -529,16 +1096,23 @@ public function submit($id)
 
             'pengirim.jabatan',
 
-
             'jenisSurat',
-
 
             'prioritasSurat'
 
 
         ])
 
-        ->where('status','!=','Draft');
+        ->where(
+
+            'status',
+
+            '!=',
+
+            'Draft'
+
+        );
+
 
 
 
@@ -554,20 +1128,52 @@ public function submit($id)
 
 
 
+
+
             $query->where(function($q) use($keyword){
 
 
+
                 $q->where(
+
                     'nomor_surat',
+
                     'like',
-                    "%$keyword%"
+
+                    "%{$keyword}%"
+
                 )
 
-
                 ->orWhere(
+
                     'perihal',
+
                     'like',
-                    "%$keyword%"
+
+                    "%{$keyword}%"
+
+                )
+
+                ->orWhereHas(
+
+                    'pengirim',
+
+                    function($user) use($keyword){
+
+
+                        $user->where(
+
+                            'name',
+
+                            'like',
+
+                            "%{$keyword}%"
+
+                        );
+
+
+                    }
+
                 );
 
 
@@ -582,8 +1188,11 @@ public function submit($id)
 
 
 
+
+
         if($request->filled('status'))
         {
+
 
             $query->where(
 
@@ -593,7 +1202,9 @@ public function submit($id)
 
             );
 
+
         }
+
 
 
 
@@ -603,11 +1214,13 @@ public function submit($id)
 
         $surat = $query
 
-        ->latest()
+            ->latest()
 
-        ->paginate(10)
+            ->paginate(10)
 
-        ->withQueryString();
+            ->withQueryString();
+
+
 
 
 
@@ -626,26 +1239,6 @@ public function submit($id)
         )->count();
 
 
-
-
-        $diproses = Surat::where(
-
-            'status',
-
-            'Menunggu Approval'
-
-        )->count();
-
-
-
-
-        $arsip = Surat::where(
-
-            'is_archived',
-
-            true
-
-        )->count();
 
 
 
@@ -667,6 +1260,30 @@ public function submit($id)
 
 
 
+        $ditolak = Surat::where(
+
+            'status',
+
+            'Ditolak'
+
+        )->count();
+
+
+
+
+
+
+
+        $disposisi = Disposisi::count();
+
+
+
+
+
+
+
+
+
         return view(
 
             'surat.inbox',
@@ -677,11 +1294,11 @@ public function submit($id)
 
                 'totalSurat',
 
-                'diproses',
+                'menungguApproval',
 
-                'arsip',
+                'ditolak',
 
-                'menungguApproval'
+                'disposisi'
 
             )
 
@@ -700,9 +1317,10 @@ public function submit($id)
 
     /*
     |--------------------------------------------------------------------------
-    | SURAT TERKIRIM
+    | SURAT TERKIRIM API
     |--------------------------------------------------------------------------
     */
+
 
     public function sent()
     {
@@ -710,9 +1328,11 @@ public function submit($id)
 
         $surat = Surat::with([
 
+
             'jenisSurat',
 
             'pengirim'
+
 
         ])
 
@@ -734,6 +1354,7 @@ public function submit($id)
 
 
 
+
         return response()->json([
 
 
@@ -743,31 +1364,23 @@ public function submit($id)
             'data'=>$surat
 
 
+
         ]);
 
 
     }
-
-
-
-
-
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | ARSIPKAN SURAT
     |--------------------------------------------------------------------------
     */
 
+
     public function archive($id)
     {
 
 
         $surat = Surat::findOrFail($id);
-
 
 
 
@@ -783,11 +1396,7 @@ public function submit($id)
 
 
 
-        return redirect()
-
-        ->back()
-
-        ->with(
+        return back()->with(
 
             'success',
 
@@ -812,19 +1421,12 @@ public function submit($id)
     |--------------------------------------------------------------------------
     */
 
+
     public function archiveList()
     {
 
 
-        $surat = Surat::with([
-
-            'pengirim.jabatan',
-
-            'jenisSurat'
-
-        ])
-
-        ->where(
+        $surat = Surat::where(
 
             'is_archived',
 
@@ -841,7 +1443,6 @@ public function submit($id)
 
 
 
-
         return response()->json([
 
 
@@ -851,7 +1452,10 @@ public function submit($id)
             'data'=>$surat
 
 
+
         ]);
+
+
 
     }
 
@@ -869,17 +1473,19 @@ public function submit($id)
     |--------------------------------------------------------------------------
     */
 
+
     public function archiveWeb()
     {
 
 
         $surat = Surat::with([
 
-            'pengirim.jabatan',
 
-            'jenisSurat',
+            'pengirim',
 
-            'tujuan.user'
+
+            'jenisSurat'
+
 
         ])
 
@@ -922,9 +1528,10 @@ public function submit($id)
 
     /*
     |--------------------------------------------------------------------------
-    | DETAIL SURAT API
+    | DETAIL API
     |--------------------------------------------------------------------------
     */
+
 
     public function show($id)
     {
@@ -933,19 +1540,25 @@ public function submit($id)
         $surat = Surat::with([
 
 
-            'pengirim.jabatan',
+            'pengirim',
 
 
-            'jenisSurat',
+            'tujuan.user',
 
 
-            'sifatSurat',
+            'lampiran',
 
 
-            'prioritasSurat',
+            'disposisi',
 
 
-           'approvals.approver.jabatan' 
+            'approval',
+
+
+            'pengesahan',
+
+
+            'balasan'
 
 
         ])
@@ -967,7 +1580,9 @@ public function submit($id)
             'data'=>$surat
 
 
+
         ]);
+
 
 
     }
@@ -982,156 +1597,311 @@ public function submit($id)
 
     /*
     |--------------------------------------------------------------------------
-    | DETAIL SURAT WEB
-    |--------------------------------------------------------------------------
-    */public function showWeb($id)
-{
-
-    $surat = Surat::with([
-
-        /*
-        |--------------------------------------------------------------------------
-        | INFORMASI SURAT
-        |--------------------------------------------------------------------------
-        */
-
-        'pengirim.jabatan',
-
-        'tujuan.user.jabatan',
-
-        'jenisSurat',
-
-        'sifatSurat',
-
-        'prioritasSurat',
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | LAMPIRAN
-        |--------------------------------------------------------------------------
-        */
-
-        'lampiran',
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DISPOSISI
-        |--------------------------------------------------------------------------
-        */
-
-        'disposisi.dariUser.jabatan',
-
-        'disposisi.keUser.jabatan',
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | APPROVAL
-        |--------------------------------------------------------------------------
-        */
-
-      'approvals.approver.jabatan',
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ARSIP
-        |--------------------------------------------------------------------------
-        */
-
-        'arsip'
-
-
-    ])
-    ->findOrFail($id);
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | USER UNTUK DISPOSISI
-    |--------------------------------------------------------------------------
-    |
-    | Digunakan pada form:
-    | "Pilih Penerima Disposisi"
-    |
-    */
-
-    $users = User::with('jabatan')
-
-        ->where('is_active', true)
-
-        ->where('id','!=',auth()->id())
-
-        ->orderBy('name')
-
-        ->get();
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | AKTIVITAS SURAT
-    |--------------------------------------------------------------------------
-    |
-    | Mengambil log aktivitas surat
-    |
-    */
-
-    $aktivitas = ActivityLog::with('user')
-    ->latest()
-    ->limit(10)
-    ->get();
-
-
-
-
-
-
-    return view(
-
-        'surat.detail',
-
-        compact(
-
-            'surat',
-
-            'users',
-
-            'aktivitas'
-
-        )
-
-    );
-
-}
-
-    /*
-    |--------------------------------------------------------------------------
-    | INBOX KTU
+    | DETAIL WEB
     |--------------------------------------------------------------------------
     */
 
-    public function inboxKtu()
+
+    public function showWeb($id)
     {
 
 
-        $surat = Surat::where(
+        $surat = Surat::with([
+
+
+
+            'pengirim.jabatan',
+
+
+
+            'tujuan.user.jabatan',
+
+
+
+            'jenisSurat',
+
+
+
+            'sifatSurat',
+
+
+
+            'prioritasSurat',
+
+
+
+            'lampiran',
+
+
+
+            'disposisi.keUser.jabatan',
+
+
+
+            'approval.approver',
+
+
+
+            'pengesahan',
+
+
+
+            'balasan'
+
+
+
+        ])
+
+        ->findOrFail($id);
+
+
+
+
+
+
+
+
+
+        $users = User::with('jabatan')
+
+            ->where(
+
+                'is_active',
+
+                1
+
+            )
+
+            ->where(
+
+                'id',
+
+                '!=',
+
+                Auth::id()
+
+            )
+
+            ->get();
+
+
+
+
+
+
+
+
+
+        $aktivitas = collect();
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AKTIVITAS SURAT
+        |--------------------------------------------------------------------------
+        */
+
+
+        $aktivitas->push([
+
+
+            'judul'=>'Surat dibuat',
+
+
+            'deskripsi'=>$surat->perihal,
+
+
+            'waktu'=>$surat->created_at
+
+
+
+        ]);
+
+
+
+
+
+
+
+        foreach($surat->approval as $item)
+        {
+
+
+            $aktivitas->push([
+
+
+                'judul'=>'Approval Surat',
+
+
+                'deskripsi'=>$item->status,
+
+
+                'waktu'=>$item->created_at
+
+
+
+            ]);
+
+
+
+        }
+
+
+
+
+
+
+
+        foreach($surat->disposisi as $item)
+        {
+
+
+            $aktivitas->push([
+
+
+                'judul'=>'Disposisi Surat',
+
+
+                'deskripsi'=>
+
+                    $item->instruksi,
+
+
+                'waktu'=>$item->created_at
+
+
+
+            ]);
+
+
+
+        }
+
+
+
+
+
+
+
+
+        if($surat->pengesahan)
+        {
+
+
+            $aktivitas->push([
+
+
+                'judul'=>'Pengesahan Surat',
+
+
+                'deskripsi'=>
+
+                    $surat->pengesahan->metode,
+
+
+                'waktu'=>
+
+                    $surat->pengesahan->tanggal_pengesahan
+
+
+
+            ]);
+
+
+        }
+
+
+
+
+
+
+
+        $aktivitas = $aktivitas
+
+            ->sortByDesc('waktu');
+
+
+
+
+
+
+
+
+
+        return view(
+
+            'surat.detail',
+
+            compact(
+
+                'surat',
+
+                'users',
+
+                'aktivitas'
+
+            )
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HALAMAN APPROVAL
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function approval()
+    {
+
+
+        $surat = Surat::with([
+
+
+            'pengirim',
+
+
+            'tujuan.user',
+
+
+            'approval.approver'
+
+
+        ])
+
+        ->whereIn(
 
             'status',
 
-            'Menunggu Paraf KTU'
+            [
+
+
+                'Menunggu Approval KPP',
+
+
+                'Menunggu Approval KTU',
+
+
+                'Menunggu Approval Kepala Stasiun'
+
+
+            ]
 
         )
 
@@ -1144,13 +1914,207 @@ public function submit($id)
 
 
 
-        return response()->json([
 
-            'success'=>true,
 
-            'data'=>$surat
+        $totalSurat = Surat::count();
 
-        ]);
+
+
+
+
+        $menunggu = Surat::whereIn(
+
+            'status',
+
+            [
+
+
+                'Menunggu Approval KPP',
+
+
+                'Menunggu Approval KTU',
+
+
+                'Menunggu Approval Kepala Stasiun'
+
+
+            ]
+
+        )
+
+        ->count();
+
+
+
+
+
+
+
+        $disetujui = Surat::where(
+
+            'status',
+
+            'Disetujui'
+
+        )
+
+        ->count();
+
+
+
+
+
+
+
+        $ditolak = Surat::where(
+
+            'status',
+
+            'Ditolak'
+
+        )
+
+        ->count();
+
+
+
+
+
+
+
+
+
+        return view(
+
+            'surat.approval',
+
+            compact(
+
+                'surat',
+
+                'totalSurat',
+
+                'menunggu',
+
+                'disetujui',
+
+                'ditolak'
+
+            )
+
+        );
+
+
+    }
+
+        /*
+    |--------------------------------------------------------------------------
+    | INBOX KPP
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function inboxKpp()
+    {
+
+
+        $surat = Surat::with([
+
+
+            'pengirim',
+
+            'tujuan.user',
+
+            'approval'
+
+
+        ])
+
+        ->where(
+
+            'status',
+
+            'Menunggu Approval KPP'
+
+        )
+
+        ->latest()
+
+        ->paginate(10);
+
+
+
+
+
+
+
+        return view(
+
+            'surat.inbox-kpp',
+
+            compact('surat')
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INBOX KTU
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function inboxKtu()
+    {
+
+
+        $surat = Surat::with([
+
+
+            'pengirim',
+
+            'tujuan.user',
+
+            'approval'
+
+
+        ])
+
+        ->where(
+
+            'status',
+
+            'Menunggu Approval KTU'
+
+        )
+
+        ->latest()
+
+        ->paginate(10);
+
+
+
+
+
+
+
+        return view(
+
+            'surat.inbox-ktu',
+
+            compact('surat')
+
+        );
 
 
     }
@@ -1169,15 +2133,28 @@ public function submit($id)
     |--------------------------------------------------------------------------
     */
 
+
     public function inboxKepalaStasiun()
     {
 
 
-        $surat = Surat::where(
+        $surat = Surat::with([
+
+
+            'pengirim',
+
+            'tujuan.user',
+
+            'approval'
+
+
+        ])
+
+        ->where(
 
             'status',
 
-            'Menunggu Persetujuan Kepala Stasiun'
+            'Menunggu Approval Kepala Stasiun'
 
         )
 
@@ -1190,81 +2167,375 @@ public function submit($id)
 
 
 
-        return response()->json([
 
-            'success'=>true,
+        return view(
 
-            'data'=>$surat
+            'surat.inbox-kepala',
+
+            compact('surat')
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPROVE SURAT
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function approve($id)
+    {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+
+
+        $status = $surat->status;
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KPP
+        |--------------------------------------------------------------------------
+        */
+
+
+        if($status == 'Menunggu Approval KPP')
+        {
+
+
+            Approval::create([
+
+
+                'surat_id'=>$surat->id,
+
+
+                'approver_id'=>Auth::id(),
+
+
+                'urutan'=>1,
+
+
+                'status'=>'Disetujui',
+
+
+                'approved_at'=>now()
+
+
+
+            ]);
+
+
+
+
+
+
+            $surat->update([
+
+
+                'status'=>
+
+                    'Menunggu Approval KTU'
+
+
+            ]);
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KTU
+        |--------------------------------------------------------------------------
+        */
+
+
+        elseif($status == 'Menunggu Approval KTU')
+        {
+
+
+            Approval::create([
+
+
+                'surat_id'=>$surat->id,
+
+
+                'approver_id'=>Auth::id(),
+
+
+                'urutan'=>2,
+
+
+                'status'=>'Disetujui',
+
+
+                'approved_at'=>now()
+
+
+
+            ]);
+
+
+
+
+
+
+
+            $surat->update([
+
+
+                'status'=>
+
+                'Menunggu Approval Kepala Stasiun'
+
+
+            ]);
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KEPALA STASIUN
+        |--------------------------------------------------------------------------
+        */
+
+
+        elseif(
+            $status ==
+            'Menunggu Approval Kepala Stasiun'
+        )
+        {
+
+
+            Approval::create([
+
+
+                'surat_id'=>$surat->id,
+
+
+                'approver_id'=>Auth::id(),
+
+
+                'urutan'=>3,
+
+
+                'status'=>'Disetujui',
+
+
+                'approved_at'=>now()
+
+
+
+            ]);
+
+
+
+
+
+
+
+            $surat->update([
+
+
+                'status'=>'Disetujui',
+
+
+                'tanggal_selesai'=>now()
+
+
+
+            ]);
+
+
+
+        }
+
+
+
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat berhasil disetujui.'
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOLAK SURAT
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function reject(
+        Request $request,
+        $id
+    )
+    {
+
+
+        $request->validate([
+
+
+            'catatan'
+
+                =>
+
+            'required|string'
+
 
         ]);
 
 
+
+
+
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+
+
+
+
+
+        Approval::create([
+
+
+            'surat_id'=>$surat->id,
+
+
+            'approver_id'=>Auth::id(),
+
+
+            'urutan'=>
+
+                match($surat->status){
+
+                    'Menunggu Approval KPP'
+                        => 1,
+
+
+                    'Menunggu Approval KTU'
+                        => 2,
+
+
+                    default
+                        => 3,
+
+                },
+
+
+
+            'status'=>'Ditolak',
+
+
+
+            'catatan'=>$request->catatan,
+
+
+
+            'approved_at'=>now()
+
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        $surat->update([
+
+
+            'status'=>'Ditolak',
+
+
+            'catatan'=>$request->catatan
+
+
+
+        ]);
+
+
+
+
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat berhasil ditolak.'
+
+        );
+
+
     }
-public function approval()
-{
-
-    $surat = Surat::with([
-
-        'pengirim',
-
-        'jenisSurat',
-
-        'approvals.approver.jabatan'
-
-    ])
-
-    ->where('status','Menunggu Approval')
-
-    ->latest()
-
-    ->paginate(10);
 
 
 
-    $totalSurat = Surat::count();
-
-
-
-    $menunggu = Surat::where(
-        'status',
-        'Menunggu Approval'
-    )->count();
-
-
-
-    $disetujui = Surat::where(
-        'status',
-        'Disetujui'
-    )->count();
-
-
-
-    $ditolak = Surat::where(
-        'status',
-        'Ditolak'
-    )->count();
-
-
-
-    return view(
-
-        'surat.approval',
-
-        compact(
-
-            'surat',
-
-            'totalSurat',
-
-            'menunggu',
-
-            'disetujui',
-
-            'ditolak'
-
-        )
-
-    );
-
-}
 }

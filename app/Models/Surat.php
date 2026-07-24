@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-
 class Surat extends Model
 {
+
     use SoftDeletes;
 
 
@@ -21,13 +21,9 @@ class Surat extends Model
 
     protected $fillable = [
 
-    'parent_surat_id',
+        'parent_surat_id',
 
         'jenis_surat_id',
-
-        'file_docx_path',
-
-        'file_pdf_path',
 
         'sifat_surat_id',
 
@@ -47,6 +43,8 @@ class Surat extends Model
 
         'tanggal_surat',
 
+        'deadline',
+
         'tanggal_kirim',
 
         'tanggal_selesai',
@@ -54,14 +52,17 @@ class Surat extends Model
         'status',
 
         'catatan',
-        
-        'template_surat_id',
 
         'file_surat',
+
+        'file_docx_path',
+
+        'file_pdf_path',
 
         'is_archived',
 
     ];
+
 
 
 
@@ -73,6 +74,8 @@ class Surat extends Model
 
             'tanggal_surat' => 'date',
 
+            'deadline' => 'date',
+
             'tanggal_kirim' => 'datetime',
 
             'tanggal_selesai' => 'datetime',
@@ -82,7 +85,6 @@ class Surat extends Model
         ];
 
     }
-
 
 
 
@@ -205,7 +207,13 @@ public function approvals(): HasMany
     );
 }
 
-
+public function approval(): HasMany
+{
+    return $this->hasMany(
+        Approval::class,
+        'surat_id'
+    );
+}
 
 
 
@@ -271,7 +279,7 @@ public function pengesahan(): HasOne
 */
 
 
-public function suratInduk()
+public function suratInduk(): BelongsTo
 {
     return $this->belongsTo(
         Surat::class,
@@ -281,7 +289,7 @@ public function suratInduk()
 
 
 
-public function balasan()
+public function balasan(): HasMany
 {
     return $this->hasMany(
         Surat::class,
@@ -295,14 +303,12 @@ public function balasan()
     |--------------------------------------------------------------------------
     */
 
-    public function arsip(): HasOne
-    {
+  public function arsip(): HasOne
+{
 
-        return $this->hasOne(
-            Arsip::class
-        );
-
-    }
-
+    return $this->hasOne(
+        Arsip::class,
+        'surat_id'
+    );
 
 }

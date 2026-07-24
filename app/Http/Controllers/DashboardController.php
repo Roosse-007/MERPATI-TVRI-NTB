@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Surat;
 use App\Models\User;
 use App\Models\Approval;
+use App\Models\Disposisi;
 use Illuminate\Support\Facades\DB;
+
 
 class DashboardController extends Controller
 {
 
+
     public function index()
     {
+
 
         $user = auth()->user();
 
@@ -57,16 +61,26 @@ class DashboardController extends Controller
 
         $statistikSurat = Surat::select(
 
-                DB::raw('MONTH(created_at) as bulan'),
+                DB::raw(
+                    'MONTH(created_at) as bulan'
+                ),
 
-                DB::raw('COUNT(*) as jumlah')
+                DB::raw(
+                    'COUNT(*) as jumlah'
+                )
 
             )
+
             ->groupBy(
-                DB::raw('MONTH(created_at)')
+                DB::raw(
+                    'MONTH(created_at)'
+                )
             )
+
             ->orderBy('bulan')
+
             ->get()
+
             ->map(function($item){
 
 
@@ -96,6 +110,8 @@ class DashboardController extends Controller
 
 
 
+
+
         /*
         |--------------------------------------------------------------------------
         | STATUS SURAT
@@ -107,11 +123,17 @@ class DashboardController extends Controller
 
                 'status',
 
-                DB::raw('COUNT(*) as jumlah')
+                DB::raw(
+                    'COUNT(*) as jumlah'
+                )
 
             )
+
             ->groupBy('status')
+
             ->get();
+
+
 
 
 
@@ -126,26 +148,111 @@ class DashboardController extends Controller
         */
 
 
-        $aktivitas = Surat::latest()
-            ->limit(3)
-            ->get();
-
-
-
+        $aktivitas = collect();
 
 
 
 
         /*
-        |--------------------------------------------------------------------------
-        | SURAT TERBARU
-        |--------------------------------------------------------------------------
+        | Surat Baru
         */
 
-
         $suratTerbaru = Surat::latest()
-            ->limit(5)
+            ->take(5)
             ->get();
+
+
+
+        foreach($suratTerbaru as $surat)
+        {
+
+            $aktivitas->push([
+
+                'judul'=>'Surat Baru',
+
+                'deskripsi'=>$surat->perihal,
+
+                'status'=>'Baru',
+
+                'waktu'=>$surat->created_at
+
+            ]);
+
+        }
+
+
+
+
+
+        /*
+        | Approval
+        */
+
+        $approvalTerbaru = Approval::with('surat')
+            ->latest()
+            ->take(5)
+            ->get();
+
+
+
+        foreach($approvalTerbaru as $approval)
+        {
+
+            $aktivitas->push([
+
+                'judul'=>'Approval Surat',
+
+                'deskripsi'=>$approval->surat->perihal ?? '-',
+
+                'status'=>$approval->status,
+
+                'waktu'=>$approval->created_at
+
+            ]);
+
+        }
+
+
+
+
+
+
+
+        /*
+        | Disposisi
+        */
+
+        $disposisiTerbaru = Disposisi::with('surat')
+            ->latest()
+            ->take(5)
+            ->get();
+
+
+
+        foreach($disposisiTerbaru as $disposisi)
+        {
+
+            $aktivitas->push([
+
+                'judul'=>'Disposisi Surat',
+
+                'deskripsi'=>$disposisi->surat->perihal ?? '-',
+
+                'status'=>'Disposisi',
+
+                'waktu'=>$disposisi->created_at
+
+            ]);
+
+        }
+
+
+
+
+
+        $aktivitas = $aktivitas
+            ->sortByDesc('waktu')
+            ->take(8);
 
 
 
@@ -155,7 +262,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | KIRIM DATA KE VIEW
+        | DATA VIEW
         |--------------------------------------------------------------------------
         */
 
@@ -175,23 +282,21 @@ class DashboardController extends Controller
             'totalArsip'=>$totalArsip,
 
 
-
             'statistikSurat'=>$statistikSurat,
-
 
 
             'statusSurat'=>$statusSurat,
 
 
-
             'aktivitas'=>$aktivitas,
-
 
 
             'suratTerbaru'=>$suratTerbaru,
 
 
         ];
+
+
 
 
 
@@ -210,12 +315,18 @@ class DashboardController extends Controller
             $user &&
             $user->jabatan &&
             $user->jabatan->nama_jabatan === 'Admin'
-        ){
+        )
+        {
+
 
             return view(
+
                 'admin.dashboard',
+
                 $data
+
             );
+
 
         }
 
@@ -233,11 +344,15 @@ class DashboardController extends Controller
 
 
         return view(
+
             'dashboard.index',
+
             $data
+
         );
 
 
     }
+
 
 }

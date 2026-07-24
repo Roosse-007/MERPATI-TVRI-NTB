@@ -10,19 +10,23 @@ class JenisSuratSeeder extends Seeder
     public function run(): void
     {
         $data = [
-
-            ['nama_jenis' => 'Surat Masuk'],
-            ['nama_jenis' => 'Surat Keluar'],
-            ['nama_jenis' => 'Surat Internal'],
-            ['nama_jenis' => 'Nota Dinas'],
-            ['nama_jenis' => 'Surat Produksi'],
-            ['nama_jenis' => 'Surat Undangan'],
-            ['nama_jenis' => 'Surat Tugas'],
-
+            'Surat Dinas',
+            'Surat Perintah',
+            'Nota Dinas',
+            'Surat Edaran',
+            'Surat Tugas',
+            'Cuti Tahunan',
+            'Cuti Melahirkan',
+            'Naskah Dinas',
+            'Surat Permohonan',
+            'Surat Pengantar',
         ];
 
-        foreach ($data as $item) {
-            JenisSurat::firstOrCreate($item);
+        foreach ($data as $nama) {
+            JenisSurat::updateOrCreate(
+                ['nama_jenis' => $nama],
+                ['is_active' => true]
+            );
         }
     }
 }

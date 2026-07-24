@@ -205,10 +205,7 @@ Route::prefix('admin')
 
 
 
-    Route::view(
-        '/users',
-        'admin.users'
-    )
+    Route::get('/users', [UserController::class, 'index'])
     ->name('admin.users');
 
 
@@ -647,82 +644,104 @@ Route::get('/surat/arsip',
 
 
 
-
-
-
-
 // ==========================
 // APPROVAL ACTION
 // ==========================
 
 
-Route::post('/approval/kpp/{id}',
-[
-    ApprovalController::class,
-    'approveKpp'
+// --------------------------
+// KPP
+// --------------------------
 
-])
-->middleware('auth');
-
-
-
-
-Route::post('/approval/kpp/{id}/reject',
-[
-    ApprovalController::class,
-    'rejectKpp'
-
-])
-->middleware('auth');
+Route::post(
+    '/approval/kpp/{id}',
+    [
+        ApprovalController::class,
+        'approveKpp'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kpp.approve');
 
 
 
-
-
-Route::post('/approval/ktu/{id}',
-[
-    ApprovalController::class,
-    'approveKtu'
-
-])
-->middleware('auth');
-
-
-
-
-Route::post('/approval/ktu/{id}/reject',
-[
-    ApprovalController::class,
-    'rejectKtu'
-
-])
-->middleware('auth');
+Route::post(
+    '/approval/kpp/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKpp'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kpp.reject');
 
 
 
 
 
-Route::post('/approval/kepala-stasiun/{id}',
-[
-    ApprovalController::class,
-    'approveKepalaStasiun'
+// --------------------------
+// KTU
+// --------------------------
 
-])
-->middleware('auth');
-
-
-
-
-
-Route::post('/approval/kepala-stasiun/{id}/reject',
-[
-    ApprovalController::class,
-    'rejectKepalaStasiun'
-
-])
-->middleware('auth');
+Route::post(
+    '/approval/ktu/{id}',
+    [
+        ApprovalController::class,
+        'approveKtu'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.ktu.approve');
 
 
+
+Route::post(
+    '/approval/ktu/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKtu'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.ktu.reject');
+
+
+
+
+
+
+
+// --------------------------
+// KEPALA STASIUN
+// --------------------------
+
+Route::post(
+    '/approval/kepala-stasiun/{id}',
+    [
+        ApprovalController::class,
+        'approveKepalaStasiun'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kepala.approve');
+
+
+
+Route::post(
+    '/approval/kepala-stasiun/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKepalaStasiun'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('approval.kepala.reject');
 
 
 
@@ -741,14 +760,8 @@ Route::get(
         'index'
     ]
 )
-->name('surat.approval')
-->middleware('auth');
-
-
-
-
-
-
+->middleware('auth')
+->name('surat.approval');
 
 
 

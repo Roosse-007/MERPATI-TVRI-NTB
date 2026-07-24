@@ -1,7 +1,190 @@
+@extends('layouts.app')
+
+@section('title','Approval Surat')
+
+
+@section('content')
+
+
+<div class="max-w-7xl mx-auto">
+
+
+
+{{-- HEADER --}}
+
+<div class="mb-8">
+
+<h1 class="
+text-4xl
+font-black
+text-slate-800
+">
+
+<i class="fa-solid fa-circle-check text-green-600"></i>
+
+Approval Surat
+
+</h1>
+
+
+<p class="text-slate-500 mt-2">
+
+Kelola proses persetujuan surat MERPATI TVRI NTB
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+{{-- STATISTIK --}}
+
+<div class="
+grid
+md:grid-cols-4
+gap-6
+mb-8
+">
+
+
+<div class="
+bg-white
+rounded-3xl
+shadow-xl
+p-6
+">
+
+<p class="text-slate-500">
+Total Surat
+</p>
+
+
+<h2 class="text-3xl font-black">
+
+{{ $totalSurat }}
+
+</h2>
+
+</div>
+
+
+
+
+
+<div class="
+bg-yellow-50
+rounded-3xl
+shadow-xl
+p-6
+">
+
+<p class="text-yellow-700">
+
+Menunggu
+
+</p>
+
+
+<h2 class="
+text-3xl
+font-black
+text-yellow-700
+">
+
+{{ $menunggu }}
+
+</h2>
+
+</div>
+
+
+
+
+
+<div class="
+bg-green-50
+rounded-3xl
+shadow-xl
+p-6
+">
+
+
+<p class="text-green-700">
+
+Disetujui
+
+</p>
+
+
+<h2 class="
+text-3xl
+font-black
+text-green-700
+">
+
+{{ $disetujui }}
+
+</h2>
+
+
+</div>
+
+
+
+
+
+<div class="
+bg-red-50
+rounded-3xl
+shadow-xl
+p-6
+">
+
+
+<p class="text-red-700">
+
+Ditolak
+
+</p>
+
+
+<h2 class="
+text-3xl
+font-black
+text-red-700
+">
+
+{{ $ditolak }}
+
+</h2>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
 <div class="space-y-6">
 
 
+
 @forelse($surat as $item)
+
 
 
 <div class="
@@ -15,7 +198,10 @@ p-8
 
 
 
-{{-- HEADER --}}
+
+
+{{-- HEADER SURAT --}}
+
 
 <div class="
 flex
@@ -23,6 +209,7 @@ justify-between
 items-start
 gap-5
 ">
+
 
 
 <div>
@@ -44,13 +231,15 @@ text-slate-800
 
 Nomor Surat :
 
-<span class="font-bold text-slate-700">
+<span class="font-bold">
 
 {{ $item->nomor_surat }}
 
 </span>
 
+
 </p>
+
 
 
 
@@ -67,6 +256,7 @@ Pengirim :
 </p>
 
 
+
 </div>
 
 
@@ -77,33 +267,50 @@ Pengirim :
 
 {{-- STATUS --}}
 
-<span
-class="
+
+@php
+
+$status = $item->status;
+
+@endphp
+
+
+
+<span class="
 px-5
 py-2
 rounded-full
 font-bold
 text-sm
 
-@if($item->status == 'Menunggu Verifikasi KPP')
+
+@if(
+str_contains($status,'KPP')
+)
 
 bg-yellow-100
 text-yellow-700
 
 
-@elseif($item->status == 'Menunggu Paraf KTU')
+@elseif(
+str_contains($status,'KTU')
+)
 
 bg-blue-100
 text-blue-700
 
 
-@elseif($item->status == 'Menunggu Persetujuan Kepala Stasiun')
+@elseif(
+str_contains($status,'Kepala')
+)
 
 bg-purple-100
 text-purple-700
 
 
-@elseif($item->status == 'Disetujui')
+@elseif(
+$status == 'Disetujui'
+)
 
 bg-green-100
 text-green-700
@@ -120,22 +327,22 @@ text-red-700
 ">
 
 
-@if($item->status == 'Menunggu Verifikasi KPP')
+@if(str_contains($status,'KPP'))
 
 <i class="fa-solid fa-clock"></i>
 
 
-@elseif($item->status == 'Menunggu Paraf KTU')
+@elseif(str_contains($status,'KTU'))
 
 <i class="fa-solid fa-pen"></i>
 
 
-@elseif($item->status == 'Menunggu Persetujuan Kepala Stasiun')
+@elseif(str_contains($status,'Kepala'))
 
 <i class="fa-solid fa-user-check"></i>
 
 
-@elseif($item->status == 'Disetujui')
+@elseif($status == 'Disetujui')
 
 <i class="fa-solid fa-check"></i>
 
@@ -148,14 +355,17 @@ text-red-700
 @endif
 
 
-{{ $item->status }}
+{{ $status }}
 
 
 </span>
 
 
 
+
 </div>
+
+
 
 
 
@@ -167,18 +377,25 @@ text-red-700
 
 
 
-{{-- BUTTON --}}
-
-
-<div class="flex flex-wrap gap-4">
 
 
 
+{{-- AKSI --}}
 
 
-{{-- DETAIL --}}
+<div class="
+flex
+flex-wrap
+gap-4
+">
 
-<a href="{{ route('surat.detail',$item->id) }}"
+
+
+
+
+<a
+
+href="{{ route('surat.detail',$item->id) }}"
 
 class="
 px-6
@@ -188,7 +405,9 @@ bg-slate-100
 font-bold
 hover:bg-slate-200
 transition
-">
+"
+
+>
 
 <i class="fa-solid fa-eye"></i>
 
@@ -204,10 +423,14 @@ Detail
 
 
 
-{{-- ================= KPP ================= --}}
+{{-- KPP --}}
 
 
-@if($item->status == 'Menunggu Verifikasi KPP')
+@if(
+$item->status == 'Menunggu Verifikasi KPP'
+||
+$item->status == 'Menunggu Approval KPP'
+)
 
 
 
@@ -218,9 +441,7 @@ action="{{ route('approval.kpp.approve',$item->id) }}">
 @csrf
 
 
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
@@ -232,7 +453,7 @@ hover:bg-green-700
 
 <i class="fa-solid fa-check"></i>
 
-Verifikasi KPP
+Setujui KPP
 
 </button>
 
@@ -250,24 +471,13 @@ action="{{ route('approval.kpp.reject',$item->id) }}">
 @csrf
 
 
-<input
-type="hidden"
-name="catatan"
-value="Ditolak oleh KPP"
->
-
-
-
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
 bg-red-600
 text-white
 font-bold
-hover:bg-red-700
 ">
 
 <i class="fa-solid fa-xmark"></i>
@@ -280,8 +490,6 @@ Tolak
 </form>
 
 
-
-
 @endif
 
 
@@ -290,10 +498,15 @@ Tolak
 
 
 
-{{-- ================= KTU ================= --}}
+{{-- KTU --}}
 
 
-@if($item->status == 'Menunggu Paraf KTU')
+
+@if(
+$item->status == 'Menunggu Paraf KTU'
+||
+$item->status == 'Menunggu Approval KTU'
+)
 
 
 
@@ -304,16 +517,13 @@ action="{{ route('approval.ktu.approve',$item->id) }}">
 @csrf
 
 
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
 bg-blue-600
 text-white
 font-bold
-hover:bg-blue-700
 ">
 
 <i class="fa-solid fa-pen"></i>
@@ -328,7 +538,6 @@ Paraf KTU
 
 
 
-
 <form method="POST"
 
 action="{{ route('approval.ktu.reject',$item->id) }}">
@@ -336,26 +545,14 @@ action="{{ route('approval.ktu.reject',$item->id) }}">
 @csrf
 
 
-<input
-type="hidden"
-name="catatan"
-value="Ditolak oleh KTU"
->
-
-
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
 bg-red-600
 text-white
 font-bold
-hover:bg-red-700
 ">
-
-<i class="fa-solid fa-xmark"></i>
 
 Tolak
 
@@ -363,8 +560,6 @@ Tolak
 
 
 </form>
-
-
 
 
 @endif
@@ -375,12 +570,15 @@ Tolak
 
 
 
-
-{{-- ================= KEPALA STASIUN ================= --}}
-
+{{-- KEPALA STASIUN --}}
 
 
-@if($item->status == 'Menunggu Persetujuan Kepala Stasiun')
+
+@if(
+$item->status == 'Menunggu Persetujuan Kepala Stasiun'
+||
+$item->status == 'Menunggu Approval Kepala Stasiun'
+)
 
 
 
@@ -391,27 +589,23 @@ action="{{ route('approval.kepala.approve',$item->id) }}">
 @csrf
 
 
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
 bg-purple-600
 text-white
 font-bold
-hover:bg-purple-700
 ">
 
 <i class="fa-solid fa-signature"></i>
 
-Setujui Kepala Stasiun
+Setujui Kepala
 
 </button>
 
 
 </form>
-
 
 
 
@@ -424,26 +618,14 @@ action="{{ route('approval.kepala.reject',$item->id) }}">
 @csrf
 
 
-<input
-type="hidden"
-name="catatan"
-value="Ditolak oleh Kepala Stasiun"
->
-
-
-<button
-
-class="
+<button class="
 px-6
 py-3
 rounded-xl
 bg-red-600
 text-white
 font-bold
-hover:bg-red-700
 ">
-
-<i class="fa-solid fa-xmark"></i>
 
 Tolak
 
@@ -453,10 +635,7 @@ Tolak
 </form>
 
 
-
 @endif
-
-
 
 
 
@@ -468,7 +647,13 @@ Tolak
 
 
 
-{{-- DETAIL APPROVAL --}}
+
+
+
+
+{{-- RIWAYAT APPROVAL --}}
+
+
 
 @if($item->approvals->count())
 
@@ -482,10 +667,12 @@ p-5
 
 
 <h3 class="
-font-bold
+font-black
 text-slate-700
-mb-3
+mb-4
 ">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
 
 Riwayat Approval
 
@@ -493,25 +680,38 @@ Riwayat Approval
 
 
 
-@foreach($item->approvals as $approval)
 
+
+@foreach($item->approvals as $approval)
 
 
 <div class="
 flex
 justify-between
-text-sm
-py-2
 border-b
+py-3
 last:border-0
 ">
 
 
-<span>
+<div>
+
+<p class="font-bold">
 
 {{ $approval->approver->name ?? '-' }}
 
-</span>
+</p>
+
+
+<p class="text-xs text-slate-500">
+
+{{ $approval->approved_at }}
+
+</p>
+
+
+</div>
+
 
 
 
@@ -543,7 +743,9 @@ text-yellow-600
 </div>
 
 
+
 @endforeach
+
 
 
 </div>
@@ -554,7 +756,12 @@ text-yellow-600
 
 
 
+
+
+
 </div>
+
+
 
 
 
@@ -579,7 +786,6 @@ text-slate-300
 "></i>
 
 
-
 <p class="
 mt-4
 font-bold
@@ -591,7 +797,6 @@ Tidak ada surat menunggu approval.
 </p>
 
 
-
 </div>
 
 
@@ -600,4 +805,11 @@ Tidak ada surat menunggu approval.
 
 
 
+
 </div>
+
+
+</div>
+
+
+@endsection

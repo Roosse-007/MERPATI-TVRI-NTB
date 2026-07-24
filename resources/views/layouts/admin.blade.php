@@ -9,20 +9,49 @@
 
 
 <title>
-@yield('title') | MERPATI TVRI NTB
+    @yield('title') | MERPATI TVRI NTB
 </title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+{{-- Font Awesome --}}
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 
+
+{{-- Bootstrap --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+
+
+{{-- Bootstrap Icons --}}
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+
+{{-- SweetAlert --}}
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
+
+{{-- Chart JS --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-@vite(['resources/css/app.css','resources/js/app.js'])
+
+{{-- Vite --}}
+@vite([
+'resources/css/app.css',
+'resources/js/app.js'
+])
+
+
+
+@stack('styles')
 
 
 
@@ -34,6 +63,7 @@ body{
     background:#f4f6f9;
 
 }
+
 
 
 /* SIDEBAR */
@@ -72,13 +102,15 @@ body{
 }
 
 
+
 /* LOGO */
 
 .sidebar-logo{
 
     padding:25px;
 
-    border-bottom:1px solid rgba(255,255,255,.2);
+    border-bottom:
+    1px solid rgba(255,255,255,.2);
 
 }
 
@@ -102,6 +134,9 @@ body{
 
 
 
+
+
+
 /* MENU */
 
 .sidebar-menu{
@@ -111,6 +146,7 @@ body{
     padding-top:15px;
 
 }
+
 
 
 .sidebar a{
@@ -136,9 +172,11 @@ body{
 }
 
 
+
 .sidebar a:hover{
 
-    background:rgba(255,255,255,.15);
+    background:
+    rgba(255,255,255,.15);
 
     transform:translateX(8px);
 
@@ -146,11 +184,11 @@ body{
 
 
 
-/* LABEL MENU */
 
 .menu-title{
 
-    padding:15px 25px 5px;
+    padding:
+    15px 25px 5px;
 
     color:#bfdbfe;
 
@@ -164,7 +202,6 @@ body{
 
 
 
-/* FOOTER */
 
 
 .sidebar-footer{
@@ -181,6 +218,8 @@ body{
     border-radius:20px;
 
 }
+
+
 
 
 
@@ -217,11 +256,11 @@ footer{
 }
 
 
+
 </style>
 
 
 </head>
-
 
 
 
@@ -230,7 +269,7 @@ footer{
 
 
 
-<!-- SIDEBAR -->
+{{-- SIDEBAR --}}
 
 
 <div class="sidebar">
@@ -238,7 +277,6 @@ footer{
 
 
 <div class="sidebar-logo">
-
 
 <h1>
 MERPATI
@@ -260,7 +298,7 @@ TVRI NTB
 
 
 
-{{-- DASHBOARD --}}
+
 
 <a href="/admin/dashboard">
 
@@ -273,16 +311,11 @@ Dashboard
 
 
 
-{{-- =====================
-MENU SURAT
-===================== --}}
-
 
 <div class="menu-title">
-
 SURAT
-
 </div>
+
 
 
 
@@ -296,6 +329,8 @@ Kotak Masuk
 
 
 
+
+
 <a href="/surat/draft">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -303,6 +338,8 @@ Kotak Masuk
 Draft
 
 </a>
+
+
 
 
 
@@ -316,6 +353,8 @@ Surat Baru
 
 
 
+
+
 <a href="/surat/approval">
 
 <i class="bi bi-check-circle fs-5"></i>
@@ -323,6 +362,8 @@ Surat Baru
 Approval
 
 </a>
+
+
 
 
 
@@ -336,6 +377,8 @@ Disposisi
 
 
 
+
+
 <a href="/surat/arsip">
 
 <i class="bi bi-archive fs-5"></i>
@@ -343,6 +386,8 @@ Disposisi
 Arsip
 
 </a>
+
+
 
 
 
@@ -359,17 +404,13 @@ Profil
 
 
 
-{{-- =====================
-ADMIN
-===================== --}}
-
-
 
 <div class="menu-title">
 
 ADMINISTRATOR
 
 </div>
+
 
 
 
@@ -385,6 +426,7 @@ Kelola User
 
 
 
+
 <a href="/admin/template-surat">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -392,6 +434,7 @@ Kelola User
 Template Surat
 
 </a>
+
 
 
 
@@ -407,6 +450,7 @@ Nomor Surat
 
 
 
+
 <a href="/admin/laporan">
 
 <i class="bi bi-file-earmark-bar-graph fs-5"></i>
@@ -414,6 +458,7 @@ Nomor Surat
 Laporan
 
 </a>
+
 
 
 
@@ -429,6 +474,7 @@ Grafik
 
 
 
+
 <a href="/admin/monitoring">
 
 <i class="bi bi-activity fs-5"></i>
@@ -436,6 +482,7 @@ Grafik
 Monitoring
 
 </a>
+
 
 
 
@@ -458,23 +505,17 @@ Setting
 
 
 
+
 <div class="sidebar-footer">
 
-
 <small>
-
 Sistem E-Surat
-
 </small>
-
 
 <br>
 
-
 <b>
-
 TVRI NTB
-
 </b>
 
 
@@ -482,7 +523,6 @@ TVRI NTB
 
 
 
-
 </div>
 
 
@@ -491,7 +531,8 @@ TVRI NTB
 
 
 
-<!-- CONTENT -->
+{{-- CONTENT --}}
+
 
 
 <div class="content">
@@ -516,15 +557,14 @@ TVRI NTB
 
 
 
+
 <div class="ms-auto d-flex align-items-center">
 
 
 
 <button class="btn btn-light me-3">
 
-
 <i class="bi bi-bell"></i>
-
 
 </button>
 
@@ -575,13 +615,9 @@ class="rounded-circle"
 
 <footer>
 
-
-© {{date('Y')}} MERPATI TVRI NTB
-
+© {{ date('Y') }} MERPATI TVRI NTB
 
 </footer>
-
-
 
 
 
@@ -592,11 +628,81 @@ class="rounded-circle"
 
 
 
+
+{{-- Bootstrap JS --}}
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
-</body>
+{{-- SweetAlert JS --}}
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+@stack('scripts')
+
+
+
+
+
+
+@if(session('success'))
+
+<script>
+
+Swal.fire({
+
+toast:true,
+
+position:'top-end',
+
+icon:'success',
+
+title:"{{ session('success') }}",
+
+showConfirmButton:false,
+
+timer:2500,
+
+timerProgressBar:true
+
+});
+
+</script>
+
+@endif
+
+
+
+
+
+
+@if(session('error'))
+
+<script>
+
+Swal.fire({
+
+icon:'error',
+
+title:'Terjadi Kesalahan',
+
+text:"{{ session('error') }}",
+
+confirmButtonColor:'#dc2626'
+
+});
+
+</script>
+
+@endif
+
+
+
+
+
+</body>
 
 </html>

@@ -7,150 +7,193 @@
 @section('content')
 
 
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto px-8 py-8">
+<div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">    
+        {{-- Header --}}
+        <div class="px-8 py-6 border-b bg-gradient-to-r from-blue-50 to-white">
+
+            <h1 class="text-3xl font-black text-slate-800">
+                Surat Baru
+            </h1>
+
+            <p class="text-slate-500 mt-1">
+                Sistem Informasi Surat Digital TVRI NTB
+            </p>
+
+        </div>
 
 
-{{-- HEADER --}}
-
-<div class="mb-8">
-
-<h1 class="
-text-4xl
-font-black
-text-slate-800
-">
-✉️ Buat Surat Baru
-</h1>
 
 
-<p class="
-text-slate-500
-mt-2
-">
-Buat surat resmi melalui sistem MERPATI TVRI NTB
-</p>
 
+
+    <form
+        action="{{ route('surat.store') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        class="p-8 space-y-10"
+    >
+
+        @csrf
+
+        {{-- ===================== INFORMASI SURAT ===================== --}}
+        <div class="rounded-2xl border border-slate-200 overflow-hidden">
+
+            <div class="px-6 py-4 bg-slate-50 border-b">
+                <h2 class="text-xl font-bold text-slate-800">
+                    📄 Informasi Surat
+                </h2>
+            </div>
+
+            <div class="p-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+
+    {{-- Jenis Surat --}}
+    <div>
+        <label class="font-semibold">
+            Jenis Surat
+        </label>
+
+        <select
+            name="jenis_surat_id"
+            required
+            class="mt-2 w-full rounded-2xl bg-slate-100 px-5 py-4">
+
+            <option value="">
+                -- Pilih Jenis Surat --
+            </option>
+
+            @foreach($jenisSurat as $jenis)
+
+                <option value="{{ $jenis->id }}">
+                    {{ $jenis->nama_jenis }}
+                </option>
+
+            @endforeach
+
+        </select>
+    </div>
+
+{{-- Nomor Surat --}}
+<div>
+
+    <label class="font-semibold">
+        Nomor Surat
+    </label>
+
+    @php
+        $bulanRomawi = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII',
+        ];
+
+        $suffix = '/II.26/' . $bulanRomawi[now()->month] . '/' . now()->year;
+    @endphp
+
+    <div class="flex mt-2">
+
+        <input
+            type="text"
+            id="nomor_awal"
+            name="nomor_awal"
+            required
+            placeholder="885/PB.01.02"
+            class="w-64 rounded-l-2xl bg-slate-100 px-5 py-4 border-r-0">
+
+        <div
+            class="flex items-center px-5 bg-slate-200 rounded-r-2xl font-semibold text-slate-700 whitespace-nowrap">
+
+            {{ $suffix }}
+
+        </div>
+
+    </div>
+
+    <input
+        type="hidden"
+        id="nomor_surat"
+        name="nomor_surat">
 
 </div>
 
+    {{-- Tanggal --}}
+    <div>
 
+        <label class="font-semibold">
+            Tanggal Surat
+        </label>
 
+        <input
+            type="date"
+            name="tanggal_surat"
+            value="{{ date('Y-m-d') }}"
+            class="mt-2 w-full rounded-2xl bg-slate-100 px-5 py-4">
 
+    </div>
 
-{{-- CARD --}}
+    {{-- Sifat Surat --}}
+    <div>
 
-<div class="
-bg-white
-rounded-[32px]
-shadow-xl
-p-8
-">
+        <label class="font-semibold">
+            Sifat Surat
+        </label>
 
+        <select
+            name="sifat_surat_id"
+            required
+            class="mt-2 w-full rounded-2xl bg-slate-100 px-5 py-4">
 
+            <option value="">
+                -- Pilih Sifat Surat --
+            </option>
 
-<form
+            @foreach($sifatSurat as $sifat)
 
-action="{{ route('surat.store') }}"
+                <option value="{{ $sifat->id }}">
+                    {{ $sifat->nama_sifat }}
+                </option>
 
-method="POST"
+            @endforeach
 
-enctype="multipart/form-data"
+        </select>
 
-class="space-y-8"
+    </div>
 
->
-
-
-@csrf
-
-
-
-
-
-{{-- INFORMASI SURAT --}}
-
-
+    {{-- Deadline --}}
 <div>
 
+    <label class="font-semibold">
+        Deadline
+        <span class="text-slate-400 font-normal">(Opsional)</span>
+    </label>
 
-<h2 class="
-text-2xl
-font-black
-mb-6
-">
-Informasi Surat
-</h2>
+    <input
+        type="date"
+        name="deadline"
+        value="{{ old('deadline') }}"
+        class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-
-
-<div class="
-grid
-md:grid-cols-2
-gap-6
-">
-
-
-<div>
-
-<label class="font-semibold">
-Nomor Surat
-</label>
-
-
-<input
-
-type="text"
-
-placeholder="Nomor otomatis"
-
-readonly
-
-class="
-mt-2
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-"
-
->
+    <p class="mt-2 text-sm text-slate-500">
+        Kosongkan jika surat tidak memiliki batas waktu.
+    </p>
 
 </div>
-
-
-
-
-
-<div>
-
-
-<label class="font-semibold">
-Tanggal Surat
-</label>
-
-
-<input
-
-type="date"
-
-name="tanggal_surat"
-
-value="{{date('Y-m-d')}}"
-
-class="
-mt-2
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-"
-
->
-
-
+    
 </div>
+
 
 
 </div>
@@ -374,90 +417,9 @@ px-5
 py-4
 "
 
->
-
-
-
-
-
-<label class="
-font-semibold
-block
-mt-6
-">
-
-Ringkasan
-
-</label>
-
-
-
-<textarea
-
-name="ringkasan"
-
-rows="3"
-
-placeholder="Ringkasan surat"
-
-class="
-mt-2
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-"
-
-></textarea>
-
-
-
-
-
-
-<label class="
-font-semibold
-block
-mt-6
-">
-
-Isi Surat
-
-</label>
-
-
-
-<textarea
-
-name="isi_surat"
-
-rows="8"
-
-required
-
-placeholder="Tulis isi surat..."
-
-class="
-mt-2
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-"
-
-></textarea>
-
-
+>   
 
 </div>
-
-
-
-
-
-
 
 {{-- LAMPIRAN --}}
 
@@ -512,7 +474,7 @@ text-sm
 text-slate-500
 ">
 
-PDF maksimal 10MB
+Masukkan Docx/PDF
 
 </p>
 
@@ -525,7 +487,7 @@ type="file"
 
 name="file_surat"
 
-accept=".pdf"
+accept=".pdf,.doc,.docx"
 
 class="
 mt-5
@@ -668,5 +630,26 @@ transition
 
 </div>
 
+<script>
+const bulanRomawi = [
+    '', 'I', 'II', 'III', 'IV', 'V', 'VI',
+    'VII', 'VIII', 'IX', 'X', 'XI', 'XII'
+];
+
+const sekarang = new Date();
+
+const suffix =
+    '/II.26/' +
+    bulanRomawi[sekarang.getMonth() + 1] +
+    '/' +
+    sekarang.getFullYear();
+
+const nomorAwal = document.getElementById('nomor_awal');
+const nomorSurat = document.getElementById('nomor_surat');
+
+nomorAwal.addEventListener('input', function () {
+    nomorSurat.value = this.value + suffix;
+});
+</script>
 
 @endsection

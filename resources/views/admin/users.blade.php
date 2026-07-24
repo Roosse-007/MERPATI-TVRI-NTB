@@ -5,34 +5,116 @@
 @section('content')
 
 
-<div class="flex justify-between items-center mb-8">
+<!-- HEADER -->
+
+<div class="
+    mb-8
+    bg-gradient-to-r
+    from-blue-50
+    via-white
+    to-cyan-50
+    rounded-2xl
+    p-6
+    border
+    border-slate-200
+    shadow-sm
+">
 
 
-<div>
-
-<h1 class="text-3xl font-bold text-gray-800">
-Kelola User
-</h1>
+<div class="flex items-center justify-between">
 
 
-<p class="text-gray-500 mt-2">
-Data pengguna sistem MERPATI TVRI NTB
-</p>
+    <!-- TITLE -->
+
+    <div class="flex items-center gap-4">
+
+
+        <div class="
+            w-14
+            h-14
+            rounded-2xl
+            bg-gradient-to-br
+            from-slate-950
+            via-blue-900
+            to-blue-700
+            flex
+            items-center
+            justify-center
+            text-white
+            shadow-lg
+        ">
+
+            <i class="bi bi-people-fill text-2xl"></i>
+
+        </div>
+
+
+
+        <div>
+
+
+            <h1 class="
+                text-3xl
+                font-bold
+                text-slate-800
+            ">
+                Kelola User
+            </h1>
+
+
+            <p class="
+                text-slate-500
+                text-sm
+                mt-1
+            ">
+                Manajemen pengguna sistem MERPATI TVRI NTB
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- BUTTON -->
+
+    <button
+        onclick="openUserModal()"
+        class="
+            flex
+            items-center
+            gap-2
+            bg-gradient-to-br
+from-slate-950
+via-blue-900
+to-blue-700
+hover:from-blue-900
+hover:to-blue-600
+            text-white
+            px-6
+            py-3
+            rounded-xl
+            shadow-lg
+            transition
+            font-semibold
+        ">
+
+
+        <i class="bi bi-person-plus"></i>
+
+        Tambah User
+
+
+    </button>
+
+
 
 
 </div>
-
-
-
-<button
-onclick="openUserModal()"
-class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg shadow">
-
-
-+ Tambah User
-
-
-</button>
 
 
 </div>
@@ -44,125 +126,283 @@ class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg shadow">
 
 <!-- STATISTIK -->
 
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+
+    <!-- TOTAL USER -->
+    <div class="
+        bg-gradient-to-r from-blue-600 to-cyan-500
+        rounded-2xl
+        h-32
+        px-6
+        shadow-md
+        text-white
+    ">
 
 
-<div class="bg-white rounded-xl shadow p-6">
+        <div class="
+    flex
+    items-center
+    justify-between
+    h-full
+">
 
-<p class="text-gray-500">
-Total User
-</p>
 
-<h2 class="text-4xl font-bold text-blue-700 mt-3">
-58
-</h2>
+            <div class="text-left">
+
+
+                <p class="text-sm text-blue-100">
+                    Total User
+                </p>
+
+
+                <h2 class="
+                    text-3xl
+                    font-bold
+                    mt-1
+                ">
+                    {{ $totalUser }}
+                </h2>
+
+
+            </div>
+
+
+
+            <div class="
+                w-12
+                h-12
+                rounded-xl
+                bg-white/20
+                flex
+                items-center
+                justify-center
+            ">
+
+                <i class="bi bi-people-fill text-xl"></i>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- USER AKTIF -->
+
+    <div class="
+        bg-gradient-to-r from-emerald-500 to-green-600
+        rounded-2xl
+        h-32
+        px-6
+        shadow-md
+        text-white
+    ">
+
+
+<div class="
+    flex
+    items-center
+    justify-between
+    h-full
+">
+
+
+            <div class="text-left">
+
+
+                <p class="text-sm text-green-100">
+                    User Aktif
+                </p>
+
+
+                <h2 class="
+                    text-3xl
+                    font-bold
+                    mt-1
+                ">
+                    {{ $userAktif }}
+                </h2>
+
+
+            </div>
+
+
+
+            <div class="
+                w-12
+                h-12
+                rounded-xl
+                bg-white/20
+                flex
+                items-center
+                justify-center
+            ">
+
+
+                <i class="bi bi-person-check-fill text-xl"></i>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- NON AKTIF -->
+
+
+    <div class="
+        bg-gradient-to-r from-rose-500 to-red-600
+        rounded-2xl
+        h-32
+        px-6
+        shadow-md
+        text-white
+    ">
+
+
+        <div class="
+    flex
+    items-center
+    justify-between
+    h-full
+">
+
+
+            <div class="text-left">
+
+
+                <p class="text-sm text-red-100">
+                    Non Aktif
+                </p>
+
+
+                <h2 class="
+                    text-3xl
+                    font-bold
+                    mt-1
+                ">
+                    {{ $userNonAktif }}
+                </h2>
+
+
+            </div>
+
+
+
+            <div class="
+                w-12
+                h-12
+                rounded-xl
+                bg-white/20
+                flex
+                items-center
+                justify-center
+            ">
+
+
+                <i class="bi bi-person-x-fill text-xl"></i>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
 
 </div>
-
-
-
-
-<div class="bg-white rounded-xl shadow p-6">
-
-<p class="text-gray-500">
-User Aktif
-</p>
-
-<h2 class="text-4xl font-bold text-green-600 mt-3">
-52
-</h2>
-
-</div>
-
-
-
-
-<div class="bg-white rounded-xl shadow p-6">
-
-<p class="text-gray-500">
-Non Aktif
-</p>
-
-<h2 class="text-4xl font-bold text-red-600 mt-3">
-6
-</h2>
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <!-- FILTER -->
 
-
-<div class="bg-white rounded-xl shadow p-5 mb-6">
-
-
-<div class="grid md:grid-cols-3 gap-4">
+<div class="bg-white rounded-2xl shadow-md p-6 mb-6">
 
 
-<input
-id="searchUser"
-type="text"
-placeholder="Cari Nama..."
-class="border rounded-lg px-4 py-2">
+<form method="GET" action="{{ route('admin.users') }}">
 
 
+    <div class="flex items-center gap-4">
 
 
-
-<select
-id="filterRole"
-class="border rounded-lg px-4 py-2">
+        <div class="relative flex-1">
 
 
-<option value="Semua">
-Semua Role
-</option>
+            <i class="bi bi-search absolute left-4 top-1/2 
+                      -translate-y-1/2 text-slate-400"></i>
 
 
-<option value="Admin">
-Admin
-</option>
+            <input
+                name="search"
+                value="{{ request('search') }}"
+                type="text"
+                placeholder="Cari Divisi atau Username..."
+                class="
+                w-full
+                pl-12
+                pr-4
+                py-3
+                rounded-xl
+                border
+                border-slate-300
+                focus:ring-4
+                focus:ring-blue-100
+                focus:border-blue-500
+                outline-none
+                "
+            >
 
 
-<option value="Operator">
-Operator
-</option>
-
-
-<option value="Pimpinan">
-Pimpinan
-</option>
-
-
-</select>
+        </div>
 
 
 
+        <button
+            type="submit"
+            class="
+            px-8
+            py-3
+            rounded-xl
+            bg-blue-700
+            hover:bg-blue-800
+            text-white
+            font-semibold
+            shadow
+            transition">
 
 
-<button
-onclick="filterUser()"
-class="bg-blue-700 text-white rounded-lg">
+            <i class="bi bi-search me-2"></i>
+
+            Cari
 
 
-Cari
+        </button>
 
 
-</button>
+    </div>
 
 
-</div>
+</form>
 
 
 </div>
@@ -186,47 +426,33 @@ Cari
 
 <thead class="bg-blue-800 text-white">
 
-
 <tr>
 
-
-<th class="p-4 text-left">
-No
+<th class="px-6 py-4 text-left w-16">
+    No
 </th>
 
-
-<th class="text-left">
-Nama
+<th class="px-6 py-4 text-left">
+    Divisi
 </th>
 
-
-<th class="text-left">
-Username
+<th class="px-6 py-4 text-left">
+    Username
 </th>
 
-
-<th class="text-left">
-Email
+<th class="px-6 py-4 text-left">
+    Email
 </th>
 
-
-<th class="text-left">
-Role
+<th class="px-6 py-4 text-center w-40">
+    Status
 </th>
 
-
-<th>
-Status
+<th class="px-6 py-4 text-center w-64">
+    Aksi
 </th>
-
-
-<th>
-Aksi
-</th>
-
 
 </tr>
-
 
 </thead>
 
@@ -236,158 +462,102 @@ Aksi
 
 <tbody id="userTable">
 
+    @forelse($users as $user)
 
+    <tr class="userRow border-b hover:bg-gray-50 h-16">
 
-<tr class="userRow border-b">
-
-
-<td class="p-4">
-1
+        <td class="px-4">
+    {{ $loop->iteration }}
 </td>
 
+        <td class="px-4 nama">
+            {{ $user->name }}
+        </td>
 
-<td class="nama">
-Administrator
-</td>
+        <td class="px-4 username">
+            {{ $user->username }}
+        </td>
 
+        <td>
+            {{ $user->email }}
+        </td>
 
-<td class="username">
-admin
-</td>
+        <td class="text-center">
 
+            @if($user->is_active)
 
-<td>
-admin@tvri.go.id
-</td>
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                    Aktif
+                </span>
 
+            @else
 
-<td class="role">
+                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+                    Non Aktif
+                </span>
 
-Admin
+            @endif
 
-</td>
+        </td>
 
+      <td class="text-center align-middle">
 
-<td>
+    <div class="flex justify-center items-center gap-2">
 
-<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+        <a href="{{ route('users.edit', $user->id) }}"
+           class="inline-flex items-center gap-1
+                  bg-amber-500 hover:bg-amber-600
+                  text-white text-sm font-medium
+                  px-4 py-2 rounded-lg
+                  transition">
 
-Aktif
+            <i class="bi bi-pencil-square"></i>
+            Edit
 
-</span>
+        </a>
 
-</td>
+        <form action="{{ route('users.destroy', $user->id) }}"
+              method="POST"
+              class="delete-form inline">
 
+            @csrf
+            @method('DELETE')
 
-<td>
+            <button
+                type="button"
+                class="delete-btn inline-flex items-center gap-1
+                       bg-red-600 hover:bg-red-700
+                       text-white text-sm font-medium
+                       px-4 py-2 rounded-lg
+                       transition">
 
+                <i class="bi bi-trash"></i>
+                Hapus
 
-<button
-onclick="editUser(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
+            </button>
 
+        </form>
 
-Edit
-
-
-</button>
-
-
-
-<button
-onclick="hapusUser(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-
-Hapus
-
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-
-
-
-
-
-
-<tr class="userRow border-b">
-
-
-<td class="p-4">
-2
-</td>
-
-
-<td class="nama">
-Operator Surat
-</td>
-
-
-<td class="username">
-operator
-</td>
-
-
-<td>
-operator@tvri.go.id
-</td>
-
-
-<td class="role">
-
-Operator
+    </div>
 
 </td>
+    </tr>
 
+    @empty
 
-<td>
+    <tr>
 
-<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+        <td colspan="6" class="text-center py-6 text-gray-500">
 
-Aktif
+            Belum ada data user.
 
-</span>
+        </td>
 
-</td>
+    </tr>
 
-
-<td>
-
-
-<button
-onclick="editUser(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-Edit
-
-</button>
-
-
-<button
-onclick="hapusUser(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-Hapus
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-
-
+    @endforelse
 
 </tbody>
-
 
 </table>
 
@@ -404,63 +574,252 @@ Hapus
 
 <!-- MODAL -->
 
-
 <div
 id="userModal"
-class="hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-blue-900 to-blue-600 items-center justify-center">
+class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm items-center justify-center">
 
 
-<div class="bg-white rounded-2xl p-8 w-96 shadow-2xl">
+<div class="
+    bg-white
+    rounded-3xl
+    w-[420px]
+    shadow-2xl
+    overflow-hidden
+">
 
 
-<h2
-id="modalTitle"
-class="text-xl font-bold mb-5">
 
+<!-- HEADER MODAL -->
+
+<div class="
+    bg-gradient-to-r
+    from-slate-950
+    via-blue-900
+    to-blue-700
+    p-6
+    text-white
+">
+
+
+<div class="flex items-center gap-3">
+
+
+<div class="
+    w-12
+    h-12
+    rounded-xl
+    bg-white/20
+    flex
+    items-center
+    justify-center
+">
+
+<i class="bi bi-person-plus-fill text-2xl"></i>
+
+</div>
+
+
+
+<div>
+
+<h2 class="text-xl font-bold">
 Tambah User
-
 </h2>
 
+<p class="text-sm text-blue-100">
+Buat akun pengguna baru
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<!-- FORM -->
+
+<form action="{{ route('users.store') }}" method="POST">
+
+@csrf
+
+
+<div class="p-6 space-y-4">
+
+
+
+<!-- NAMA -->
+
+<div class="relative">
+
+<i class="bi bi-person absolute left-4 top-3.5 text-slate-400"></i>
+
+<input
+name="name"
+placeholder="Nama Lengkap"
+class="
+w-full
+pl-11
+pr-4
+py-3
+rounded-xl
+border
+border-slate-200
+focus:ring-4
+focus:ring-blue-100
+focus:border-blue-500
+outline-none
+">
+
+</div>
+
+
+
+
+
+<!-- USERNAME -->
+
+<div class="relative">
+
+<i class="bi bi-at absolute left-4 top-3.5 text-slate-400"></i>
 
 
 <input
-id="nama"
-placeholder="Nama"
-class="border w-full p-3 rounded mb-3">
-
-
-
-<input
-id="username"
+name="username"
 placeholder="Username"
-class="border w-full p-3 rounded mb-3">
+autocomplete="off"
+class="
+w-full
+pl-11
+pr-4
+py-3
+rounded-xl
+border
+border-slate-200
+focus:ring-4
+focus:ring-blue-100
+outline-none
+">
 
+
+</div>
+
+
+
+
+
+<!-- EMAIL -->
+
+<div class="relative">
+
+<i class="bi bi-envelope absolute left-4 top-3.5 text-slate-400"></i>
 
 
 <input
-id="email"
+name="email"
 placeholder="Email"
-class="border w-full p-3 rounded mb-3">
+class="
+w-full
+pl-11
+pr-4
+py-3
+rounded-xl
+border
+border-slate-200
+focus:ring-4
+focus:ring-blue-100
+outline-none
+">
 
+
+</div>
+
+
+
+
+
+<!-- PASSWORD -->
+
+<div class="relative">
+
+
+<i class="bi bi-lock absolute left-4 top-3.5 text-slate-400"></i>
+
+
+<input
+id="password"
+name="password"
+type="password"
+placeholder="Password"
+autocomplete="new-password"
+class="
+w-full
+pl-11
+pr-12
+py-3
+rounded-xl
+border
+border-slate-200
+focus:ring-4
+focus:ring-blue-100
+outline-none
+">
+
+
+<button
+type="button"
+onclick="togglePassword()"
+class="
+absolute
+right-4
+top-3.5
+text-slate-400
+">
+
+
+<i id="eyeIcon" class="bi bi-eye"></i>
+
+
+</button>
+
+
+</div>
+
+
+
+
+
+<!-- STATUS -->
 
 
 <select
-id="role"
-class="border w-full p-3 rounded mb-3">
+name="is_active"
+class="
+w-full
+px-4
+py-3
+rounded-xl
+border
+border-slate-200
+focus:ring-4
+focus:ring-blue-100
+outline-none
+">
 
 
-<option>
-Admin
+<option value="1">
+Aktif
 </option>
 
 
-<option>
-Operator
-</option>
-
-
-<option>
-Pimpinan
+<option value="0">
+Tidak Aktif
 </option>
 
 
@@ -468,21 +827,57 @@ Pimpinan
 
 
 
-<button
-onclick="simpanUser()"
-class="bg-blue-700 text-white px-5 py-2 rounded">
 
+
+<!-- BUTTON -->
+
+
+<div class="flex gap-3 pt-3">
+
+
+<button
+type="submit"
+class="
+flex-1
+flex
+items-center
+justify-center
+gap-2
+bg-gradient-to-br
+from-slate-950
+via-blue-900
+to-blue-700
+hover:from-blue-900
+hover:to-blue-600
+text-white
+py-3.5
+rounded-2xl
+font-semibold
+shadow-lg
+transition
+duration-300
+hover:scale-[1.03]
+">
+
+<i class="bi bi-save text-lg"></i>
 
 Simpan
-
 
 </button>
 
 
 
+
 <button
+type="button"
 onclick="closeUserModal()"
-class="bg-gray-300 px-5 py-2 rounded">
+class="
+px-6
+bg-slate-200
+text-slate-700
+rounded-xl
+hover:bg-slate-300
+">
 
 
 Batal
@@ -497,21 +892,17 @@ Batal
 </div>
 
 
+</form>
 
 
+</div>
 
 
+</div>
 
 
 
 <script>
-
-
-let editMode=false;
-
-let editRow=null;
-
-
 
 function openUserModal(){
 
@@ -530,6 +921,61 @@ document.getElementById('userModal')
 document.getElementById('userModal')
 .classList.add('flex');
 
+function openUserModal(){
+
+editMode=false;
+
+document.getElementById('modalTitle').innerHTML=
+"Tambah User";
+
+
+// kosongkan form saat buka modal
+document.getElementById('username').value = "";
+document.getElementById('email').value = "";
+document.getElementById('password').value = "";
+
+
+document.getElementById('userModal')
+.classList.remove('hidden');
+
+
+document.getElementById('userModal')
+.classList.add('flex');
+
+}
+
+
+}
+
+// TAMBAHKAN DISINI
+
+function togglePassword(){
+
+    let password =
+    document.getElementById('password');
+
+
+    let icon =
+    document.getElementById('eyeIcon');
+
+
+    if(password.type === "password"){
+
+        password.type = "text";
+
+        icon.classList.remove('bi-eye');
+
+        icon.classList.add('bi-eye-slash');
+
+    }else{
+
+        password.type = "password";
+
+        icon.classList.remove('bi-eye-slash');
+
+        icon.classList.add('bi-eye');
+
+    }
 
 }
 
@@ -564,9 +1010,10 @@ document.getElementById('username').value;
 let email =
 document.getElementById('email').value;
 
+let password =
+document.getElementById('password').value;
 
-let role =
-document.getElementById('role').value;
+
 
 
 
@@ -611,7 +1058,7 @@ ${email}
 </td>
 
 <td class="role">
-${role}
+-
 </td>
 
 <td>
@@ -624,22 +1071,6 @@ Aktif
 
 
 <td>
-
-<button onclick="editUser(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-Edit
-
-</button>
-
-
-<button onclick="hapusUser(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-Hapus
-
-</button>
-
 
 </td>
 
@@ -656,71 +1087,6 @@ closeUserModal();
 
 
 }
-
-
-
-
-
-
-
-function editUser(btn){
-
-
-editMode=true;
-
-
-editRow=
-btn.closest('tr');
-
-
-
-document.getElementById('modalTitle').innerHTML=
-"Edit User";
-
-
-document.getElementById('nama').value=
-editRow.querySelector('.nama').innerText;
-
-
-document.getElementById('username').value=
-editRow.querySelector('.username').innerText;
-
-
-
-document.getElementById('role').value=
-editRow.querySelector('.role').innerText;
-
-
-
-openUserModal();
-
-
-}
-
-
-
-
-
-
-function hapusUser(btn){
-
-
-if(confirm("Yakin hapus user?")){
-
-
-btn.closest('tr').remove();
-
-
-}
-
-
-}
-
-
-
-
-
-
 
 
 function filterUser(){
@@ -790,3 +1156,34 @@ row.style.display="none";
 
 
 @endsection
+
+@push('scripts')
+<script>
+document.querySelectorAll('.delete-btn').forEach(button => {
+
+    button.addEventListener('click', function () {
+
+        const form = this.closest('.delete-form');
+
+        Swal.fire({
+            title: 'Hapus User?',
+            text: 'User ini akan dihapus permanen.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#dc2626'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+
+    });
+
+});
+</script>
+
+@endpush
+
+

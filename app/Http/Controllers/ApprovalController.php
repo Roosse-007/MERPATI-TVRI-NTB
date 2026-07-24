@@ -6,6 +6,7 @@ use App\Models\Approval;
 use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class ApprovalController extends Controller
@@ -21,39 +22,45 @@ class ApprovalController extends Controller
     public function index()
     {
 
+
         $totalSurat = Surat::count();
 
 
 
-        $menunggu = Surat::whereIn('status',[
+        $menunggu = Surat::whereIn(
+            'status',
+            [
 
-            'Menunggu Verifikasi KPP',
+                'Menunggu Verifikasi KPP',
 
-            'Menunggu Paraf KTU',
+                'Menunggu Paraf KTU',
 
-            'Menunggu Persetujuan Kepala Stasiun'
+                'Menunggu Persetujuan Kepala Stasiun'
 
-        ])->count();
+            ]
+        )
+        ->count();
+
 
 
 
         $disetujui = Surat::where(
-
             'status',
-
             'Disetujui'
+        )
+        ->count();
 
-        )->count();
+
 
 
 
         $ditolak = Surat::where(
-
             'status',
-
             'Ditolak'
+        )
+        ->count();
 
-        )->count();
+
 
 
 
@@ -69,15 +76,18 @@ class ApprovalController extends Controller
 
         ])
 
-        ->whereIn('status',[
+        ->whereIn(
+            'status',
+            [
 
-            'Menunggu Verifikasi KPP',
+                'Menunggu Verifikasi KPP',
 
-            'Menunggu Paraf KTU',
+                'Menunggu Paraf KTU',
 
-            'Menunggu Persetujuan Kepala Stasiun'
+                'Menunggu Persetujuan Kepala Stasiun'
 
-        ])
+            ]
+        )
 
         ->latest()
 
@@ -87,25 +97,24 @@ class ApprovalController extends Controller
 
 
 
+
         return view(
-
             'surat.approval',
+            [
 
-            compact(
+                'totalSurat'=>$totalSurat,
 
-                'totalSurat',
+                'menunggu'=>$menunggu,
 
-                'menunggu',
+                'disetujui'=>$disetujui,
 
-                'disetujui',
+                'ditolak'=>$ditolak,
 
-                'ditolak',
+                'surat'=>$surat
 
-                'surat'
-
-            )
-
+            ]
         );
+
 
     }
 
@@ -116,31 +125,19 @@ class ApprovalController extends Controller
 
 
 
+
     /*
     |--------------------------------------------------------------------------
-    | APPROVAL KPP
+    | KPP
     |--------------------------------------------------------------------------
     */
+
 
     public function approveKpp($id)
     {
 
+
         $surat = Surat::findOrFail($id);
-
-
-
-        if($surat->status !== 'Menunggu Verifikasi KPP')
-        {
-
-            return back()->with(
-
-                'error',
-
-                'Status surat tidak sesuai.'
-
-            );
-
-        }
 
 
 
@@ -157,7 +154,9 @@ class ApprovalController extends Controller
 
             'approved_at'=>now()
 
+
         ]);
+
 
 
 
@@ -165,9 +164,12 @@ class ApprovalController extends Controller
 
         $surat->update([
 
+
             'status'=>'Menunggu Paraf KTU'
 
+
         ]);
+
 
 
 
@@ -181,6 +183,7 @@ class ApprovalController extends Controller
 
         );
 
+
     }
 
 
@@ -190,7 +193,10 @@ class ApprovalController extends Controller
 
 
 
-    public function rejectKpp(Request $request,$id)
+    public function rejectKpp(
+        Request $request,
+        $id
+    )
     {
 
 
@@ -198,19 +204,27 @@ class ApprovalController extends Controller
 
 
 
+
         Approval::create([
+
 
             'surat_id'=>$surat->id,
 
+
             'approver_id'=>Auth::id(),
+
 
             'urutan'=>1,
 
+
             'status'=>'Ditolak',
+
 
             'catatan'=>$request->catatan,
 
+
             'approved_at'=>now()
+
 
         ]);
 
@@ -218,11 +232,15 @@ class ApprovalController extends Controller
 
 
 
+
         $surat->update([
+
 
             'status'=>'Ditolak',
 
+
             'catatan'=>$request->catatan
+
 
         ]);
 
@@ -238,7 +256,9 @@ class ApprovalController extends Controller
 
         );
 
+
     }
+
 
 
 
@@ -250,29 +270,16 @@ class ApprovalController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | APPROVAL KTU
+    | KTU
     |--------------------------------------------------------------------------
     */
+
 
     public function approveKtu($id)
     {
 
+
         $surat = Surat::findOrFail($id);
-
-
-
-        if($surat->status !== 'Menunggu Paraf KTU')
-        {
-
-            return back()->with(
-
-                'error',
-
-                'Status surat tidak sesuai.'
-
-            );
-
-        }
 
 
 
@@ -280,17 +287,24 @@ class ApprovalController extends Controller
 
         Approval::create([
 
+
             'surat_id'=>$surat->id,
+
 
             'approver_id'=>Auth::id(),
 
+
             'urutan'=>2,
+
 
             'status'=>'Disetujui',
 
+
             'approved_at'=>now()
 
+
         ]);
+
 
 
 
@@ -299,9 +313,12 @@ class ApprovalController extends Controller
 
         $surat->update([
 
+
             'status'=>'Menunggu Persetujuan Kepala Stasiun'
 
+
         ]);
+
 
 
 
@@ -315,6 +332,7 @@ class ApprovalController extends Controller
 
         );
 
+
     }
 
 
@@ -323,7 +341,13 @@ class ApprovalController extends Controller
 
 
 
-    public function rejectKtu(Request $request,$id)
+
+
+
+    public function rejectKtu(
+        Request $request,
+        $id
+    )
     {
 
 
@@ -331,21 +355,32 @@ class ApprovalController extends Controller
 
 
 
+
+
+
         Approval::create([
+
 
             'surat_id'=>$surat->id,
 
+
             'approver_id'=>Auth::id(),
+
 
             'urutan'=>2,
 
+
             'status'=>'Ditolak',
+
 
             'catatan'=>$request->catatan,
 
+
             'approved_at'=>now()
 
+
         ]);
+
 
 
 
@@ -353,11 +388,16 @@ class ApprovalController extends Controller
 
         $surat->update([
 
+
             'status'=>'Ditolak',
+
 
             'catatan'=>$request->catatan
 
+
         ]);
+
+
 
 
 
@@ -371,6 +411,7 @@ class ApprovalController extends Controller
 
         );
 
+
     }
 
 
@@ -383,29 +424,16 @@ class ApprovalController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | APPROVAL KEPALA STASIUN
+    | KEPALA STASIUN
     |--------------------------------------------------------------------------
     */
+
 
     public function approveKepalaStasiun($id)
     {
 
+
         $surat = Surat::findOrFail($id);
-
-
-
-        if($surat->status !== 'Menunggu Persetujuan Kepala Stasiun')
-        {
-
-            return back()->with(
-
-                'error',
-
-                'Status surat tidak sesuai.'
-
-            );
-
-        }
 
 
 
@@ -414,17 +442,25 @@ class ApprovalController extends Controller
 
         Approval::create([
 
+
             'surat_id'=>$surat->id,
+
 
             'approver_id'=>Auth::id(),
 
+
             'urutan'=>3,
+
 
             'status'=>'Disetujui',
 
+
             'approved_at'=>now()
 
+
         ]);
+
+
 
 
 
@@ -432,11 +468,16 @@ class ApprovalController extends Controller
 
         $surat->update([
 
+
             'status'=>'Disetujui',
+
 
             'tanggal_selesai'=>now()
 
+
         ]);
+
+
 
 
 
@@ -450,6 +491,7 @@ class ApprovalController extends Controller
 
         );
 
+
     }
 
 
@@ -460,7 +502,10 @@ class ApprovalController extends Controller
 
 
 
-    public function rejectKepalaStasiun(Request $request,$id)
+    public function rejectKepalaStasiun(
+        Request $request,
+        $id
+    )
     {
 
 
@@ -468,21 +513,34 @@ class ApprovalController extends Controller
 
 
 
+
+
+
+
         Approval::create([
+
 
             'surat_id'=>$surat->id,
 
+
             'approver_id'=>Auth::id(),
+
 
             'urutan'=>3,
 
+
             'status'=>'Ditolak',
+
 
             'catatan'=>$request->catatan,
 
+
             'approved_at'=>now()
 
+
         ]);
+
+
 
 
 
@@ -490,11 +548,17 @@ class ApprovalController extends Controller
 
         $surat->update([
 
+
             'status'=>'Ditolak',
+
 
             'catatan'=>$request->catatan
 
+
         ]);
+
+
+
 
 
 
@@ -508,7 +572,10 @@ class ApprovalController extends Controller
 
         );
 
+
     }
+
+
 
 
 }
