@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 <div class="flex justify-between items-center mb-8">
 
     <div>
@@ -18,585 +19,418 @@
 
     </div>
 
+
     <button
     onclick="openNomorModal()"
     class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg shadow transition hover:-translate-y-1">
 
-    + Tambah Nomor Surat
+        + Tambah Nomor Surat
 
     </button>
 
+
 </div>
+
+
+
+
 
 <!-- Card Statistik -->
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-    <div class="bg-white rounded-xl shadow p-6">
 
-        <p class="text-gray-500">
-            Total Format
-        </p>
+<div class="bg-white rounded-xl shadow p-6">
 
-        <h2 class="text-4xl font-bold text-blue-700 mt-3">
-            15
-        </h2>
+<p class="text-gray-500">
+Total Format
+</p>
 
-    </div>
+<h2 class="text-4xl font-bold text-blue-700 mt-3">
 
-    <div class="bg-white rounded-xl shadow p-6">
+{{ $totalFormat }}
 
-        <p class="text-gray-500">
-            Tahun Aktif
-        </p>
-
-        <h2 class="text-4xl font-bold text-green-600 mt-3">
-            2026
-        </h2>
-
-    </div>
-
-    <div class="bg-white rounded-xl shadow p-6">
-
-        <p class="text-gray-500">
-            Nomor Terakhir
-        </p>
-
-        <h2 class="text-4xl font-bold text-yellow-500 mt-3">
-            00124
-        </h2>
-
-    </div>
-
-    <div class="bg-white rounded-xl shadow p-6">
-
-        <p class="text-gray-500">
-            Digunakan Hari Ini
-        </p>
-
-        <h2 class="text-4xl font-bold text-red-500 mt-3">
-            8
-        </h2>
-
-    </div>
+</h2>
 
 </div>
+
+
+
+
+
+<div class="bg-white rounded-xl shadow p-6">
+
+<p class="text-gray-500">
+Tahun Aktif
+</p>
+
+<h2 class="text-4xl font-bold text-green-600 mt-3">
+
+{{ $tahunAktif ?? '-' }}
+
+</h2>
+
+</div>
+
+
+
+
+
+
+<div class="bg-white rounded-xl shadow p-6">
+
+<p class="text-gray-500">
+Nomor Terakhir
+</p>
+
+
+<h2 class="text-4xl font-bold text-yellow-500 mt-3">
+
+{{ str_pad($nomorTerakhir ?? 0,5,'0',STR_PAD_LEFT) }}
+
+</h2>
+
+
+</div>
+
+
+
+
+
+
+<div class="bg-white rounded-xl shadow p-6">
+
+<p class="text-gray-500">
+Digunakan Hari Ini
+</p>
+
+
+<h2 class="text-4xl font-bold text-red-500 mt-3">
+
+{{ $digunakanHariIni }}
+
+</h2>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
 
 <!-- Filter -->
 
 <div class="bg-white rounded-xl shadow p-5 mb-6">
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-        <input
-            type="text"
-            placeholder="Cari Format..."
-            class="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-700">
+<form method="GET"
+action="{{ route('admin.nomor') }}">
 
-        <select class="border rounded-lg px-4 py-2">
 
-            <option>Semua Tahun</option>
-            <option>2026</option>
-            <option>2025</option>
-            <option>2024</option>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-        </select>
 
-        <select class="border rounded-lg px-4 py-2">
 
-            <option>Semua Status</option>
-            <option>Aktif</option>
-            <option>Nonaktif</option>
+<input
 
-        </select>
+type="text"
 
-        <button
-            class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg">
+name="search"
 
-            Cari
+value="{{ request('search') }}"
 
-        </button>
+placeholder="Cari Format..."
 
-    </div>
+class="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-700">
+
+
+
+
+
+<select name="tahun"
+class="border rounded-lg px-4 py-2">
+
+
+<option value="">
+Semua Tahun
+</option>
+
+
+@foreach($tahunList as $tahun)
+
+
+<option value="{{ $tahun }}"
+
+@if(request('tahun')==$tahun)
+selected
+@endif
+
+>
+
+{{ $tahun }}
+
+</option>
+
+
+@endforeach
+
+
+</select>
+
+
+
+
+
+<select name="status"
+
+class="border rounded-lg px-4 py-2">
+
+
+<option value="">
+Semua Status
+</option>
+
+
+<option value="Aktif"
+@if(request('status')=='Aktif')
+selected
+@endif
+>
+Aktif
+</option>
+
+
+
+<option value="Nonaktif"
+@if(request('status')=='Nonaktif')
+selected
+@endif
+>
+Nonaktif
+</option>
+
+
+
+</select>
+
+
+
+
+
+<button
+
+class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg">
+
+Cari
+
+</button>
+
+
 
 </div>
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+
 
 <!-- Table -->
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
 
-    <table class="min-w-full">
 
-        <thead class="bg-blue-800 text-white">
+<table class="min-w-full">
 
-            <tr>
 
-                <th class="px-6 py-4 text-left">
-                    No
-                </th>
+<thead class="bg-blue-800 text-white">
 
-                <th class="px-6 py-4 text-left">
-                    Format Nomor
-                </th>
 
-                <th class="px-6 py-4 text-left">
-                    Nomor Terakhir
-                </th>
+<tr>
 
-                <th class="px-6 py-4 text-left">
-                    Tahun
-                </th>
 
-                <th class="px-6 py-4 text-left">
-                    Status
-                </th>
+<th class="px-6 py-4 text-left">
+No
+</th>
 
-                <th class="px-6 py-4 text-center">
-                    Aksi
-                </th>
 
-            </tr>
+<th class="px-6 py-4 text-left">
+Format Nomor
+</th>
 
-        </thead>
 
-        <tbody>
+<th class="px-6 py-4 text-left">
+Nomor Terakhir
+</th>
 
-            <tr class="border-b hover:bg-gray-50">
 
-                <td class="px-6 py-4">
-                    1
-                </td>
+<th class="px-6 py-4 text-left">
+Tahun
+</th>
 
-                <td class="px-6 py-4 font-medium">
-                    001/TVRI/NTB/VII/2026
-                </td>
 
-                <td class="px-6 py-4">
-                    00124
-                </td>
+<th class="px-6 py-4 text-left">
+Status
+</th>
 
-                <td class="px-6 py-4">
-                    2026
-                </td>
 
-                <td class="px-6 py-4">
+<th class="px-6 py-4 text-center">
+Aksi
+</th>
 
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
 
-                        Aktif
+</tr>
 
-                    </span>
 
-                </td>
+</thead>
 
-                <td class="px-6 py-4 text-center">
 
-                    <button
-                    onclick="editNomor(this)"
-                    class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
+<tbody>
 
-                    Edit
 
-                    </button>
+@forelse($nomorSurat as $index=>$item)
 
-
-                    <button
-                    onclick="hapusNomor(this)"
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
-
-                    Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            <tr class="border-b hover:bg-gray-50">
-
-                <td class="px-6 py-4">
-                    2
-                </td>
-
-                <td class="px-6 py-4 font-medium">
-                    001/DISPOSISI/VII/2026
-                </td>
-
-                <td class="px-6 py-4">
-                    00075
-                </td>
-
-                <td class="px-6 py-4">
-                    2026
-                </td>
-
-                <td class="px-6 py-4">
-
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-
-                        Aktif
-
-                    </span>
-
-                </td>
-
-                <td class="px-6 py-4 text-center">
-
-                    <button
-                    onclick="editNomor(this)"
-                    class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
-
-                    Edit
-
-                    </button>
-
-
-                    <button
-                    onclick="hapusNomor(this)"
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
-
-                    Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            <tr class="hover:bg-gray-50">
-
-                <td class="px-6 py-4">
-                    3
-                </td>
-
-                <td class="px-6 py-4 font-medium">
-                    001/INTERNAL/2025
-                </td>
-
-                <td class="px-6 py-4">
-                    00358
-                </td>
-
-                <td class="px-6 py-4">
-                    2025
-                </td>
-
-                <td class="px-6 py-4">
-
-                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-
-                        Nonaktif
-
-                    </span>
-
-                </td>
-
-                <td class="px-6 py-4 text-center">
-
-                    <button
-                    onclick="editNomor(this)"
-                    class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
-
-                    Edit
-
-                    </button>
-
-
-                    <button
-                    onclick="hapusNomor(this)"
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
-
-                    Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</div>
-
-<!-- Pagination -->
-
-<div class="mt-6 flex justify-between items-center">
-
-    <p class="text-gray-500">
-
-        Menampilkan 1 - 3 dari 15 format nomor surat
-
-    </p>
-
-    <div class="space-x-2">
-
-        <button class="border px-4 py-2 rounded">
-
-            Sebelumnya
-
-        </button>
-
-        <button class="bg-blue-700 text-white px-4 py-2 rounded">
-
-            1
-
-        </button>
-
-        <button class="border px-4 py-2 rounded">
-
-            2
-
-        </button>
-
-        <button class="border px-4 py-2 rounded">
-
-            Selanjutnya
-
-        </button>
-
-    </div>
-
-</div>
-
-<!-- MODAL TAMBAH NOMOR SURAT -->
-
-<div
-id="nomorModal"
-class="hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-blue-900 to-blue-600 items-center justify-center z-50">
-
-
-<div class="bg-white rounded-2xl p-8 w-96 shadow-2xl">
-
-
-<h2 class="text-xl font-bold mb-5">
-
-Tambah Nomor Surat
-
-</h2>
-
-
-
-<input
-id="formatNomor"
-type="text"
-placeholder="Format Nomor Surat"
-class="border w-full p-3 rounded-lg mb-3">
-
-
-
-<input
-id="nomorTerakhir"
-type="text"
-placeholder="Nomor Terakhir"
-class="border w-full p-3 rounded-lg mb-3">
-
-
-
-<input
-id="tahunNomor"
-type="text"
-value="2026"
-placeholder="Tahun"
-class="border w-full p-3 rounded-lg mb-5">
-
-
-
-<div class="flex gap-3">
-
-
-<button
-onclick="simpanNomor()"
-class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-lg">
-
-Simpan
-
-</button>
-
-
-
-<button
-onclick="closeNomorModal()"
-class="bg-gray-300 hover:bg-gray-400 px-5 py-2 rounded-lg">
-
-Batal
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-<div
-id="editModal"
-class="hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-blue-900 to-blue-600 items-center justify-center z-50">
-
-
-<div class="bg-white rounded-2xl p-8 w-96 shadow-xl">
-
-
-<h2 class="text-xl font-bold mb-5">
-Edit Nomor Surat
-</h2>
-
-
-<input
-id="editFormat"
-class="border w-full p-3 rounded-lg mb-3">
-
-
-<input
-id="editNomor"
-class="border w-full p-3 rounded-lg mb-3">
-
-
-<input
-id="editTahun"
-class="border w-full p-3 rounded-lg mb-5">
-
-
-<button
-onclick="updateNomor()"
-class="bg-blue-700 text-white px-5 py-2 rounded-lg">
-
-Simpan
-
-</button>
-
-
-<button
-onclick="closeEditModal()"
-class="bg-gray-300 px-5 py-2 rounded-lg">
-
-Batal
-
-</button>
-
-
-</div>
-
-
-</div>
-<script>
-
-let editRow = null;
-
-
-
-function openNomorModal(){
-
-let modal =
-document.getElementById('nomorModal');
-
-modal.classList.remove('hidden');
-
-modal.classList.add('flex');
-
-}
-
-
-
-function closeNomorModal(){
-
-let modal =
-document.getElementById('nomorModal');
-
-modal.classList.add('hidden');
-
-modal.classList.remove('flex');
-
-}
-
-
-
-
-function simpanNomor(){
-
-
-let format =
-document.getElementById('formatNomor').value;
-
-
-let nomor =
-document.getElementById('nomorTerakhir').value;
-
-
-let tahun =
-document.getElementById('tahunNomor').value;
-
-
-
-if(format=="" || nomor==""){
-
-alert("Data belum lengkap");
-
-return;
-
-}
-
-
-
-let tbody=document.querySelector("tbody");
-
-
-tbody.innerHTML += `
 
 <tr class="border-b hover:bg-gray-50">
 
 
 <td class="px-6 py-4">
-Baru
+
+{{ $nomorSurat->firstItem()+$index }}
+
 </td>
 
 
-<td class="px-6 py-4">
-${format}
+
+<td class="px-6 py-4 font-medium">
+
+{{ $item->kode_nomor }}
+
 </td>
 
 
-<td class="px-6 py-4">
-${nomor}
-</td>
-
-
-<td class="px-6 py-4">
-${tahun}
-</td>
 
 
 <td class="px-6 py-4">
 
-<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+{{ str_pad($item->nomor_terakhir,5,'0',STR_PAD_LEFT) }}
+
+</td>
+
+
+
+
+<td class="px-6 py-4">
+
+{{ $item->tahun }}
+
+</td>
+
+
+
+
+<td class="px-6 py-4">
+
+
+@if($item->status == 'Aktif')
+
+
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
 
 Aktif
 
 </span>
 
+
+@else
+
+
+<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+
+Nonaktif
+
+</span>
+
+
+@endif
+
+
 </td>
 
 
-<td class="px-6 py-4">
 
 
-<button onclick="editNomor(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
+<td class="px-6 py-4 text-center">
+
+
+
+<button
+
+data-id="{{ $item->id }}"
+
+data-kode="{{ $item->kode_nomor }}"
+
+data-nomor="{{ $item->nomor_terakhir }}"
+
+data-tahun="{{ $item->tahun }}"
+
+data-status="{{ $item->status }}"
+
+onclick="editNomor(this)"
+
+class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
 
 Edit
 
 </button>
 
 
-<button onclick="hapusNomor(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
+
+
+<form
+
+action="{{ route('admin.nomor.destroy',$item->id) }}"
+
+method="POST"
+
+class="inline">
+
+
+@csrf
+
+@method('DELETE')
+
+
+<button
+
+type="button"
+
+onclick="hapusNomorSurat(this)"
+
+data-id="{{ $item->id }}"
+
+class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
 
 Hapus
 
 </button>
+
+
+</form>
+
 
 
 </td>
@@ -604,12 +438,541 @@ Hapus
 
 </tr>
 
-`;
+
+@empty
+
+
+<tr>
+
+
+<td colspan="6"
+
+class="text-center py-6 text-gray-500">
+
+
+Belum ada data nomor surat
+
+
+</td>
+
+
+</tr>
+
+
+@endforelse
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+<div class="mt-6">
+
+{{ $nomorSurat->links() }}
+
+</div><!-- ========================= -->
+<!-- MODAL TAMBAH NOMOR SURAT -->
+<!-- ========================= -->
+
+
+<div id="nomorModal"
+
+class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+
+
+<div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8">
+
+
+<div class="flex justify-between items-center mb-6">
+
+
+<h2 class="text-2xl font-bold text-gray-800">
+
+Tambah Nomor Surat
+
+</h2>
 
 
 
-closeNomorModal();
+<button
 
+onclick="closeNomorModal()"
+
+class="text-gray-500 text-2xl">
+
+×
+
+</button>
+
+
+</div>
+
+
+
+
+
+<form
+
+action="{{ route('admin.nomor.store') }}"
+
+method="POST">
+
+
+@csrf
+
+
+
+<div class="space-y-4">
+
+
+
+<div>
+
+
+<label class="font-semibold">
+
+Jenis Surat
+
+</label>
+
+
+<select
+
+name="jenis_surat_id"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+<option value="">
+
+-- Pilih Jenis Surat --
+
+</option>
+
+
+@foreach(\App\Models\JenisSurat::all() as $jenis)
+
+
+<option value="{{ $jenis->id }}">
+
+{{ $jenis->nama_jenis }}
+
+</option>
+
+
+@endforeach
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+
+<div>
+
+
+
+<label class="font-semibold">
+
+Kode Nomor
+
+</label>
+
+
+<input
+
+type="text"
+
+name="kode_nomor"
+
+placeholder="Contoh: 001/TVRI/NTB"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+<div>
+
+
+<label class="font-semibold">
+
+Tahun
+
+</label>
+
+
+<input
+
+type="number"
+
+name="tahun"
+
+value="{{ date('Y') }}"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<div class="flex justify-end gap-3 mt-8">
+
+
+<button
+
+type="button"
+
+onclick="closeNomorModal()"
+
+class="px-5 py-2 rounded-lg bg-gray-200">
+
+
+Batal
+
+
+</button>
+
+
+
+
+
+<button
+
+class="px-5 py-2 rounded-lg bg-blue-700 text-white">
+
+
+Simpan
+
+
+</button>
+
+
+
+</div>
+
+
+
+</form>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- MODAL EDIT -->
+<!-- ========================= -->
+
+
+<div id="editModal"
+
+class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+
+
+<div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8">
+
+
+<div class="flex justify-between items-center mb-6">
+
+
+<h2 class="text-2xl font-bold text-gray-800">
+
+Edit Nomor Surat
+
+</h2>
+
+
+
+<button
+
+onclick="closeEditModal()"
+
+class="text-gray-500 text-2xl">
+
+×
+
+</button>
+
+
+</div>
+
+
+
+
+
+<form
+
+id="editForm"
+
+method="POST">
+
+
+@csrf
+
+@method('PUT')
+
+
+
+
+<div class="space-y-4">
+
+
+
+<!-- FORMAT NOMOR -->
+
+<div>
+
+
+<label class="font-semibold">
+
+Format Nomor
+
+</label>
+
+
+<input
+
+id="editKode"
+
+name="kode_nomor"
+
+type="text"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+<!-- NOMOR TERAKHIR -->
+
+<div>
+
+
+<label class="font-semibold">
+
+Nomor Terakhir
+
+</label>
+
+
+<input
+
+id="editNomor"
+
+name="nomor_terakhir"
+
+type="text"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+<!-- TAHUN -->
+
+<div>
+
+
+<label class="font-semibold">
+
+Tahun
+
+</label>
+
+
+<input
+
+id="editTahun"
+
+name="tahun"
+
+type="number"
+
+class="w-full border rounded-lg px-4 py-2 mt-2"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+<!-- STATUS -->
+
+<div>
+
+
+<label class="font-semibold">
+
+Status
+
+</label>
+
+
+<select
+
+id="editStatus"
+
+name="status"
+
+class="w-full border rounded-lg px-4 py-2 mt-2">
+
+
+<option value="Aktif">
+
+Aktif
+
+</option>
+
+
+<option value="Nonaktif">
+
+Nonaktif
+
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<div class="flex justify-end gap-3 mt-8">
+
+
+<button
+
+type="button"
+
+onclick="closeEditModal()"
+
+class="px-5 py-2 bg-gray-200 rounded-lg">
+
+Batal
+
+</button>
+
+
+
+
+<button
+
+type="submit"
+
+class="px-5 py-2 bg-yellow-500 text-white rounded-lg">
+
+Update
+
+</button>
+
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+
+// buka modal tambah
+
+function openNomorModal(){
+
+document
+.getElementById('nomorModal')
+.classList
+.remove('hidden');
+
+}
+
+
+
+
+function closeNomorModal(){
+
+document
+.getElementById('nomorModal')
+.classList
+.add('hidden');
 
 }
 
@@ -619,106 +982,152 @@ closeNomorModal();
 
 
 
-function editNomor(btn){
+// EDIT DATA REAL
+
+function editNomor(button){
 
 
-editRow = btn.closest("tr");
+let id = button.dataset.id;
 
 
-let data =
-editRow.querySelectorAll("td");
+let kode = button.dataset.kode;
 
 
-document.getElementById("editFormat").value =
-data[1].innerText;
+let nomor = button.dataset.nomor;
 
 
-document.getElementById("editNomor").value =
-data[2].innerText;
+let tahun = button.dataset.tahun;
 
 
-document.getElementById("editTahun").value =
-data[3].innerText;
+let status = button.dataset.status;
 
 
 
-let modal=document.getElementById("editModal");
+document
+.getElementById('editKode')
+.value = kode;
 
 
-modal.classList.remove("hidden");
 
-modal.classList.add("flex");
+document
+.getElementById('editNomor')
+.value = String(nomor).padStart(5,'0');
+
+
+
+document
+.getElementById('editTahun')
+.value = tahun;
+
+
+
+document
+.getElementById('editStatus')
+.value = status;
+
+
+
+document
+.getElementById('editForm')
+.action =
+"/admin/nomor-surat/"+id;
+
+
+
+document
+.getElementById('editModal')
+.classList
+.remove('hidden');
+
+
+}
+
+function hapusNomorSurat(button){
+
+
+let id = button.dataset.id;
+
+
+
+Swal.fire({
+
+title:'Hapus Nomor Surat?',
+
+text:'Data yang dihapus tidak dapat dikembalikan!',
+
+icon:'warning',
+
+
+showCancelButton:true,
+
+
+confirmButtonColor:'#dc2626',
+
+
+cancelButtonColor:'#6b7280',
+
+
+confirmButtonText:'Ya, Hapus',
+
+
+cancelButtonText:'Batal'
+
+
+}).then((result)=>{
+
+
+if(result.isConfirmed){
+
+
+
+let form = document.getElementById('formHapus');
+
+
+
+form.action =
+"/admin/nomor-surat/"+id;
+
+
+
+form.submit();
+
 
 
 }
 
 
 
-
-
-function updateNomor(){
-
-
-let data =
-editRow.querySelectorAll("td");
-
-
-
-data[1].innerText =
-document.getElementById("editFormat").value;
-
-
-
-data[2].innerText =
-document.getElementById("editNomor").value;
-
-
-
-data[3].innerText =
-document.getElementById("editTahun").value;
-
-
-
-alert("Data berhasil diperbarui");
-
-
-closeEditModal();
+});
 
 
 }
-
-
-
-
 
 function closeEditModal(){
 
-let modal=document.getElementById("editModal");
 
-modal.classList.add("hidden");
-
-}
-
-
-
-
-function hapusNomor(btn){
-
-
-if(confirm("Yakin hapus nomor surat?")){
-
-
-btn.closest("tr").remove();
+document
+.getElementById('editModal')
+.classList
+.add('hidden');
 
 
 }
-
-
-}
-
 
 
 
 </script>
+
+
+<form 
+id="formHapus"
+method="POST"
+style="display:none">
+
+@csrf
+
+@method('DELETE')
+
+</form>
+
 
 @endsection

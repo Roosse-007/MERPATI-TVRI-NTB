@@ -3,28 +3,52 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lampiran extends Model
 {
+
     protected $table = 'lampiran';
 
+
     protected $fillable = [
+
         'surat_id',
+
         'nama_file',
+
         'path_file',
+
         'mime_type',
+
         'ukuran_file',
-        'uploaded_by',
+
+        'uploaded_by'
+
     ];
 
-    public function surat(): BelongsTo
+
+
+    public function surat()
     {
-        return $this->belongsTo(Surat::class);
+
+        return $this->belongsTo(
+            Surat::class,
+            'surat_id'
+        );
+
     }
 
-    public function uploader(): BelongsTo
+
+
+    public function uploader()
     {
-        return $this->belongsTo(User::class, 'uploaded_by');
+
+        return $this->belongsTo(
+            User::class,
+            'uploaded_by'
+        );
+
     }
+
+
 }

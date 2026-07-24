@@ -7,17 +7,38 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NomorSurat extends Model
 {
+
     protected $table = 'nomor_surat';
 
+
     protected $fillable = [
+
         'jenis_surat_id',
+
         'kode_nomor',
+
         'nomor_terakhir',
+
         'tahun',
+
+        'status'
+
     ];
 
+
+
+    /**
+     * Relasi ke jenis surat
+     */
     public function jenisSurat(): BelongsTo
     {
-        return $this->belongsTo(JenisSurat::class);
+
+        return $this->belongsTo(
+            JenisSurat::class,
+            'jenis_surat_id'
+        );
+
     }
+
+
 }

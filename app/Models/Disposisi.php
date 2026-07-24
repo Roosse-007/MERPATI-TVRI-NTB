@@ -9,23 +9,25 @@ class Disposisi extends Model
 {
     protected $table = 'disposisi';
 
-    protected $fillable = [
-        'surat_id',
-        'dari_user_id',
-        'ke_user_id',
-        'instruksi',
-        'dibaca',
-        'dibaca_at',
-        'status',
-    ];
+  protected $fillable = [
+    'surat_id',
+    'dari_user_id',
+    'ke_user_id',
+    'instruksi',
+    'deadline',
+    'dibaca',
+    'dibaca_at',
+    'status',
+];
 
     protected function casts(): array
-    {
-        return [
-            'dibaca' => 'boolean',
-            'dibaca_at' => 'datetime',
-        ];
-    }
+{
+    return [
+        'dibaca' => 'boolean',
+        'dibaca_at' => 'datetime',
+        'deadline' => 'date',
+    ];
+}
 
     public function surat(): BelongsTo
     {

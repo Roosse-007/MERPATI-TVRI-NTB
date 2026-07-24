@@ -2,7 +2,9 @@
 
 @section('title','Template Surat')
 
+
 @section('content')
+
 
 
 <div class="flex justify-between items-center mb-8">
@@ -24,18 +26,22 @@ Kelola template surat MERPATI TVRI NTB
 
 
 
+
 <button
 onclick="openTemplateModal()"
 class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg shadow">
 
 
-+ Tambah Template
+<i class="fa-solid fa-plus"></i>
+
+Tambah Template
 
 
 </button>
 
 
 </div>
+
 
 
 
@@ -50,17 +56,24 @@ class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg shadow">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
 
+
 <div class="bg-white rounded-xl shadow p-6">
 
 <p class="text-gray-500">
 Total Template
 </p>
 
+
 <h2 class="text-4xl font-bold text-blue-700 mt-3">
-24
+
+{{ $totalTemplate }}
+
 </h2>
 
+
 </div>
+
+
 
 
 
@@ -71,11 +84,19 @@ Total Template
 Template Aktif
 </p>
 
+
 <h2 class="text-4xl font-bold text-green-600 mt-3">
-20
+
+{{ $templateAktif }}
+
 </h2>
 
+
 </div>
+
+
+
+
 
 
 
@@ -86,85 +107,16 @@ Template Aktif
 Template Nonaktif
 </p>
 
+
 <h2 class="text-4xl font-bold text-red-600 mt-3">
-4
+
+{{ $templateNonaktif }}
+
 </h2>
 
-</div>
-
 
 </div>
 
-
-
-
-
-
-
-
-<!-- FILTER -->
-
-
-<div class="bg-white rounded-xl shadow p-5 mb-6">
-
-
-<div class="grid md:grid-cols-3 gap-4">
-
-
-<input
-id="searchTemplate"
-type="text"
-placeholder="Cari Template..."
-class="border rounded-lg px-4 py-2">
-
-
-
-
-
-<select
-id="filterKategori"
-class="border rounded-lg px-4 py-2">
-
-
-<option value="Semua">
-Semua Kategori
-</option>
-
-
-<option value="Surat Masuk">
-Surat Masuk
-</option>
-
-
-<option value="Surat Keluar">
-Surat Keluar
-</option>
-
-
-<option value="Disposisi">
-Disposisi
-</option>
-
-
-</select>
-
-
-
-
-
-
-<button
-onclick="filterTemplate()"
-class="bg-blue-700 text-white rounded-lg">
-
-
-Cari
-
-
-</button>
-
-
-</div>
 
 
 </div>
@@ -203,7 +155,7 @@ Nama Template
 
 
 <th class="text-left">
-Kategori
+Keterangan
 </th>
 
 
@@ -217,7 +169,7 @@ Status
 </th>
 
 
-<th>
+<th class="text-center">
 Aksi
 </th>
 
@@ -231,235 +183,299 @@ Aksi
 
 
 
-<tbody id="templateTable">
+
+
+<tbody>
 
 
 
+@forelse($templates as $key=>$template)
 
 
-<tr class="templateRow border-b">
+
+<tr class="border-b hover:bg-gray-50">
+
 
 
 <td class="p-4">
-1
+
+{{ $key+1 }}
+
 </td>
 
 
-<td class="namaTemplate">
-Template Surat Masuk
+
+
+
+
+<td class="font-semibold">
+
+{{ $template->nama_template }}
+
 </td>
 
 
-<td class="kategori">
-Surat Masuk
-</td>
+
+
 
 
 <td>
-16 Juli 2026
+
+{{ $template->keterangan ?? '-' }}
+
 </td>
+
+
+
+
 
 
 <td>
 
-<span class="status bg-green-100 text-green-700 px-3 py-1 rounded-full">
+{{ $template->created_at->format('d M Y') }}
+
+</td>
+
+
+
+
+
+
+
+
+<td>
+
+
+@if($template->is_active)
+
+
+
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
 
 Aktif
 
 </span>
 
-</td>
 
 
-<td>
+@else
 
 
-<button
-onclick="editTemplate(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
 
-Edit
-
-</button>
-
-
-
-
-<button
-onclick="hapusTemplate(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-Hapus
-
-</button>
-
-
-
-
-<button
-onclick="previewTemplate()"
-class="bg-blue-600 text-white px-3 py-2 rounded">
-
-Preview
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-
-
-
-
-
-
-
-<tr class="templateRow border-b">
-
-
-<td class="p-4">
-2
-</td>
-
-
-<td class="namaTemplate">
-Template Surat Keluar
-</td>
-
-
-<td class="kategori">
-Surat Keluar
-</td>
-
-
-<td>
-16 Juli 2026
-</td>
-
-
-<td>
-
-<span class="status bg-green-100 text-green-700 px-3 py-1 rounded-full">
-
-Aktif
-
-</span>
-
-</td>
-
-
-<td>
-
-
-<button
-onclick="editTemplate(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-Edit
-
-</button>
-
-
-<button
-onclick="hapusTemplate(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-Hapus
-
-</button>
-
-
-<button
-onclick="previewTemplate()"
-class="bg-blue-600 text-white px-3 py-2 rounded">
-
-Preview
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-
-
-
-
-
-
-
-
-<tr class="templateRow">
-
-
-<td class="p-4">
-3
-</td>
-
-
-<td class="namaTemplate">
-Template Disposisi
-</td>
-
-
-<td class="kategori">
-Disposisi
-</td>
-
-
-<td>
-15 Juli 2026
-</td>
-
-
-<td>
-
-
-<span class="status bg-red-100 text-red-700 px-3 py-1 rounded-full">
+<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
 
 Nonaktif
 
 </span>
 
 
+
+@endif
+
+
 </td>
+
+
+
+
+
+
+
 
 
 <td>
 
 
-<button
-onclick="editTemplate(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
+<div class="flex justify-center gap-2">
 
-Edit
+
+
+
+
+<!-- EDIT -->
+
+
+<a
+
+href="{{ route('template.edit',$template->id) }}"
+
+title="Edit Template"
+
+class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg">
+
+
+<i class="fa-solid fa-pen"></i>
+
+
+</a>
+
+
+
+
+
+
+
+
+<!-- STATUS -->
+
+
+<form
+
+action="{{ route('template.status',$template->id) }}"
+
+method="POST">
+
+
+@csrf
+
+@method('PATCH')
+
+
+
+<button
+
+title="Ubah Status"
+
+class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg">
+
+
+<i class="fa-solid fa-power-off"></i>
+
+
+</button>
+
+
+</form>
+
+
+
+
+
+
+
+
+
+<!-- PREVIEW -->
+
+
+@if($template->file_template)
+
+
+
+<a
+
+href="{{ asset('storage/'.$template->file_template) }}"
+
+target="_blank"
+
+title="Preview Template"
+
+class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg">
+
+
+<i class="fa-solid fa-eye"></i>
+
+
+</a>
+
+
+
+@else
+
+
+<button
+
+onclick="alert('File template belum tersedia')"
+
+title="Preview Template"
+
+class="bg-blue-300 text-white p-2 rounded-lg">
+
+
+<i class="fa-solid fa-eye"></i>
+
 
 </button>
 
 
 
-<button
-onclick="hapusTemplate(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
+@endif
 
-Hapus
+
+
+
+
+
+
+
+
+
+
+<!-- DELETE -->
+
+
+<form
+
+action="{{ route('template.destroy',$template->id) }}"
+
+method="POST"
+
+onsubmit="return confirm('Hapus template ini?')">
+
+
+@csrf
+
+@method('DELETE')
+
+
+
+<button
+
+title="Hapus Template"
+
+class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg">
+
+
+<i class="fa-solid fa-trash"></i>
+
 
 </button>
 
 
+</form>
 
-<button
-onclick="previewTemplate()"
-class="bg-blue-600 text-white px-3 py-2 rounded">
 
-Preview
 
-</button>
+
+
+
+
+</div>
+
+
+</td>
+
+
+
+
+
+</tr>
+
+
+
+
+
+@empty
+
+
+<tr>
+
+<td colspan="6"
+
+class="text-center p-5 text-gray-500">
+
+
+Belum ada template
 
 
 </td>
@@ -469,7 +485,13 @@ Preview
 
 
 
+@endforelse
+
+
+
+
 </tbody>
+
 
 
 </table>
@@ -485,21 +507,29 @@ Preview
 
 
 
-<!-- MODAL -->
+
+
+
+
+
+<!-- MODAL TAMBAH -->
 
 
 <div
+
 id="templateModal"
-class="hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-blue-900 to-blue-600 items-center justify-center">
+
+class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
 
 
 
-<div class="bg-white rounded-2xl p-8 w-96 shadow-2xl">
 
 
-<h2
-id="modalTitle"
-class="text-xl font-bold mb-5">
+
+<div class="bg-white rounded-xl p-8 w-96 shadow-xl">
+
+
+<h2 class="text-xl font-bold mb-5">
 
 Tambah Template
 
@@ -508,36 +538,53 @@ Tambah Template
 
 
 
+
+
+
+<form
+
+action="{{ route('template.store') }}"
+
+method="POST"
+
+enctype="multipart/form-data">
+
+
+@csrf
+
+
+
+
+
+
+
 <input
-id="nama"
+
+name="nama_template"
+
 placeholder="Nama Template"
-class="border w-full p-3 rounded mb-3">
+
+class="border w-full p-3 rounded mb-3"
+
+required>
 
 
 
 
 
-<select
-id="kategori"
-class="border w-full p-3 rounded mb-3">
 
 
-<option>
-Surat Masuk
-</option>
 
+<input
 
-<option>
-Surat Keluar
-</option>
+type="file"
 
+name="file_template"
 
-<option>
-Disposisi
-</option>
+class="border w-full p-3 rounded mb-3"
 
+accept=".pdf,.doc,.docx">
 
-</select>
 
 
 
@@ -545,8 +592,11 @@ Disposisi
 
 
 <textarea
-id="isiTemplate"
-placeholder="Isi Template Surat"
+
+name="keterangan"
+
+placeholder="Keterangan Template"
+
 class="border w-full p-3 rounded mb-3"></textarea>
 
 
@@ -554,8 +604,9 @@ class="border w-full p-3 rounded mb-3"></textarea>
 
 
 
+
 <button
-onclick="simpanTemplate()"
+
 class="bg-blue-700 text-white px-5 py-2 rounded">
 
 
@@ -567,8 +618,15 @@ Simpan
 
 
 
+
+
+
 <button
+
+type="button"
+
 onclick="closeTemplateModal()"
+
 class="bg-gray-300 px-5 py-2 rounded">
 
 
@@ -578,7 +636,16 @@ Batal
 </button>
 
 
+
+
+
+
+
+</form>
+
+
 </div>
+
 
 
 </div>
@@ -594,21 +661,17 @@ Batal
 <script>
 
 
-let editMode=false;
-
-let editRow=null;
-
-
-
-
 function openTemplateModal(){
 
 
-document.getElementById('templateModal')
+document
+.getElementById('templateModal')
 .classList.remove('hidden');
 
 
-document.getElementById('templateModal')
+
+document
+.getElementById('templateModal')
 .classList.add('flex');
 
 
@@ -621,7 +684,8 @@ document.getElementById('templateModal')
 function closeTemplateModal(){
 
 
-document.getElementById('templateModal')
+document
+.getElementById('templateModal')
 .classList.add('hidden');
 
 
@@ -629,254 +693,8 @@ document.getElementById('templateModal')
 
 
 
-
-
-
-
-function simpanTemplate(){
-
-
-
-let nama =
-document.getElementById('nama').value;
-
-
-
-let kategori =
-document.getElementById('kategori').value;
-
-
-
-if(editMode){
-
-
-editRow.querySelector('.namaTemplate')
-.innerHTML=nama;
-
-
-editRow.querySelector('.kategori')
-.innerHTML=kategori;
-
-
-
-}
-
-else{
-
-
-document.getElementById('templateTable')
-.innerHTML += `
-
-
-<tr class="templateRow border-b">
-
-
-<td class="p-4">
-Baru
-</td>
-
-
-<td class="namaTemplate">
-${nama}
-</td>
-
-
-<td class="kategori">
-${kategori}
-</td>
-
-
-<td>
-Hari ini
-</td>
-
-
-<td>
-
-<span class="status bg-green-100 text-green-700 px-3 py-1 rounded-full">
-
-Aktif
-
-</span>
-
-</td>
-
-
-
-<td>
-
-
-<button onclick="editTemplate(this)"
-class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-Edit
-
-</button>
-
-
-<button onclick="hapusTemplate(this)"
-class="bg-red-600 text-white px-3 py-2 rounded">
-
-Hapus
-
-</button>
-
-
-</td>
-
-
-
-</tr>
-
-
-`;
-
-
-}
-
-
-
-closeTemplateModal();
-
-
-}
-
-
-
-
-
-
-
-function editTemplate(btn){
-
-
-editMode=true;
-
-
-editRow=
-btn.closest('tr');
-
-
-
-document.getElementById('modalTitle')
-.innerHTML="Edit Template";
-
-
-
-document.getElementById('nama').value =
-editRow.querySelector('.namaTemplate').innerText;
-
-
-
-openTemplateModal();
-
-
-}
-
-
-
-
-
-
-
-function hapusTemplate(btn){
-
-
-if(confirm("Hapus template ini?")){
-
-
-btn.closest('tr').remove();
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-function filterTemplate(){
-
-
-
-let keyword =
-document.getElementById('searchTemplate')
-.value.toLowerCase();
-
-
-
-let kategori =
-document.getElementById('filterKategori')
-.value;
-
-
-
-document.querySelectorAll('.templateRow')
-.forEach(row=>{
-
-
-let nama =
-row.querySelector('.namaTemplate')
-.innerText.toLowerCase();
-
-
-
-let kategoriData =
-row.querySelector('.kategori')
-.innerText;
-
-
-
-if(
-
-nama.includes(keyword)
-
-&&
-
-(kategori=="Semua" || kategori==kategoriData)
-
-){
-
-
-row.style.display="table-row";
-
-
-}
-
-else{
-
-
-row.style.display="none";
-
-
-}
-
-
-});
-
-
-}
-
-
-
-
-
-
-function previewTemplate(){
-
-
-alert("Preview template surat");
-
-
-}
-
-
-
 </script>
+
 
 
 @endsection

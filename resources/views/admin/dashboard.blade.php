@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
-@section('title','Dashboard')
+@section('title','Dashboard Admin')
+
 
 @section('content')
 
@@ -9,20 +10,17 @@
 
 <div class="mb-8 flex justify-between items-center">
 
-
     <div>
 
         <h1 class="text-3xl font-bold text-gray-800">
             Dashboard Admin
         </h1>
 
-
         <p class="text-gray-500 mt-2">
             Selamat datang di Sistem E-Surat MERPATI TVRI NTB
         </p>
 
     </div>
-
 
 
     <div>
@@ -42,208 +40,199 @@
 
 
 
-
 <!-- STATISTIC CARD -->
-
 
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
 
 
-    <!-- Surat -->
+<!-- TOTAL SURAT -->
 
-    <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-2xl shadow-lg p-6">
+<div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-2xl shadow-lg p-6">
 
 
-        <div class="flex justify-between">
+<div class="flex justify-between">
 
 
-            <div>
+<div>
 
-                <p class="text-blue-100">
-                    Total Surat
-                </p>
+<p class="text-blue-100">
+Total Surat
+</p>
 
 
-                <h2 class="text-4xl font-bold mt-3">
-                    245
-                </h2>
+<h2 class="text-4xl font-bold mt-3">
 
+{{ $totalSurat }}
 
-            </div>
+</h2>
 
 
-            <div class="text-5xl">
+</div>
 
-                📄
 
-            </div>
+<div class="text-5xl">
+📄
+</div>
 
 
-        </div>
+</div>
 
 
-        <p class="mt-4 text-sm">
+<p class="mt-4 text-sm">
 
-            +12 surat bulan ini
+Total dokumen surat
 
-        </p>
+</p>
 
 
-    </div>
+</div>
 
 
 
 
 
-    <!-- User -->
 
+<!-- USER -->
 
-    <div class="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-2xl shadow-lg p-6">
+<div class="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-2xl shadow-lg p-6">
 
 
-        <div class="flex justify-between">
+<div class="flex justify-between">
 
 
-            <div>
+<div>
 
+<p class="text-green-100">
+Total User
+</p>
 
-                <p class="text-green-100">
-                    Total User
-                </p>
 
+<h2 class="text-4xl font-bold mt-3">
 
-                <h2 class="text-4xl font-bold mt-3">
-                    58
-                </h2>
+{{ $totalUser }}
 
+</h2>
 
-            </div>
 
+</div>
 
 
-            <div class="text-5xl">
+<div class="text-5xl">
+👥
+</div>
 
-                👥
 
-            </div>
+</div>
 
 
+<p class="mt-4 text-sm">
 
-        </div>
+Akun pengguna sistem
 
+</p>
 
-        <p class="mt-4 text-sm">
 
-            Semua akun aktif
+</div>
 
-        </p>
 
 
 
-    </div>
 
 
 
+<!-- APPROVAL -->
 
 
+<div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-white rounded-2xl shadow-lg p-6">
 
-    <!-- Approval -->
 
+<div class="flex justify-between">
 
-    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-white rounded-2xl shadow-lg p-6">
 
+<div>
 
-        <div class="flex justify-between">
+<p class="text-yellow-100">
+Pending Approval
+</p>
 
 
-            <div>
+<h2 class="text-4xl font-bold mt-3">
 
-                <p class="text-yellow-100">
-                    Pending Approval
-                </p>
+{{ $pendingApproval }}
 
+</h2>
 
-                <h2 class="text-4xl font-bold mt-3">
-                    16
-                </h2>
 
+</div>
 
-            </div>
 
+<div class="text-5xl">
+⏳
+</div>
 
 
-            <div class="text-5xl">
+</div>
 
-                ⏳
 
-            </div>
+<p class="mt-4 text-sm">
 
+Menunggu tindakan
 
+</p>
 
-        </div>
 
+</div>
 
-        <p class="mt-4 text-sm">
 
-            Menunggu tindakan
 
-        </p>
 
 
-    </div>
 
 
 
+<!-- ARSIP -->
 
 
+<div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-2xl shadow-lg p-6">
 
 
-    <!-- Arsip -->
+<div class="flex justify-between">
 
 
-    <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-2xl shadow-lg p-6">
+<div>
 
+<p class="text-purple-100">
+Total Arsip
+</p>
 
-        <div class="flex justify-between">
 
+<h2 class="text-4xl font-bold mt-3">
 
-            <div>
+{{ $totalArsip }}
 
+</h2>
 
-                <p class="text-purple-100">
-                    Total Arsip
-                </p>
 
+</div>
 
-                <h2 class="text-4xl font-bold mt-3">
-                    820
-                </h2>
 
+<div class="text-5xl">
+🗂️
+</div>
 
-            </div>
 
+</div>
 
 
-            <div class="text-5xl">
+<p class="mt-4 text-sm">
 
-                🗂️
+Dokumen tersimpan
 
-            </div>
+</p>
 
 
-
-        </div>
-
-
-        <p class="mt-4 text-sm">
-
-            Dokumen tersimpan
-
-        </p>
-
-
-    </div>
+</div>
 
 
 
@@ -269,74 +258,57 @@ Menu Cepat
 </h2>
 
 
-
 <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
 
 
-
 <a href="/admin/users"
-class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 transition text-center">
+class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 text-center">
 
 
 <div class="text-3xl">
-
 👥
-
 </div>
 
 
 <p class="mt-2 font-semibold">
-
 Kelola User
-
 </p>
 
 
 </a>
-
-
 
 
 
 <a href="/admin/template-surat"
-class="p-5 rounded-xl bg-green-50 hover:bg-green-100 transition text-center">
+class="p-5 rounded-xl bg-green-50 hover:bg-green-100 text-center">
 
 
 <div class="text-3xl">
-
 📄
-
 </div>
 
 
 <p class="mt-2 font-semibold">
-
 Template Surat
-
 </p>
 
 
 </a>
-
 
 
 
 
 <a href="/admin/laporan"
-class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition text-center">
+class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-center">
 
 
 <div class="text-3xl">
-
 📊
-
 </div>
 
 
 <p class="mt-2 font-semibold">
-
 Laporan
-
 </p>
 
 
@@ -345,29 +317,23 @@ Laporan
 
 
 
-
-<a href="/admin/arsip"
-class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 transition text-center">
+<a href="/surat/arsip"
+class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 text-center">
 
 
 <div class="text-3xl">
-
 🗂️
-
 </div>
 
 
 <p class="mt-2 font-semibold">
-
 Arsip
-
 </p>
 
 
 </a>
 
 
-
 </div>
 
 
@@ -380,8 +346,9 @@ Arsip
 
 
 
-<!-- CHART + STATUS -->
 
+
+<!-- CHART -->
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
 
@@ -408,6 +375,8 @@ Statistik Surat
 
 
 
+<!-- STATUS -->
+
 <div class="bg-white rounded-2xl shadow p-6">
 
 
@@ -422,32 +391,16 @@ Status Surat
 <div class="space-y-5">
 
 
-<div>
-
-<div class="flex justify-between">
-
-<span>
-Disetujui
-</span>
-
-<span>
-70%
-</span>
-
-</div>
+@foreach($statusSurat as $status)
 
 
-<div class="bg-gray-200 rounded-full h-3 mt-2">
+@php
 
-<div class="bg-green-500 h-3 rounded-full w-[70%]">
+$total = $totalSurat > 0 
+? round(($status->jumlah/$totalSurat)*100)
+:0;
 
-</div>
-
-</div>
-
-</div>
-
-
+@endphp
 
 
 
@@ -456,57 +409,42 @@ Disetujui
 
 <div class="flex justify-between">
 
-<span>
-Diproses
-</span>
 
 <span>
-20%
+
+{{ $status->status }}
+
 </span>
+
+
+<span>
+
+{{ $total }}%
+
+</span>
+
 
 </div>
+
 
 
 <div class="bg-gray-200 rounded-full h-3 mt-2">
 
-<div class="bg-yellow-500 h-3 rounded-full w-[20%]">
 
+<div class="bg-blue-600 h-3 rounded-full"
+style="width:{{ $total }}%">
 </div>
 
-</div>
-
-</div>
-
-
-
-
-
-<div>
-
-
-<div class="flex justify-between">
-
-<span>
-Ditolak
-</span>
-
-<span>
-10%
-</span>
-
-</div>
-
-
-<div class="bg-gray-200 rounded-full h-3 mt-2">
-
-<div class="bg-red-500 h-3 rounded-full w-[10%]">
-
-</div>
 
 </div>
 
 
 </div>
+
+
+
+@endforeach
+
 
 
 </div>
@@ -540,83 +478,54 @@ Aktivitas Terbaru
 
 
 
+
 <div class="space-y-5">
+
+
+@foreach($aktivitas as $item)
 
 
 
 <div class="border-l-4 border-blue-600 pl-4">
 
-<p class="font-semibold">
-
-Surat masuk baru diterima
-
-</p>
-
-<small class="text-gray-400">
-
-5 menit lalu
-
-</small>
-
-</div>
-
-
-
-
-
-<div class="border-l-4 border-green-600 pl-4">
 
 <p class="font-semibold">
 
-Surat berhasil disetujui
+Surat :
+{{ $item->perihal }}
 
 </p>
 
-<small class="text-gray-400">
-
-20 menit lalu
-
-</small>
-
-</div>
-
-
-
-
-
-<div class="border-l-4 border-yellow-500 pl-4">
-
-<p class="font-semibold">
-
-Menunggu approval kepala bagian
-
-</p>
 
 <small class="text-gray-400">
 
-1 jam lalu
+{{ $item->created_at->diffForHumans() }}
 
 </small>
 
-</div>
-
-
-
-
-</div>
-
 
 </div>
 
 
 
+@endforeach
+
+
+
+</div>
+
+
+</div>
 
 
 
 
 
 
-<!-- TABLE -->
+
+
+
+<!-- SURAT TERBARU -->
 
 
 <div class="bg-white rounded-2xl shadow mt-8 overflow-hidden">
@@ -633,6 +542,8 @@ Surat Terbaru
 
 
 </div>
+
+
 
 
 
@@ -684,44 +595,7 @@ Tanggal
 <tbody>
 
 
-<tr class="border-b">
-
-
-<td class="p-4">
-1
-</td>
-
-
-<td>
-001/TVRI/VII/2026
-</td>
-
-
-<td>
-Undangan Rapat
-</td>
-
-
-<td>
-
-<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-
-Disetujui
-
-</span>
-
-
-</td>
-
-
-<td>
-16 Juli 2026
-</td>
-
-
-</tr>
-
-
+@foreach($suratTerbaru as $key=>$surat)
 
 
 
@@ -729,25 +603,38 @@ Disetujui
 
 
 <td class="p-4">
-2
+
+{{ $key+1 }}
+
 </td>
 
-
-<td>
-002/TVRI/VII/2026
-</td>
-
-
-<td>
-Surat Tugas
-</td>
 
 
 <td>
 
-<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+{{ $surat->nomor_surat }}
 
-Diproses
+</td>
+
+
+
+<td>
+
+{{ $surat->perihal }}
+
+</td>
+
+
+
+
+<td>
+
+
+<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+
+
+{{ $surat->status }}
+
 
 </span>
 
@@ -755,16 +642,26 @@ Diproses
 </td>
 
 
+
+
 <td>
-16 Juli 2026
+
+{{ $surat->created_at->format('d M Y') }}
+
 </td>
 
 
+
 </tr>
+
+
+
+@endforeach
 
 
 
 </tbody>
+
 
 
 </table>
@@ -782,6 +679,10 @@ Diproses
 
 
 
+
+<!-- CHART SCRIPT -->
+
+
 <script>
 
 
@@ -793,37 +694,23 @@ const ctx=document.getElementById('chartSurat');
 
 new Chart(ctx,{
 
+
 type:'line',
 
 
 data:{
 
 
-labels:[
-'Jan',
-'Feb',
-'Mar',
-'Apr',
-'Mei',
-'Jun',
-'Jul'
-],
+labels:@json($statistikSurat->pluck('bulan')),
 
 
 datasets:[{
 
+
 label:'Jumlah Surat',
 
 
-data:[
-20,
-35,
-25,
-50,
-40,
-60,
-75
-],
+data:@json($statistikSurat->pluck('jumlah')),
 
 
 borderWidth:3
@@ -833,6 +720,7 @@ borderWidth:3
 
 
 },
+
 
 
 options:{
@@ -853,6 +741,7 @@ responsive:true
 
 
 </script>
+
 
 
 

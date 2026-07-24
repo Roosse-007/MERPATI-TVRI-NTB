@@ -35,13 +35,15 @@
             @include('partials.navbar')
 
             {{-- Content --}}
-            <main class="
-                flex-1
-                ml-72
-                px-8
-                pt-6
-                pb-8
-            ">
+           <main class="
+    flex-1
+    ml-72
+    px-8
+    pt-6
+    pb-8
+    relative
+    z-10
+">
 
                 @yield('content')
 

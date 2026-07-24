@@ -5,219 +5,510 @@ namespace App\Http\Controllers;
 use App\Models\Approval;
 use App\Models\Surat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ApprovalController extends Controller
 {
 
-public function index()
-{
-    $totalSurat = Surat::count();
 
-    $menunggu = Surat::whereIn('status', [
-        'Menunggu Verifikasi KPP',
-        'Menunggu Paraf KTU',
-        'Menunggu Persetujuan Kepala Stasiun'
-    ])->count();
+    /*
+    |--------------------------------------------------------------------------
+    | HALAMAN APPROVAL
+    |--------------------------------------------------------------------------
+    */
 
-    $disetujui = Surat::where('status', 'Disetujui')->count();
+    public function index()
+    {
 
-    $ditolak = Surat::where('status', 'Ditolak')->count();
+        $totalSurat = Surat::count();
 
-    $surat = Surat::with([
-        'pengirim',
-        'tujuan.user'
-    ])->latest()->get();
 
-    return view('surat.approval', compact(
-        'totalSurat',
-        'menunggu',
-        'disetujui',
-        'ditolak',
-        'surat'
-    ));
-}
-public function approveKpp($id)
-{
-    $surat = Surat::find($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+        $menunggu = Surat::whereIn('status',[
+
+            'Menunggu Verifikasi KPP',
+
+            'Menunggu Paraf KTU',
+
+            'Menunggu Persetujuan Kepala Stasiun'
+
+        ])->count();
+
+
+
+        $disetujui = Surat::where(
+
+            'status',
+
+            'Disetujui'
+
+        )->count();
+
+
+
+        $ditolak = Surat::where(
+
+            'status',
+
+            'Ditolak'
+
+        )->count();
+
+
+
+
+
+        $surat = Surat::with([
+
+            'pengirim',
+
+            'tujuan.user',
+
+            'approvals.approver'
+
+        ])
+
+        ->whereIn('status',[
+
+            'Menunggu Verifikasi KPP',
+
+            'Menunggu Paraf KTU',
+
+            'Menunggu Persetujuan Kepala Stasiun'
+
+        ])
+
+        ->latest()
+
+        ->get();
+
+
+
+
+
+        return view(
+
+            'surat.approval',
+
+            compact(
+
+                'totalSurat',
+
+                'menunggu',
+
+                'disetujui',
+
+                'ditolak',
+
+                'surat'
+
+            )
+
+        );
+
     }
 
-    if ($surat->status !== 'Menunggu Verifikasi KPP') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
-    }
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 2, // sementara, nanti diganti Auth::id()
-    'urutan'      => 1,
-    'status'      => 'Disetujui',
-    'approved_at' => now(),
-]);
-    $surat->status = 'Menunggu Paraf KTU';
-    $surat->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat berhasil diverifikasi KPP.',
-        'data' => $surat
-    ]);
-}
-public function rejectKpp($id)
-{
-    $surat = Surat::find($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
-    }
-    Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 2,
-    'urutan'      => 1,
-    'status'      => 'Ditolak',
-    'approved_at' => now(),
-]);
 
-    $surat->status = 'Ditolak';
 
-    $surat->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh KPP.',
-        'data' => $surat
-    ]);
-    
-}
-public function approveKtu($id)
-{
-    $surat = Surat::find($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
-    }
 
-    if ($surat->status !== 'Menunggu Paraf KTU') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
-    }
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 3,
-    'urutan'      => 2,
-    'status'      => 'Disetujui',
-    'approved_at' => now(),
-]);
-    $surat->status = 'Menunggu Persetujuan Kepala Stasiun';
+    /*
+    |--------------------------------------------------------------------------
+    | APPROVAL KPP
+    |--------------------------------------------------------------------------
+    */
 
-    $surat->save();
+    public function approveKpp($id)
+    {
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Paraf KTU berhasil.',
-        'data' => $surat
-    ]);
-}
-public function rejectKtu($id)
-{
-    $surat = Surat::find($id);
+        $surat = Surat::findOrFail($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
-    }
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 3,
-    'urutan'      => 2,
-    'status'      => 'Ditolak',
-    'approved_at' => now(),
-]);
-    $surat->status = 'Ditolak';
 
-    $surat->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh KTU.',
-        'data' => $surat
-    ]);
-}
-public function approveKepalaStasiun($id)
-{
-    $surat = Surat::find($id);
+        if($surat->status !== 'Menunggu Verifikasi KPP')
+        {
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+            return back()->with(
+
+                'error',
+
+                'Status surat tidak sesuai.'
+
+            );
+
+        }
+
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>1,
+
+            'status'=>'Disetujui',
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Menunggu Paraf KTU'
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat berhasil diverifikasi KPP.'
+
+        );
+
     }
 
-    if ($surat->status !== 'Menunggu Persetujuan Kepala Stasiun') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Status surat tidak sesuai.'
-        ], 400);
+
+
+
+
+
+
+
+    public function rejectKpp(Request $request,$id)
+    {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>1,
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan,
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat ditolak KPP.'
+
+        );
+
     }
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 4,
-    'urutan'      => 3,
-    'status'      => 'Disetujui',
-    'approved_at' => now(),
-]);
-    $surat->status = 'Disetujui';
 
-    $surat->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat disetujui Kepala Stasiun.',
-        'data' => $surat
-    ]);
-}
-public function rejectKepalaStasiun($id)
-{
-    $surat = Surat::find($id);
 
-    if (!$surat) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Surat tidak ditemukan.'
-        ], 404);
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPROVAL KTU
+    |--------------------------------------------------------------------------
+    */
+
+    public function approveKtu($id)
+    {
+
+        $surat = Surat::findOrFail($id);
+
+
+
+        if($surat->status !== 'Menunggu Paraf KTU')
+        {
+
+            return back()->with(
+
+                'error',
+
+                'Status surat tidak sesuai.'
+
+            );
+
+        }
+
+
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>2,
+
+            'status'=>'Disetujui',
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Menunggu Persetujuan Kepala Stasiun'
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Paraf KTU berhasil.'
+
+        );
+
     }
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => 4,
-    'urutan'      => 3,
-    'status'      => 'Ditolak',
-    'approved_at' => now(),
-]);
-    $surat->status = 'Ditolak';
 
-    $surat->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Surat ditolak oleh Kepala Stasiun.',
-        'data' => $surat
-    ]);
-}
+
+
+
+
+
+    public function rejectKtu(Request $request,$id)
+    {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>2,
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan,
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat ditolak KTU.'
+
+        );
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPROVAL KEPALA STASIUN
+    |--------------------------------------------------------------------------
+    */
+
+    public function approveKepalaStasiun($id)
+    {
+
+        $surat = Surat::findOrFail($id);
+
+
+
+        if($surat->status !== 'Menunggu Persetujuan Kepala Stasiun')
+        {
+
+            return back()->with(
+
+                'error',
+
+                'Status surat tidak sesuai.'
+
+            );
+
+        }
+
+
+
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>3,
+
+            'status'=>'Disetujui',
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Disetujui',
+
+            'tanggal_selesai'=>now()
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat disetujui Kepala Stasiun.'
+
+        );
+
+    }
+
+
+
+
+
+
+
+
+
+    public function rejectKepalaStasiun(Request $request,$id)
+    {
+
+
+        $surat = Surat::findOrFail($id);
+
+
+
+        Approval::create([
+
+            'surat_id'=>$surat->id,
+
+            'approver_id'=>Auth::id(),
+
+            'urutan'=>3,
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan,
+
+            'approved_at'=>now()
+
+        ]);
+
+
+
+
+
+        $surat->update([
+
+            'status'=>'Ditolak',
+
+            'catatan'=>$request->catatan
+
+        ]);
+
+
+
+
+
+        return back()->with(
+
+            'success',
+
+            'Surat ditolak Kepala Stasiun.'
+
+        );
+
+    }
+
+
 }

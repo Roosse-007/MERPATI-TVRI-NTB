@@ -161,7 +161,100 @@ py-4
 
 
 
+{{-- TEMPLATE SURAT --}}
 
+
+<div>
+
+
+<h2 class="
+text-2xl
+font-black
+mb-6
+">
+Template Surat
+</h2>
+
+
+
+<label class="font-semibold">
+
+Pilih Template
+
+</label>
+
+
+
+
+<select
+
+name="template_surat_id"
+
+required
+
+class="
+mt-2
+w-full
+rounded-2xl
+bg-slate-100
+px-5
+py-4
+"
+
+>
+
+
+<option value="">
+
+-- Pilih Template Surat --
+
+</option>
+
+
+
+@foreach($templates as $template)
+
+
+<option
+
+value="{{ $template->id }}"
+
+>
+
+
+{{ $template->nama_template }}
+
+
+@if($template->keterangan)
+
+- {{ $template->keterangan }}
+
+@endif
+
+
+</option>
+
+
+
+@endforeach
+
+
+
+</select>
+
+
+<p class="
+text-sm
+text-slate-500
+mt-2
+">
+
+Template akan digunakan untuk membuat dokumen Word otomatis.
+
+</p>
+
+
+</div>
 
 {{-- TUJUAN --}}
 

@@ -1,238 +1,556 @@
-@extends('layouts.app')
-
-@section('title','Approval Surat')
-
-@section('content')
+<div class="space-y-6">
 
 
-<div class="relative">
+@forelse($surat as $item)
 
 
-{{-- MERPATI --}}
-<x-flying-dove />
+<div class="
+bg-white
+rounded-3xl
+shadow-xl
+border
+border-slate-200
+p-8
+">
 
 
 
-<div class="mb-8">
+{{-- HEADER --}}
 
-<h1 class="
-text-4xl
+<div class="
+flex
+justify-between
+items-start
+gap-5
+">
+
+
+<div>
+
+
+<h2 class="
+text-xl
 font-black
 text-slate-800
 ">
 
-Approval Surat ✅
+{{ $item->perihal }}
 
-</h1>
+</h2>
+
 
 
 <p class="text-slate-500 mt-2">
 
-Pantau perjalanan persetujuan surat secara real-time
+Nomor Surat :
+
+<span class="font-bold text-slate-700">
+
+{{ $item->nomor_surat }}
+
+</span>
 
 </p>
 
+
+
+<p class="text-sm text-slate-500 mt-3">
+
+Pengirim :
+
+<span class="font-bold">
+
+{{ $item->pengirim->name ?? '-' }}
+
+</span>
+
+</p>
+
+
 </div>
 
 
 
 
 
-{{-- STATISTIK --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-    {{-- Total Surat --}}
-    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
-        <div class="flex items-center gap-2 text-slate-300 text-sm">
-            <i data-lucide="files" class="w-5 h-5"></i>
-            <span>Total Surat</span>
-        </div>
+{{-- STATUS --}}
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $totalSurat }}
-        </h2>
+<span
+class="
+px-5
+py-2
+rounded-full
+font-bold
+text-sm
 
-    </div>
+@if($item->status == 'Menunggu Verifikasi KPP')
 
-    {{-- Menunggu --}}
-    <div class="bg-gradient-to-br from-amber-900 via-yellow-900 to-orange-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+bg-yellow-100
+text-yellow-700
 
-        <div class="flex items-center gap-2 text-amber-200 text-sm">
-            <i data-lucide="clock-3" class="w-5 h-5"></i>
-            <span>Menunggu</span>
-        </div>
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $menunggu }}
-        </h2>
+@elseif($item->status == 'Menunggu Paraf KTU')
 
-    </div>
+bg-blue-100
+text-blue-700
 
-    {{-- Disetujui --}}
-    <div class="bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
 
-        <div class="flex items-center gap-2 text-emerald-200 text-sm">
-            <i data-lucide="circle-check-big" class="w-5 h-5"></i>
-            <span>Disetujui</span>
-        </div>
+@elseif($item->status == 'Menunggu Persetujuan Kepala Stasiun')
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $disetujui }}
-        </h2>
+bg-purple-100
+text-purple-700
 
-    </div>
 
-    {{-- Ditolak --}}
-    <div class="bg-gradient-to-br from-rose-900 via-red-900 to-red-800 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+@elseif($item->status == 'Disetujui')
 
-        <div class="flex items-center gap-2 text-red-200 text-sm">
-            <i data-lucide="circle-x" class="w-5 h-5"></i>
-            <span>Ditolak</span>
-        </div>
+bg-green-100
+text-green-700
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $ditolak }}
-        </h2>
 
-    </div>
+@else
+
+bg-red-100
+text-red-700
+
+
+@endif
+
+">
+
+
+@if($item->status == 'Menunggu Verifikasi KPP')
+
+<i class="fa-solid fa-clock"></i>
+
+
+@elseif($item->status == 'Menunggu Paraf KTU')
+
+<i class="fa-solid fa-pen"></i>
+
+
+@elseif($item->status == 'Menunggu Persetujuan Kepala Stasiun')
+
+<i class="fa-solid fa-user-check"></i>
+
+
+@elseif($item->status == 'Disetujui')
+
+<i class="fa-solid fa-check"></i>
+
+
+@else
+
+<i class="fa-solid fa-xmark"></i>
+
+
+@endif
+
+
+{{ $item->status }}
+
+
+</span>
+
+
 
 </div>
 
 
-<div class="bg-white rounded-[32px] shadow-xl overflow-hidden">
 
-    {{-- HEADER TABLE --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 p-8 border-b">
 
-        <div>
 
-            <h2 class="text-2xl font-black text-slate-800">
-                Daftar Approval Surat
-            </h2>
-
-            <p class="text-slate-500 mt-1">
-                Seluruh proses approval surat TVRI NTB
-            </p>
-
-        </div>
-
-    </div>
+<hr class="my-6">
 
 
 
 
 
-    <div class="overflow-x-auto">
+{{-- BUTTON --}}
 
-        <table class="w-full">
 
-            <thead class="bg-slate-50">
+<div class="flex flex-wrap gap-4">
 
-                <tr>
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        No
-                    </th>
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        Nomor Surat
-                    </th>
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        Perihal
-                    </th>
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        Pengirim
-                    </th>
+{{-- DETAIL --}}
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        Tujuan
-                    </th>
+<a href="{{ route('surat.detail',$item->id) }}"
 
-                    <th class="px-6 py-5 text-left font-bold text-slate-600">
-                        Tanggal
-                    </th>
+class="
+px-6
+py-3
+rounded-xl
+bg-slate-100
+font-bold
+hover:bg-slate-200
+transition
+">
 
-                    <th class="px-6 py-5 text-center font-bold text-slate-600">
-                        Status
-                    </th>
+<i class="fa-solid fa-eye"></i>
 
-                </tr>
+Detail
 
-            </thead>
+</a>
 
-            <tbody>
 
-@foreach($surat as $item)
 
-<tr class="border-b hover:bg-sky-50 duration-300">
 
-    <td class="px-6 py-5 font-semibold">
-        {{ $loop->iteration }}
-    </td>
 
-    <td class="px-6 py-5 font-bold text-blue-600">
-        {{ $item->nomor_surat }}
-    </td>
 
-    <td class="px-6 py-5">
-        {{ $item->perihal }}
-    </td>
 
-    <td class="px-6 py-5">
-        {{ $item->pengirim->name ?? '-' }}
-    </td>
 
-    <td class="px-6 py-5">
-        {{ optional($item->tujuan->first()?->user)->name ?? '-' }}
-    </td>
 
-    <td class="px-6 py-5">
-        {{ $item->tanggal_surat?->format('d M Y') }}
-    </td>
+{{-- ================= KPP ================= --}}
 
-    <td class="px-6 py-5 text-center">
 
-        @switch($item->status)
+@if($item->status == 'Menunggu Verifikasi KPP')
 
-            @case('Disetujui')
-                <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-bold">
-                    Disetujui
-                </span>
-            @break
 
-            @case('Ditolak')
-                <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-bold">
-                    Ditolak
-                </span>
-            @break
 
-            @default
-                <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-bold">
-                    {{ $item->status }}
-                </span>
+<form method="POST"
 
-        @endswitch
+action="{{ route('approval.kpp.approve',$item->id) }}">
 
-    </td>
+@csrf
 
-</tr>
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-green-600
+text-white
+font-bold
+hover:bg-green-700
+">
+
+<i class="fa-solid fa-check"></i>
+
+Verifikasi KPP
+
+</button>
+
+
+</form>
+
+
+
+
+
+<form method="POST"
+
+action="{{ route('approval.kpp.reject',$item->id) }}">
+
+@csrf
+
+
+<input
+type="hidden"
+name="catatan"
+value="Ditolak oleh KPP"
+>
+
+
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-red-600
+text-white
+font-bold
+hover:bg-red-700
+">
+
+<i class="fa-solid fa-xmark"></i>
+
+Tolak
+
+</button>
+
+
+</form>
+
+
+
+
+@endif
+
+
+
+
+
+
+
+{{-- ================= KTU ================= --}}
+
+
+@if($item->status == 'Menunggu Paraf KTU')
+
+
+
+<form method="POST"
+
+action="{{ route('approval.ktu.approve',$item->id) }}">
+
+@csrf
+
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-blue-600
+text-white
+font-bold
+hover:bg-blue-700
+">
+
+<i class="fa-solid fa-pen"></i>
+
+Paraf KTU
+
+</button>
+
+
+</form>
+
+
+
+
+
+<form method="POST"
+
+action="{{ route('approval.ktu.reject',$item->id) }}">
+
+@csrf
+
+
+<input
+type="hidden"
+name="catatan"
+value="Ditolak oleh KTU"
+>
+
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-red-600
+text-white
+font-bold
+hover:bg-red-700
+">
+
+<i class="fa-solid fa-xmark"></i>
+
+Tolak
+
+</button>
+
+
+</form>
+
+
+
+
+@endif
+
+
+
+
+
+
+
+
+{{-- ================= KEPALA STASIUN ================= --}}
+
+
+
+@if($item->status == 'Menunggu Persetujuan Kepala Stasiun')
+
+
+
+<form method="POST"
+
+action="{{ route('approval.kepala.approve',$item->id) }}">
+
+@csrf
+
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-purple-600
+text-white
+font-bold
+hover:bg-purple-700
+">
+
+<i class="fa-solid fa-signature"></i>
+
+Setujui Kepala Stasiun
+
+</button>
+
+
+</form>
+
+
+
+
+
+
+<form method="POST"
+
+action="{{ route('approval.kepala.reject',$item->id) }}">
+
+@csrf
+
+
+<input
+type="hidden"
+name="catatan"
+value="Ditolak oleh Kepala Stasiun"
+>
+
+
+<button
+
+class="
+px-6
+py-3
+rounded-xl
+bg-red-600
+text-white
+font-bold
+hover:bg-red-700
+">
+
+<i class="fa-solid fa-xmark"></i>
+
+Tolak
+
+</button>
+
+
+</form>
+
+
+
+@endif
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+{{-- DETAIL APPROVAL --}}
+
+@if($item->approvals->count())
+
+
+<div class="
+mt-6
+bg-slate-50
+rounded-2xl
+p-5
+">
+
+
+<h3 class="
+font-bold
+text-slate-700
+mb-3
+">
+
+Riwayat Approval
+
+</h3>
+
+
+
+@foreach($item->approvals as $approval)
+
+
+
+<div class="
+flex
+justify-between
+text-sm
+py-2
+border-b
+last:border-0
+">
+
+
+<span>
+
+{{ $approval->approver->name ?? '-' }}
+
+</span>
+
+
+
+<span class="
+font-bold
+
+@if($approval->status=='Disetujui')
+
+text-green-600
+
+@elseif($approval->status=='Ditolak')
+
+text-red-600
+
+@else
+
+text-yellow-600
+
+@endif
+
+">
+
+{{ $approval->status }}
+
+</span>
+
+
+
+</div>
+
 
 @endforeach
 
-</tbody>
-
-        </table>
-
-    </div>
 
 </div>
 
 
+@endif
 
-</div>
 
 
 
@@ -240,7 +558,46 @@ Pantau perjalanan persetujuan surat secara real-time
 
 
 
+@empty
+
+
+
+<div class="
+bg-white
+rounded-3xl
+shadow
+p-10
+text-center
+">
+
+
+<i class="
+fa-solid
+fa-inbox
+text-5xl
+text-slate-300
+"></i>
+
+
+
+<p class="
+mt-4
+font-bold
+text-slate-500
+">
+
+Tidak ada surat menunggu approval.
+
+</p>
+
+
+
 </div>
 
 
-@endsection
+
+@endforelse
+
+
+
+</div>
