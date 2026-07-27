@@ -57,10 +57,14 @@ class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg shadow">
 
 
 
-<!-- STATISTIK -->
+
+<!-- =========================
+STATISTIK REAL DATABASE
+========================= -->
 
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
 
 
 <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-xl shadow p-6">
@@ -70,29 +74,40 @@ Surat Masuk
 </p>
 
 
-<h2 class="text-4xl font-bold mt-3">
-245
+<h2 class="text-4xl font-bold mt-2">
+
+{{ $suratMasuk }}
+
 </h2>
 
 
 </div>
+
+
+
 
 
 
 
 <div class="bg-gradient-to-r from-green-600 to-green-400 text-white rounded-xl shadow p-6">
 
+
 <p>
 Surat Keluar
 </p>
 
 
-<h2 class="text-4xl font-bold mt-3">
-186
+<h2 class="text-4xl font-bold mt-2">
+
+{{ $suratKeluar }}
+
+
 </h2>
 
 
 </div>
+
+
 
 
 
@@ -100,17 +115,21 @@ Surat Keluar
 
 <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-white rounded-xl shadow p-6">
 
+
 <p>
 Approval
 </p>
 
 
-<h2 class="text-4xl font-bold mt-3">
-32
+<h2 class="text-4xl font-bold mt-2">
+
+{{ $approval}}
 </h2>
 
 
 </div>
+
+
 
 
 
@@ -118,19 +137,24 @@ Approval
 
 <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-xl shadow p-6">
 
+
 <p>
 Arsip
 </p>
 
 
-<h2 class="text-4xl font-bold mt-3">
-786
+<h2 class="text-4xl font-bold mt-2">
+
+{{ $arsip }}
+
 </h2>
 
 
 </div>
 
 
+
+
 </div>
 
 
@@ -141,15 +165,24 @@ Arsip
 
 
 
-<!-- FILTER -->
+<!-- =========================
+FILTER
+========================= -->
 
 
 <div class="bg-white rounded-xl shadow p-6 mb-8">
 
 
 <h2 class="text-xl font-bold mb-5">
+
 Filter Laporan
+
 </h2>
+
+
+
+<form method="GET"
+action="{{ route('admin.laporan') }}">
 
 
 
@@ -157,43 +190,82 @@ Filter Laporan
 
 
 
+
+
 <input
+
 type="date"
-id="tanggalMulai"
+
+name="dari"
+
+value="{{ request('dari') }}"
+
 class="border rounded-lg px-4 py-2">
 
 
 
+
+
+
+
 <input
+
 type="date"
-id="tanggalAkhir"
+
+name="sampai"
+
+value="{{ request('sampai') }}"
+
 class="border rounded-lg px-4 py-2">
+
+
+
 
 
 
 
 
 <select
-id="jenisSurat"
+
+name="jenis"
+
 class="border rounded-lg px-4 py-2">
 
 
-<option value="Semua">
+
+<option value="">
+
 Semua Jenis
+
 </option>
 
 
-<option value="Surat Masuk">
-Surat Masuk
+
+@foreach($jenisSurat as $jenis)
+
+
+<option
+
+value="{{ $jenis->id }}"
+
+@if(request('jenis')==$jenis->id)
+selected
+@endif
+
+>
+
+{{ $jenis->nama_jenis }}
+
 </option>
 
 
-<option value="Surat Keluar">
-Surat Keluar
-</option>
+@endforeach
+
 
 
 </select>
+
+
 
 
 
@@ -201,38 +273,66 @@ Surat Keluar
 
 
 <select
-id="statusSurat"
+
+name="status"
+
 class="border rounded-lg px-4 py-2">
 
 
-<option value="Semua">
+<option value="">
+
 Semua Status
+
 </option>
 
 
-<option value="Disetujui">
+<option value="Disetujui"
+@if(request('status')=='Disetujui')
+selected
+@endif
+>
+
 Disetujui
+
 </option>
 
 
-<option value="Diproses">
+
+<option value="Diproses"
+@if(request('status')=='Diproses')
+selected
+@endif
+>
+
 Diproses
+
 </option>
 
 
-<option value="Ditolak">
+
+
+<option value="Ditolak"
+@if(request('status')=='Ditolak')
+selected
+@endif
+>
+
 Ditolak
+
 </option>
+
 
 
 </select>
+
+
 
 
 
 
 
 <button
-onclick="filterLaporan()"
+
 class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg">
 
 Tampilkan
@@ -241,26 +341,33 @@ Tampilkan
 
 
 
-</div>
-
 
 </div>
 
 
 
+</form>
+
+
+
+</div>
 
 
 
 
 
 
-<!-- TABLE -->
+
+
+<!-- =========================
+TABLE REAL DATABASE
+========================= -->
 
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
 
 
-<table class="w-full" id="tableLaporan">
+<table class="w-full">
 
 
 <thead class="bg-blue-800 text-white">
@@ -274,27 +381,27 @@ No
 </th>
 
 
-<th class="text-left">
+<th class="p-4 text-left">
 Nomor Surat
 </th>
 
 
-<th class="text-left">
+<th class="p-4 text-left">
 Jenis
 </th>
 
 
-<th class="text-left">
+<th class="p-4 text-left">
 Perihal
 </th>
 
 
-<th class="text-left">
+<th class="p-4 text-left">
 Tanggal
 </th>
 
 
-<th class="text-left">
+<th class="p-4 text-left">
 Status
 </th>
 
@@ -306,40 +413,76 @@ Status
 
 
 
-
 <tbody>
 
 
+@forelse($laporan as $index=>$item)
 
-<tr class="border-b data-row">
+
+<tr class="border-b hover:bg-gray-50">
+
 
 
 <td class="p-4">
-1
+
+{{ $laporan->firstItem()+$index }}
+
 </td>
 
 
-<td>
-001/TVRI/VII/2026
+
+
+
+<td class="p-4 font-medium">
+
+{{ $item->nomor_surat ?? '-' }}
+
 </td>
 
 
-<td class="jenis">
-Surat Masuk
+
+
+
+
+<td class="p-4">
+
+
+{{ $item->jenisSurat->nama_jenis ?? '-' }}
+
+
 </td>
 
 
-<td>
-Undangan Rapat
+
+
+
+<td class="p-4">
+
+{{ $item->perihal }}
+
 </td>
 
 
-<td>
-16 Juli 2026
+
+
+
+<td class="p-4">
+
+
+{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}
+
+
 </td>
 
 
-<td class="status">
+
+
+
+<td class="p-4">
+
+
+@if($item->status == 'Disetujui')
+
 
 <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
 
@@ -347,95 +490,11 @@ Disetujui
 
 </span>
 
-</td>
 
 
-</tr>
+@elseif($item->status == 'Ditolak')
 
 
-
-
-
-
-
-
-<tr class="border-b data-row">
-
-
-<td class="p-4">
-2
-</td>
-
-
-<td>
-002/TVRI/VII/2026
-</td>
-
-
-<td class="jenis">
-Surat Keluar
-</td>
-
-
-<td>
-Surat Tugas
-</td>
-
-
-<td>
-15 Juli 2026
-</td>
-
-
-<td class="status">
-
-<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-
-Diproses
-
-</span>
-
-</td>
-
-
-</tr>
-
-
-
-
-
-
-
-
-<tr class="border-b data-row">
-
-
-<td class="p-4">
-3
-</td>
-
-
-<td>
-003/TVRI/VII/2026
-</td>
-
-
-<td class="jenis">
-Surat Keluar
-</td>
-
-
-<td>
-Nota Dinas
-</td>
-
-
-<td>
-14 Juli 2026
-</td>
-
-
-<td class="status">
 
 <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
 
@@ -443,11 +502,52 @@ Ditolak
 
 </span>
 
+
+
+
+@else
+
+
+<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+
+{{ $item->status }}
+
+</span>
+
+
+@endif
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+@empty
+
+
+<tr>
+
+
+<td colspan="6"
+class="text-center py-6 text-gray-500">
+
+
+Belum ada data laporan surat
+
+
 </td>
 
 
 </tr>
 
+
+
+@endforelse
 
 
 
@@ -457,35 +557,42 @@ Ditolak
 </table>
 
 
+
 </div>
 
 
 
+<div class="mt-6">
+
+{{ $laporan->links() }}
+
+</div><!-- =========================
+ACTION
+========================= -->
 
 
-
-
-
-
-<div class="mt-6 flex justify-between">
+<div class="mt-6 flex justify-between items-center">
 
 
 <p class="text-gray-500">
 
-Menampilkan data laporan
+Menampilkan data laporan surat
 
 </p>
 
 
 
-<button
-onclick="resetFilter()"
-class="border px-5 py-2 rounded-lg">
+
+<a href="{{ route('admin.laporan') }}"
+
+class="border px-5 py-2 rounded-lg hover:bg-gray-100">
 
 
 Reset Filter
 
-</button>
+
+</a>
+
 
 
 </div>
@@ -498,117 +605,69 @@ Reset Filter
 
 
 
+<!-- =========================
+SCRIPT EXPORT
+========================= -->
+
+
 <script>
 
 
-function filterLaporan(){
+function exportExcel(){
 
 
-
-let jenis =
-document.getElementById('jenisSurat').value;
-
-
-
-let status =
-document.getElementById('statusSurat').value;
+let table =
+document.querySelector('table');
 
 
 
 let rows =
-document.querySelectorAll('.data-row');
+table.querySelectorAll('tr');
 
+
+
+let csv = [];
 
 
 
 rows.forEach(row=>{
 
 
-let jenisData =
-row.querySelector('.jenis').innerText;
+let cols =
+row.querySelectorAll('th,td');
 
 
-let statusData =
-row.querySelector('.status').innerText.trim();
+let data=[];
 
 
-
-if(
-
-(jenis=="Semua" || jenis==jenisData)
-
-&&
-
-(status=="Semua" || status==statusData)
-
-){
+cols.forEach(col=>{
 
 
-row.style.display="table-row";
+data.push(
+'"'+col.innerText.trim()+'"'
+);
 
 
-}
-
-else{
+});
 
 
-row.style.display="none";
-
-
-}
-
+csv.push(data.join(','));
 
 
 });
 
 
 
-}
-
-
-
-
-
-
-
-
-
-function resetFilter(){
-
-
-document.getElementById('jenisSurat').value="Semua";
-
-
-document.getElementById('statusSurat').value="Semua";
-
-
-
-filterLaporan();
-
-
-}
-
-
-
-
-
-
-
-
-
-function exportExcel(){
-
-
-
-let csv = 
-"No,Nomor Surat,Jenis,Perihal,Tanggal,Status\n"+
-"1,001/TVRI/VII/2026,Surat Masuk,Undangan Rapat,16 Juli 2026,Disetujui\n"+
-"2,002/TVRI/VII/2026,Surat Keluar,Surat Tugas,15 Juli 2026,Diproses";
-
-
 
 let blob =
-new Blob([csv],{type:'text/csv'});
+new Blob(
+[csv.join('\n')],
+{
+type:'text/csv'
+}
+);
+
+
 
 
 let url =
@@ -620,13 +679,21 @@ let a =
 document.createElement('a');
 
 
+
 a.href=url;
 
 
-a.download="laporan-surat.csv";
+
+a.download =
+'laporan-surat.csv';
+
 
 
 a.click();
+
+
+
+window.URL.revokeObjectURL(url);
 
 
 
@@ -644,11 +711,14 @@ function exportPDF(){
 window.print();
 
 
+
 }
 
 
 
 </script>
+
+
 
 
 

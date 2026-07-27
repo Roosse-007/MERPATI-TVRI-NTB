@@ -5,47 +5,51 @@ namespace App\Http\Controllers;
 use App\Models\Approval;
 use App\Models\Surat;
 use App\Services\ApprovalWorkflowService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ApprovalController extends Controller
 {
-
+    /**
+     * Halaman Approval Surat
+     */
 public function index()
 {
     $user = auth()->user();
     $jabatan = $user->jabatan->nama_jabatan ?? '';
 
     $query = Surat::with([
-        'pengirim',
-        'tujuan.user'
-    ]);
+        'pengirim.jabatan',
+        'tujuan.user',
+        'approval'
+    ])
+    // HANYA surat yang ditujukan ke akun login
+    ->whereHas('tujuan', function ($q) use ($user) {
+        $q->where('user_id', $user->id);
+    });
 
-    /*
-    |--------------------------------------------------------------------------
-    | FILTER BERDASARKAN JABATAN
-    |--------------------------------------------------------------------------
-    */
+    switch ($jabatan) {
 
-    if ($jabatan == 'Admin') {
+        case 'Admin':
+            // Admin melihat semua surat yang ditujukan kepadanya
+            break;
 
-        // Admin melihat semua surat
+        case 'Ketua Tim Perencana dan Pengendali Program':
+            $query->where('status', 'Menunggu Approval KPP');
+            break;
 
-    } elseif ($jabatan == 'Ketua Tim Perencana dan Pengendali Program') {
+        case 'Kepala Sub Bagian Tata Usaha':
+            $query->where('status', 'Menunggu Approval KTU');
+            break;
 
-        $query->where('status', 'Menunggu Approval KPP');
+        case 'Kepala TVRI Stasiun NTB':
+            $query->where('status', 'Menunggu Approval Kepala Stasiun');
+            break;
 
-    } elseif ($jabatan == 'Kepala Sub Bagian Tata Usaha') {
-
-        $query->where('status', 'Menunggu Approval KTU');
-
-    } elseif ($jabatan == 'Kepala TVRI Stasiun NTB') {
-
-        $query->where('status', 'Menunggu Approval Kepala Stasiun');
-
-    } else {
-
-        $query->where('pengirim_id', $user->id);
-
+        default:
+            // Jabatan lain tidak mempunyai halaman approval
+            $query->whereRaw('1 = 0');
+            break;
     }
 
     $surat = $query->latest()->get();
@@ -55,7 +59,7 @@ public function index()
     $menunggu = $surat->whereIn('status', [
         'Menunggu Approval KPP',
         'Menunggu Approval KTU',
-        'Menunggu Approval Kepala Stasiun'
+        'Menunggu Approval Kepala Stasiun',
     ])->count();
 
     $disetujui = $surat->where('status', 'Disetujui')->count();
@@ -63,258 +67,325 @@ public function index()
     $ditolak = $surat->where('status', 'Ditolak')->count();
 
     return view('surat.approval', compact(
+        'surat',
         'totalSurat',
         'menunggu',
         'disetujui',
-        'ditolak',
-        'surat'
+        'ditolak'
     ));
 }
-public function approveKpp($id)
-{
-    $surat = Surat::findOrFail($id);
+        /**
+     * Mengecek apakah user memiliki hak approval
+     */
+    private function checkRole(string $jabatan)
+    {
+        $userJabatan = auth()->user()->jabatan->nama_jabatan ?? '';
 
-    if ($surat->status !== 'Menunggu Approval KPP') {
-        return redirect()
-    ->route('surat.approval')
-    ->with('error', 'Status surat tidak sesuai.');
+        if ($userJabatan !== $jabatan) {
+            abort(403, 'Anda tidak memiliki hak untuk melakukan approval.');
+        }
     }
 
-    $cek = Approval::where('surat_id', $surat->id)
-    ->where('urutan', 1)
-    ->exists();
+    /**
+     * Mengecek status surat
+     */
+    private function checkStatus(Surat $surat, string $status)
+    {
+        if ($surat->status !== $status) {
+            return redirect()
+                ->route('surat.approval')
+                ->with('error', 'Status surat tidak sesuai.');
+        }
 
-if ($cek) {
-    return redirect()
-        ->route('surat.approval')
-        ->with('error', 'Surat sudah pernah diproses.');
-}
-DB::transaction(function () use ($surat) {
-Approval::create([
-    'surat_id'    => $surat->id,
-    'approver_id' => auth()->id(),// sementara, nanti diganti Auth::id()
-    'urutan'      => 1,
-    'status'      => 'Disetujui',
-    'approved_at' => now(),
-]);
-$workflow = new ApprovalWorkflowService();
-
-$surat->update([
-    'status' => $workflow->getNextStatus($surat)
-]);
-});
-return redirect()
-    ->route('surat.approval')
-    ->with('success', 'Surat berhasil disetujui oleh KPP.');
-}
-public function rejectKpp($id)
-{
-    $surat = Surat::findOrFail($id);
-
-    // Pastikan surat berada pada tahap approval KPP
-    if ($surat->status !== 'Menunggu Approval KPP') {
-        return redirect()
-            ->route('surat.approval')
-            ->with('error', 'Status surat tidak sesuai.');
+        return null;
     }
 
-    // Cegah surat diproses lebih dari satu kali oleh KPP
-    $sudahDiproses = Approval::where('surat_id', $surat->id)
-        ->where('urutan', 1)
-        ->exists();
+    /**
+     * Mengecek apakah approval sudah pernah dilakukan
+     */
+    private function checkApproval(Surat $surat, int $urutan)
+    {
+        $cek = Approval::where('surat_id', $surat->id)
+            ->where('urutan', $urutan)
+            ->exists();
 
-    if ($sudahDiproses) {
-        return redirect()
-            ->route('surat.approval')
-            ->with('error', 'Surat sudah pernah diproses.');
+        if ($cek) {
+            return redirect()
+                ->route('surat.approval')
+                ->with('error', 'Surat sudah pernah diproses.');
+        }
+
+        return null;
     }
 
-    DB::transaction(function () use ($surat) {
-
+    /**
+     * Menyimpan data approval
+     */
+    private function createApproval(
+        Surat $surat,
+        int $urutan,
+        string $status,
+        ?string $catatan = null
+    ) {
         Approval::create([
             'surat_id'    => $surat->id,
             'approver_id' => auth()->id(),
-            'urutan'      => 1,
-            'status'      => 'Ditolak',
+            'urutan'      => $urutan,
+            'status'      => $status,
+            'catatan'     => $catatan,
             'approved_at' => now(),
         ]);
-
-        $surat->update([
-            'status' => 'Ditolak',
-        ]);
-    });
-
-    return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil ditolak oleh KPP.');
-}
-public function approveKtu($id)
-{
-    $surat = Surat::findOrFail($id);
-
-    // Validasi status
-    if ($surat->status !== 'Menunggu Approval KTU') {
-        return redirect()
-            ->route('surat.approval')
-            ->with('error', 'Status surat tidak sesuai.');
     }
 
-    // Cek apakah sudah pernah diproses
-    $cek = Approval::where('surat_id', $surat->id)
-        ->where('urutan', 2)
-        ->exists();
-
-    if ($cek) {
-        return redirect()
-            ->route('surat.approval')
-            ->with('error', 'Surat sudah pernah diproses.');
-    }
-
-    DB::transaction(function () use ($surat) {
-
-        Approval::create([
-            'surat_id'    => $surat->id,
-            'approver_id' => auth()->id(),
-            'urutan'      => 2,
-            'status'      => 'Disetujui',
-            'approved_at' => now(),
-        ]);
-
+    /**
+     * Mengubah status surat ke tahap berikutnya
+     */
+    private function nextStatus(Surat $surat)
+    {
         $workflow = new ApprovalWorkflowService();
 
         $surat->update([
             'status' => $workflow->getNextStatus($surat),
         ]);
-    });
+    }
+        /**
+     * Approval oleh KPP
+     */
+    public function approveKpp($id)
+    {
+        // Hanya KPP yang boleh approve
+        $this->checkRole('Ketua Tim Perencana dan Pengendali Program');
 
-    return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil disetujui oleh KTU.');
-}
-public function rejectKtu($id)
-{
-    $surat = Surat::findOrFail($id);
+        $surat = Surat::findOrFail($id);
 
-    // Validasi status
-    if ($surat->status !== 'Menunggu Approval KTU') {
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval KPP')) {
+            return $error;
+        }
+
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 1)) {
+            return $error;
+        }
+
+        DB::transaction(function () use ($surat) {
+
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                1,
+                'Disetujui'
+            );
+
+            // Lanjut ke approval berikutnya
+            $this->nextStatus($surat);
+
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Status surat tidak sesuai.');
+            ->with('success', 'Surat berhasil disetujui oleh KPP.');
     }
+        /**
+     * Penolakan oleh KPP
+     */
+    public function rejectKpp(Request $request, $id)
+    {
+        // Hanya KPP yang boleh menolak
+        $this->checkRole('Ketua Tim Perencana dan Pengendali Program');
 
-    // Cek apakah sudah pernah diproses
-    $cek = Approval::where('surat_id', $surat->id)
-        ->where('urutan', 2)
-        ->exists();
+        $surat = Surat::findOrFail($id);
 
-    if ($cek) {
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval KPP')) {
+            return $error;
+        }
+
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 1)) {
+            return $error;
+        }
+
+        DB::transaction(function () use ($surat, $request) {
+
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                1,
+                'Ditolak',
+                $request->catatan
+            );
+
+            // Update status surat
+            $surat->update([
+                'status'   => 'Ditolak',
+                'catatan'  => $request->catatan,
+            ]);
+
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Surat sudah pernah diproses.');
+            ->with('success', 'Surat berhasil ditolak oleh KPP.');
     }
+        /**
+     * Approval oleh KTU
+     */
+    public function approveKtu($id)
+    {
+        // Hanya KTU yang boleh approve
+        $this->checkRole('Kepala Sub Bagian Tata Usaha');
 
-    DB::transaction(function () use ($surat) {
+        $surat = Surat::findOrFail($id);
 
-        Approval::create([
-            'surat_id'    => $surat->id,
-            'approver_id' => auth()->id(),
-            'urutan'      => 2,
-            'status'      => 'Ditolak',
-            'approved_at' => now(),
-        ]);
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval KTU')) {
+            return $error;
+        }
 
-        $surat->update([
-            'status' => 'Ditolak',
-        ]);
-    });
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 2)) {
+            return $error;
+        }
 
-    return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil ditolak oleh KTU.');
-}
-public function approveKepalaStasiun($id)
-{
-    $surat = Surat::findOrFail($id);
+        DB::transaction(function () use ($surat) {
 
-    // Validasi status
-    if ($surat->status !== 'Menunggu Approval Kepala Stasiun') {
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                2,
+                'Disetujui'
+            );
+
+            // Lanjut ke approval berikutnya
+            $this->nextStatus($surat);
+
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Status surat tidak sesuai.');
+            ->with('success', 'Surat berhasil disetujui oleh KTU.');
     }
+        /**
+     * Penolakan oleh KTU
+     */
+    public function rejectKtu(Request $request, $id)
+    {
+        // Hanya KTU yang boleh menolak
+        $this->checkRole('Kepala Sub Bagian Tata Usaha');
 
-    // Cek apakah sudah pernah diproses
-    $cek = Approval::where('surat_id', $surat->id)
-        ->where('urutan', 3)
-        ->exists();
+        $surat = Surat::findOrFail($id);
 
-    if ($cek) {
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval KTU')) {
+            return $error;
+        }
+
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 2)) {
+            return $error;
+        }
+
+        DB::transaction(function () use ($surat, $request) {
+
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                2,
+                'Ditolak',
+                $request->catatan
+            );
+
+            // Update status surat
+            $surat->update([
+                'status'   => 'Ditolak',
+                'catatan'  => $request->catatan,
+            ]);
+
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Surat sudah pernah diproses.');
+            ->with('success', 'Surat berhasil ditolak oleh KTU.');
     }
+        /**
+     * Approval oleh Kepala TVRI
+     */
+    public function approveKepalaStasiun($id)
+    {
+        // Hanya Kepala TVRI yang boleh approve
+        $this->checkRole('Kepala TVRI Stasiun NTB');
 
-    DB::transaction(function () use ($surat) {
+        $surat = Surat::findOrFail($id);
 
-        Approval::create([
-            'surat_id'    => $surat->id,
-            'approver_id' => auth()->id(),
-            'urutan'      => 3,
-            'status'      => 'Disetujui',
-            'approved_at' => now(),
-        ]);
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval Kepala Stasiun')) {
+            return $error;
+        }
 
-        $workflow = new ApprovalWorkflowService();
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 3)) {
+            return $error;
+        }
 
-        $surat->update([
-            'status' => $workflow->getNextStatus($surat),
-        ]);
-    });
+        DB::transaction(function () use ($surat) {
 
-    return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil disetujui oleh Kepala Stasiun.');
-}
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                3,
+                'Disetujui'
+            );
 
-public function rejectKepalaStasiun($id)
-{
-    $surat = Surat::findOrFail($id);
+            // Ubah status menjadi Disetujui
+            $this->nextStatus($surat);
 
-    // Validasi status
-    if ($surat->status !== 'Menunggu Approval Kepala Stasiun') {
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Status surat tidak sesuai.');
+            ->with('success', 'Surat berhasil disetujui oleh Kepala TVRI.');
     }
+        /**
+     * Penolakan oleh Kepala TVRI
+     */
+    public function rejectKepalaStasiun(Request $request, $id)
+    {
+        // Hanya Kepala TVRI yang boleh menolak
+        $this->checkRole('Kepala TVRI Stasiun NTB');
 
-    // Cek apakah sudah pernah diproses
-    $cek = Approval::where('surat_id', $surat->id)
-        ->where('urutan', 3)
-        ->exists();
+        $surat = Surat::findOrFail($id);
 
-    if ($cek) {
+        // Cek status surat
+        if ($error = $this->checkStatus($surat, 'Menunggu Approval Kepala Stasiun')) {
+            return $error;
+        }
+
+        // Cek apakah sudah pernah diproses
+        if ($error = $this->checkApproval($surat, 3)) {
+            return $error;
+        }
+
+        DB::transaction(function () use ($surat, $request) {
+
+            // Simpan approval
+            $this->createApproval(
+                $surat,
+                3,
+                'Ditolak',
+                $request->catatan
+            );
+
+            // Update status surat
+            $surat->update([
+                'status'   => 'Ditolak',
+                'catatan'  => $request->catatan,
+            ]);
+
+        });
+
         return redirect()
             ->route('surat.approval')
-            ->with('error', 'Surat sudah pernah diproses.');
+            ->with('success', 'Surat berhasil ditolak oleh Kepala TVRI.');
     }
-
-    DB::transaction(function () use ($surat) {
-
-        Approval::create([
-            'surat_id'    => $surat->id,
-            'approver_id' => auth()->id(),
-            'urutan'      => 3,
-            'status'      => 'Ditolak',
-            'approved_at' => now(),
-        ]);
-
-        $surat->update([
-            'status' => 'Ditolak',
-        ]);
-    });
-
-    return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil ditolak oleh Kepala Stasiun.');
-}
 }

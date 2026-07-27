@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Surat;
-use App\Models\Disposisi;
 use App\Models\Approval;
+use App\Models\Disposisi;
+use App\Models\Surat;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -15,141 +17,59 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD ADMIN
+        | STATISTIK GLOBAL
         |--------------------------------------------------------------------------
         */
 
-        if ($jabatan == 'Admin') {
+        $totalSurat = Surat::count();
 
-            $data = [
+        $totalUser = User::count();
 
-                'suratMasuk' => Surat::where('status', '!=', 'Draft')->count(),
+        $pendingApproval = Surat::whereIn('status', [
+            'Menunggu Approval KPP',
+            'Menunggu Approval KTU',
+            'Menunggu Approval Kepala Stasiun',
+        ])->count();
 
-                'draft' => Surat::where('status', 'Draft')->count(),
-
-                'approval' => Surat::whereIn('status', [
-                    'Menunggu Approval KPP',
-                    'Menunggu Approval KTU',
-                    'Menunggu Approval Kepala Stasiun',
-                ])->count(),
-
-                'diterima' => Surat::where('status', 'Disetujui')->count(),
-
-                'arsip' => Surat::where('is_archived', true)->count(),
-
-            ];
-
-        }
+        $totalArsip = Surat::where('is_archived', true)->count();
 
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD KPP
+        | GRAFIK SURAT BULANAN
         |--------------------------------------------------------------------------
         */
 
-        elseif ($jabatan == 'Ketua Tim Perencana dan Pengendali Program') {
+        $statistikSurat = Surat::select(
+                DB::raw('MONTH(created_at) as bulan'),
+                DB::raw('COUNT(*) as jumlah')
+            )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy(DB::raw('MONTH(created_at)'))
+            ->get()
+            ->map(function ($item) {
 
-            $data = [
+                return [
+                    'bulan' => date(
+                        'M',
+                        mktime(0, 0, 0, $item->bulan, 1)
+                    ),
 
-                'suratMasuk' => Surat::where('status', 'Menunggu Approval KPP')->count(),
-
-                'draft' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', 'Draft')
-                    ->count(),
-
-                'approval' => Surat::where('status', 'Menunggu Approval KPP')->count(),
-
-                'diterima' => Surat::where('status', 'Disetujui')->count(),
-
-                'arsip' => Surat::where('is_archived', true)->count(),
-
-            ];
-
-        }
+                    'jumlah' => $item->jumlah,
+                ];
+            });
 
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD KTU
+        | STATUS SURAT
         |--------------------------------------------------------------------------
         */
 
-        elseif ($jabatan == 'Kepala Sub Bagian Tata Usaha') {
-
-            $data = [
-
-                'suratMasuk' => Surat::where('status', 'Menunggu Approval KTU')->count(),
-
-                'draft' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', 'Draft')
-                    ->count(),
-
-                'approval' => Surat::where('status', 'Menunggu Approval KTU')->count(),
-
-                'diterima' => Surat::where('status', 'Disetujui')->count(),
-
-                'arsip' => Surat::where('is_archived', true)->count(),
-
-            ];
-
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | DASHBOARD KEPALA TVRI STASIUN NTB
-        |--------------------------------------------------------------------------
-        */
-
-        elseif ($jabatan == 'Kepala TVRI Stasiun NTB') {
-
-            $data = [
-
-                'suratMasuk' => Surat::where('status', 'Menunggu Approval Kepala Stasiun')->count(),
-
-                'draft' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', 'Draft')
-                    ->count(),
-
-                'approval' => Surat::where('status', 'Menunggu Approval Kepala Stasiun')->count(),
-
-                'diterima' => Surat::where('status', 'Disetujui')->count(),
-
-                'arsip' => Surat::where('is_archived', true)->count(),
-
-            ];
-
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | USER BIASA
-        |--------------------------------------------------------------------------
-        */
-
-        else {
-
-            $data = [
-
-                'suratMasuk' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', '!=', 'Draft')
-                    ->count(),
-
-                'draft' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', 'Draft')
-                    ->count(),
-
-                'approval' => Approval::where('approver_id', $user->id)->count(),
-
-                'diterima' => Surat::where('pengirim_id', $user->id)
-                    ->where('status', 'Disetujui')
-                    ->count(),
-
-                'arsip' => Surat::where('pengirim_id', $user->id)
-                    ->where('is_archived', true)
-                    ->count(),
-
-            ];
-
-        }
+        $statusSurat = Surat::select(
+                'status',
+                DB::raw('COUNT(*) as jumlah')
+            )
+            ->groupBy('status')
+            ->get();
 
         /*
         |--------------------------------------------------------------------------
@@ -159,48 +79,214 @@ class DashboardController extends Controller
 
         $aktivitas = collect();
 
-        $query = Surat::query();
+        $suratTerbaru = Surat::latest()
+            ->take(5)
+            ->get();
 
-        if ($jabatan == 'Ketua Tim Perencana dan Pengendali Program') {
-
-            $query->where('status', 'Menunggu Approval KPP');
-
-        } elseif ($jabatan == 'Kepala Sub Bagian Tata Usaha') {
-
-            $query->where('status', 'Menunggu Approval KTU');
-
-        } elseif ($jabatan == 'Kepala TVRI Stasiun NTB') {
-
-            $query->where('status', 'Menunggu Approval Kepala Stasiun');
-
-        } elseif ($jabatan != 'Admin') {
-
-            $query->where('pengirim_id', $user->id);
-
-        }
-
-        foreach ($query->latest()->take(5)->get() as $surat) {
+        foreach ($suratTerbaru as $surat) {
 
             $aktivitas->push([
-                'judul' => 'Surat',
-                'deskripsi' => $surat->perihal,
-                'status' => $surat->status,
-                'waktu' => $surat->created_at,
+                'judul'      => 'Surat Baru',
+                'deskripsi'  => $surat->perihal,
+                'status'     => 'Baru',
+                'waktu'      => $surat->created_at,
             ]);
-
         }
 
-        $data['aktivitas'] = $aktivitas
+        $approvalTerbaru = Approval::with('surat')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        foreach ($approvalTerbaru as $approval) {
+
+            $aktivitas->push([
+                'judul'      => 'Approval Surat',
+                'deskripsi'  => $approval->surat->perihal ?? '-',
+                'status'     => $approval->status,
+                'waktu'      => $approval->created_at,
+            ]);
+        }
+
+        $disposisiTerbaru = Disposisi::with('surat')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        foreach ($disposisiTerbaru as $disposisi) {
+
+            $aktivitas->push([
+                'judul'      => 'Disposisi Surat',
+                'deskripsi'  => $disposisi->surat->perihal ?? '-',
+                'status'     => 'Disposisi',
+                'waktu'      => $disposisi->created_at,
+            ]);
+        }
+
+        $aktivitas = $aktivitas
             ->sortByDesc('waktu')
-            ->take(8);
+            ->take(8)
+            ->values();
+            
+
+            /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD BERDASARKAN ROLE
+        |--------------------------------------------------------------------------
+        */
+
+if ($jabatan === 'Admin') {
+
+    $suratMasuk = Surat::where('status', '!=', 'Draft')->count();
+
+    $draft = Surat::where('status', 'Draft')->count();
+
+    $approval = Surat::whereIn('status', [
+        'Menunggu Approval KPP',
+        'Menunggu Approval KTU',
+        'Menunggu Approval Kepala Stasiun',
+    ])->count();
+
+    $diterima = Surat::where('status', 'Disetujui')->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
+
+} elseif ($jabatan === 'Ketua Tim Perencana dan Pengendali Program') {
+
+            $suratMasuk = Surat::where(
+                'status',
+                'Menunggu Approval KPP'
+            )->count();
+
+            $draft = Surat::where('pengirim_id', $user->id)
+                ->where('status', 'Draft')
+                ->count();
+
+            $approval = Surat::where(
+                'status',
+                'Menunggu Approval KPP'
+            )->count();
+
+            $diterima = Surat::where(
+                'status',
+                'Disetujui'
+            )->count();
+
+            $arsip = Surat::where(
+                'is_archived',
+                true
+            )->count();
+
+        } elseif ($jabatan === 'Kepala Sub Bagian Tata Usaha') {
+
+            $suratMasuk = Surat::where(
+                'status',
+                'Menunggu Approval KTU'
+            )->count();
+
+            $draft = Surat::where('pengirim_id', $user->id)
+                ->where('status', 'Draft')
+                ->count();
+
+            $approval = Surat::where(
+                'status',
+                'Menunggu Approval KTU'
+            )->count();
+
+            $diterima = Surat::where(
+                'status',
+                'Disetujui'
+            )->count();
+
+            $arsip = Surat::where(
+                'is_archived',
+                true
+            )->count();
+
+        } elseif ($jabatan === 'Kepala TVRI Stasiun NTB') {
+
+            $suratMasuk = Surat::where(
+                'status',
+                'Menunggu Approval Kepala Stasiun'
+            )->count();
+
+            $draft = Surat::where('pengirim_id', $user->id)
+                ->where('status', 'Draft')
+                ->count();
+
+            $approval = Surat::where(
+                'status',
+                'Menunggu Approval Kepala Stasiun'
+            )->count();
+
+            $diterima = Surat::where(
+                'status',
+                'Disetujui'
+            )->count();
+
+            $arsip = Surat::where(
+                'is_archived',
+                true
+            )->count();
+
+        } else {
+
+            $suratMasuk = Surat::where('pengirim_id', $user->id)
+                ->where('status', '!=', 'Draft')
+                ->count();
+
+            $draft = Surat::where('pengirim_id', $user->id)
+                ->where('status', 'Draft')
+                ->count();
+
+            $approval = Surat::where('pengirim_id', $user->id)
+            ->whereIn('status', [
+                'Menunggu Approval KPP',
+                'Menunggu Approval KTU',
+                'Menunggu Approval Kepala Stasiun',
+            ])
+            ->count();
+
+            $diterima = Surat::where('pengirim_id', $user->id)
+                ->where('status', 'Disetujui')
+                ->count();
+
+            $arsip = Surat::where('pengirim_id', $user->id)
+                ->where('is_archived', true)
+                ->count();
+        }
 
         /*
+        |--------------------------------------------------------------------------
+        | DATA YANG DIKIRIM KE VIEW
+        |--------------------------------------------------------------------------
+        */
+
+        $data = [
+            'totalSurat'       => $totalSurat,
+            'totalUser'        => $totalUser,
+            'pendingApproval'  => $pendingApproval,
+            'totalArsip'       => $totalArsip,
+
+            'suratMasuk'       => $suratMasuk,
+            'draft'            => $draft,
+            'approval'         => $approval,
+            'diterima'         => $diterima,
+            'arsip'            => $arsip,
+
+            'statistikSurat'   => $statistikSurat,
+            'statusSurat'      => $statusSurat,
+            'aktivitas'        => $aktivitas,
+            'suratTerbaru'     => $suratTerbaru,
+        ];
+
+                /*
         |--------------------------------------------------------------------------
         | VIEW
         |--------------------------------------------------------------------------
         */
 
-        if ($jabatan == 'Admin') {
+        if ($jabatan === 'Admin') {
 
             return view('admin.dashboard', $data);
 

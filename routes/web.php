@@ -2,7 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UserController;
@@ -10,8 +10,13 @@ use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PengesahanController;
 
-
+use App\Http\Controllers\BalasanSuratController;
+use App\Http\Controllers\LampiranController;
+use App\Http\Controllers\TemplateSuratController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NomorSuratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
@@ -80,12 +85,67 @@ Route::post('/logout',
 
 
 
+// ==========================
+// NOMOR SURAT
+// ==========================
+
+Route::prefix('admin')
+->middleware('auth')
+->group(function(){
 
 
+    Route::get('/nomor-surat',
+    [
+        NomorSuratController::class,
+        'index'
+    ])
+    ->name('admin.nomor');
 
 
+    Route::get('/nomor-surat/create',
+    [
+        NomorSuratController::class,
+        'create'
+    ])
+    ->name('admin.nomor.create');
 
 
+    Route::post('/nomor-surat',
+    [
+        NomorSuratController::class,
+        'store'
+    ])
+    ->name('admin.nomor.store');
+
+
+    Route::get('/nomor-surat/{id}/edit',
+    [
+        NomorSuratController::class,
+        'edit'
+    ])
+    ->whereNumber('id')
+    ->name('admin.nomor.edit');
+
+
+    Route::put('/nomor-surat/{id}',
+    [
+        NomorSuratController::class,
+        'update'
+    ])
+    ->whereNumber('id')
+    ->name('admin.nomor.update');
+
+
+    Route::delete('/nomor-surat/{id}',
+    [
+        NomorSuratController::class,
+        'destroy'
+    ])
+    ->whereNumber('id')
+    ->name('admin.nomor.destroy');
+
+
+});
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD
@@ -106,9 +166,21 @@ Route::get('/dashboard',
 
 
 
+/*
+|--------------------------------------------------------------------------
+| LAPORAN
+|--------------------------------------------------------------------------
+*/
 
-
-
+Route::get(
+    '/admin/laporan',
+    [
+        LaporanController::class,
+        'index'
+    ]
+)
+->middleware('auth')
+->name('admin.laporan');
 
 /*
 |--------------------------------------------------------------------------
@@ -122,10 +194,12 @@ Route::prefix('admin')
 ->group(function(){
 
 
-
-    Route::view(
+    Route::get(
         '/dashboard',
-        'admin.dashboard'
+        [
+            DashboardController::class,
+            'index'
+        ]
     )
     ->name('admin.dashboard');
 
@@ -133,30 +207,6 @@ Route::prefix('admin')
 
     Route::get('/users', [UserController::class, 'index'])
     ->name('admin.users');
-
-
-
-    Route::view(
-        '/template-surat',
-        'admin.template-surat'
-    )
-    ->name('admin.template');
-
-
-
-    Route::view(
-        '/nomor-surat',
-        'admin.nomor-surat'
-    )
-    ->name('admin.nomor');
-
-
-
-    Route::view(
-        '/laporan',
-        'admin.laporan'
-    )
-    ->name('admin.laporan');
 
 
 
@@ -191,16 +241,85 @@ Route::prefix('admin')
     ->name('admin.setting');
 
 
-
 });
 
 
 
 
+/*
+|--------------------------------------------------------------------------
+| TEMPLATE SURAT ADMIN
+|--------------------------------------------------------------------------
+*/
+
+
+// HALAMAN TEMPLATE
+
+Route::get(
+    '/admin/template-surat',
+    [TemplateSuratController::class,'index']
+)
+->name('admin.template');
 
 
 
 
+
+// TAMBAH TEMPLATE
+
+Route::post(
+    '/admin/template-surat',
+    [TemplateSuratController::class,'store']
+)
+->name('template.store');
+
+
+
+
+
+// FORM EDIT TEMPLATE
+
+Route::get(
+    '/admin/template-surat/{id}/edit',
+    [TemplateSuratController::class,'edit']
+)
+->name('template.edit');
+
+
+
+
+
+// UPDATE TEMPLATE
+
+Route::put(
+    '/admin/template-surat/{id}',
+    [TemplateSuratController::class,'update']
+)
+->name('template.update');
+
+
+
+
+
+// HAPUS TEMPLATE
+
+Route::delete(
+    '/admin/template-surat/{id}',
+    [TemplateSuratController::class,'destroy']
+)
+->name('template.destroy');
+
+
+
+
+
+// AKTIF / NONAKTIF TEMPLATE
+
+Route::patch(
+    '/admin/template-surat/{id}/status',
+    [TemplateSuratController::class,'toggleStatus']
+)
+->name('template.status');
 
 /*
 |--------------------------------------------------------------------------
@@ -525,75 +644,109 @@ Route::get('/surat/arsip',
 
 
 
-
-
-
-
 // ==========================
 // APPROVAL ACTION
 // ==========================
+
 
 // --------------------------
 // KPP
 // --------------------------
 
-Route::post('/approval/kpp/{id}', [
-    ApprovalController::class,
-    'approveKpp'
-])
+Route::post(
+    '/approval/kpp/{id}',
+    [
+        ApprovalController::class,
+        'approveKpp'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.kpp.approve');
 
-Route::post('/approval/kpp/{id}/reject', [
-    ApprovalController::class,
-    'rejectKpp'
-])
+
+
+Route::post(
+    '/approval/kpp/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKpp'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.kpp.reject');
+
+
+
 
 
 // --------------------------
 // KTU
 // --------------------------
 
-Route::post('/approval/ktu/{id}', [
-    ApprovalController::class,
-    'approveKtu'
-])
+Route::post(
+    '/approval/ktu/{id}',
+    [
+        ApprovalController::class,
+        'approveKtu'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.ktu.approve');
 
-Route::post('/approval/ktu/{id}/reject', [
-    ApprovalController::class,
-    'rejectKtu'
-])
+
+
+Route::post(
+    '/approval/ktu/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKtu'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.ktu.reject');
+
+
+
+
+
 
 
 // --------------------------
 // KEPALA STASIUN
 // --------------------------
 
-Route::post('/approval/kepala-stasiun/{id}', [
-    ApprovalController::class,
-    'approveKepalaStasiun'
-])
+Route::post(
+    '/approval/kepala-stasiun/{id}',
+    [
+        ApprovalController::class,
+        'approveKepalaStasiun'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.kepala.approve');
 
-Route::post('/approval/kepala-stasiun/{id}/reject', [
-    ApprovalController::class,
-    'rejectKepalaStasiun'
-])
+
+
+Route::post(
+    '/approval/kepala-stasiun/{id}/reject',
+    [
+        ApprovalController::class,
+        'rejectKepalaStasiun'
+    ]
+)
 ->middleware('auth')
 ->whereNumber('id')
 ->name('approval.kepala.reject');
+
+
+
+
+
 
 
 // ==========================
@@ -617,37 +770,19 @@ Route::get('/surat/approval', [
 
 
 
-
-
-
-
-
 // ==========================
 // DISPOSISI
 // ==========================
 
 
-// Halaman daftar disposisi
-
-Route::get('/surat/disposisi',
-[
-    DisposisiController::class,
-    'indexWeb'
-
-])
-->middleware('auth')
-->name('disposisi.index');
-
-
-
-
-
-// Form buat disposisi dari surat
+// ==========================
+// FORM BUAT DISPOSISI DARI SURAT
+// ==========================
 
 Route::get('/surat/{id}/disposisi',
 [
     DisposisiController::class,
-    'showWeb'
+    'createWeb'
 
 ])
 ->middleware('auth')
@@ -658,7 +793,9 @@ Route::get('/surat/{id}/disposisi',
 
 
 
-// Simpan disposisi dari form
+// ==========================
+// SIMPAN DISPOSISI WEB
+// ==========================
 
 Route::post('/surat/disposisi',
 [
@@ -673,12 +810,15 @@ Route::post('/surat/disposisi',
 
 
 
-// Detail disposisi
+
+// ==========================
+// DETAIL DISPOSISI
+// ==========================
 
 Route::get('/surat/disposisi/{id}',
 [
     DisposisiController::class,
-    'show'
+    'showWeb'
 
 ])
 ->middleware('auth')
@@ -689,7 +829,28 @@ Route::get('/surat/disposisi/{id}',
 
 
 
-// Inbox disposisi user
+
+// ==========================
+// LIST SEMUA DISPOSISI
+// ==========================
+
+Route::get('/surat/disposisi',
+[
+    DisposisiController::class,
+    'indexWeb'
+
+])
+->middleware('auth')
+->name('disposisi.index');
+
+
+
+
+
+
+// ==========================
+// INBOX DISPOSISI USER
+// ==========================
 
 Route::get('/surat/disposisi/inbox/{userId}',
 [
@@ -704,7 +865,11 @@ Route::get('/surat/disposisi/inbox/{userId}',
 
 
 
-// Tandai dibaca
+
+
+// ==========================
+// TANDAI DISPOSISI DIBACA
+// ==========================
 
 Route::put('/surat/disposisi/{id}/read',
 [
@@ -719,7 +884,10 @@ Route::put('/surat/disposisi/{id}/read',
 
 
 
-// Selesaikan disposisi
+
+// ==========================
+// SELESAIKAN DISPOSISI
+// ==========================
 
 Route::put('/surat/disposisi/{id}/finish',
 [
@@ -729,9 +897,181 @@ Route::put('/surat/disposisi/{id}/finish',
 ])
 ->middleware('auth')
 ->whereNumber('id');
+/*
+|--------------------------------------------------------------------------
+| LAMPIRAN SURAT
+|--------------------------------------------------------------------------
+*/
+Route::post(
+    '/lampiran/store',
+    [
+        LampiranController::class,
+        'store'
+    ]
+)
+->middleware('auth')
+->name('lampiran.store');
+
 
 Route::get('/surat/filter', [SuratController::class, 'filterInbox'])
     ->name('surat.filter');
+
+
+
+Route::delete(
+    '/lampiran/{id}',
+    [
+        LampiranController::class,
+        'destroy'
+    ]
+)
+->middleware('auth')
+->name('lampiran.destroy');
+// ==========================
+// PENGESAHAN SURAT
+// ==========================
+
+
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN PILIH METODE PENGESAHAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/surat/{id}/pengesahan',
+    [
+        PengesahanController::class,
+        'create'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('pengesahan.create');
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| FORM UPLOAD TTE
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/surat/{id}/pengesahan/tte',
+    [
+        PengesahanController::class,
+        'formTTE'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('pengesahan.tte.form');
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| FORM UPLOAD QR CODE
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/surat/{id}/pengesahan/qr',
+    [
+        PengesahanController::class,
+        'formQR'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('pengesahan.qr.form');
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| SIMPAN UPLOAD TTE / QR
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/surat/{id}/pengesahan/upload',
+    [
+        PengesahanController::class,
+        'uploadPengesahan'
+    ]
+)
+->middleware('auth')
+->whereNumber('id')
+->name('pengesahan.upload');
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| VERIFIKASI QR CODE PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/verifikasi/{kode}',
+    function($kode){
+
+
+        $data = \App\Models\PengesahanSurat::where(
+
+            'nomor_verifikasi',
+
+            $kode
+
+        )->firstOrFail();
+
+
+
+        return view(
+            'verifikasi',
+            compact('data')
+        );
+
+
+    }
+)
+->name('verifikasi');
+
+// ==========================
+// BALASAN
+// ==========================
+Route::get(
+    '/surat/{id}/balas',
+    [BalasanSuratController::class,'create']
+)
+->name('surat.balas');
+
+
+Route::post(
+    '/surat/{id}/balas',
+    [BalasanSuratController::class,'store']
+)
+->name('surat.balas.store');
+
+
+Route::get('/surat/{surat}/download', [SuratController::class, 'download'])
+    ->name('surat.download');
 // ==========================
 // SELESAI
 // ==========================

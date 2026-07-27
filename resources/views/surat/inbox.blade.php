@@ -95,7 +95,15 @@ transition">
 
 
     {{-- 2. MENUNGGU APPROVAL --}}
-    <a href="{{ route('surat.inbox', ['status' => 'Menunggu Approval KPP']) }}" class="block group">
+    @php
+    $statusApproval = match(auth()->user()->jabatan->nama_jabatan ?? '') {
+        'Ketua Tim Perencana dan Pengendali Program' => 'Menunggu Approval KPP',
+        'Kepala Sub Bagian Tata Usaha' => 'Menunggu Approval KTU',
+        'Kepala TVRI Stasiun NTB' => 'Menunggu Approval Kepala Stasiun',
+        default => '',
+    };
+    @endphp
+    <a href="{{ route('surat.inbox', ['status' => $statusApproval]) }}" class="block group">
         <div class="
             relative
             overflow-hidden
