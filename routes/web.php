@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
+use App\Http\Controllers\GrafikController;
 
 
 
@@ -109,7 +110,6 @@ Route::get('/dashboard',
 
 
 
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN
@@ -163,11 +163,14 @@ Route::prefix('admin')
 
 
 
-    Route::view(
-        '/grafik',
-        'admin.grafik'
-    )
-    ->name('admin.grafik');
+      Route::get('/grafik',
+[
+    GrafikController::class,
+    'index'
+])
+->name('admin.grafik');
+
+
 
 
 

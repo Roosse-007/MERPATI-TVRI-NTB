@@ -45,206 +45,177 @@
 
 <!-- STATISTIC CARD -->
 
-
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
 
+<!-- Total Surat -->
 
-    <!-- Surat -->
+<div class="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
 
-    <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-2xl shadow-lg p-6">
 
+<div class="flex items-center gap-5">
 
-        <div class="flex justify-between">
 
+<div class="bg-white/20 p-4 rounded-xl text-3xl">
 
-            <div>
+<i class="bi bi-envelope-paper"></i>
 
-                <p class="text-blue-100">
-                    Total Surat
-                </p>
+</div>
 
 
-                <h2 class="text-4xl font-bold mt-3">
-                    245
-                </h2>
+<div>
 
+<p class="text-blue-100">
+Total Surat
+</p>
 
-            </div>
+<h2 class="text-4xl font-bold">
+245
+</h2>
 
+<p class="text-sm mt-2">
++12 surat bulan ini
+</p>
 
-            <div class="text-5xl">
+</div>
 
-                📄
 
-            </div>
+</div>
 
 
-        </div>
+</div>
 
 
-        <p class="mt-4 text-sm">
 
-            +12 surat bulan ini
 
-        </p>
 
+<!-- Total User -->
 
-    </div>
+<div class="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
 
 
+<div class="flex items-center gap-5">
 
 
+<div class="bg-white/20 p-4 rounded-xl text-3xl">
 
-    <!-- User -->
+<i class="bi bi-people-fill"></i>
 
+</div>
 
-    <div class="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-2xl shadow-lg p-6">
 
+<div>
 
-        <div class="flex justify-between">
+<p class="text-green-100">
+Total User
+</p>
 
 
-            <div>
+<h2 class="text-4xl font-bold">
+58
+</h2>
 
 
-                <p class="text-green-100">
-                    Total User
-                </p>
+<p class="text-sm mt-2">
+Semua akun aktif
+</p>
 
 
-                <h2 class="text-4xl font-bold mt-3">
-                    58
-                </h2>
+</div>
 
 
-            </div>
+</div>
 
 
+</div>
 
-            <div class="text-5xl">
 
-                👥
 
-            </div>
 
 
+<!-- Approval -->
 
-        </div>
+<div class="bg-gradient-to-r from-yellow-500 to-orange-400 text-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
 
 
-        <p class="mt-4 text-sm">
+<div class="flex items-center gap-5">
 
-            Semua akun aktif
 
-        </p>
+<div class="bg-white/20 p-4 rounded-xl text-3xl">
 
+<i class="bi bi-hourglass-split"></i>
 
+</div>
 
-    </div>
 
+<div>
 
+<p class="text-yellow-100">
+Pending Approval
+</p>
 
 
+<h2 class="text-4xl font-bold">
+16
+</h2>
 
 
-    <!-- Approval -->
+<p class="text-sm mt-2">
+Menunggu tindakan
+</p>
 
 
-    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-white rounded-2xl shadow-lg p-6">
+</div>
 
 
-        <div class="flex justify-between">
+</div>
 
 
-            <div>
+</div>
 
-                <p class="text-yellow-100">
-                    Pending Approval
-                </p>
 
 
-                <h2 class="text-4xl font-bold mt-3">
-                    16
-                </h2>
 
 
-            </div>
+<!-- Arsip -->
 
+<div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
 
 
-            <div class="text-5xl">
+<div class="flex items-center gap-5">
 
-                ⏳
 
-            </div>
+<div class="bg-white/20 p-4 rounded-xl text-3xl">
 
+<i class="bi bi-archive-fill"></i>
 
+</div>
 
-        </div>
 
+<div>
 
-        <p class="mt-4 text-sm">
+<p class="text-purple-100">
+Total Arsip
+</p>
 
-            Menunggu tindakan
 
-        </p>
+<h2 class="text-4xl font-bold">
+820
+</h2>
 
 
-    </div>
+<p class="text-sm mt-2">
+Dokumen tersimpan
+</p>
 
 
+</div>
 
 
+</div>
 
 
-
-    <!-- Arsip -->
-
-
-    <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-2xl shadow-lg p-6">
-
-
-        <div class="flex justify-between">
-
-
-            <div>
-
-
-                <p class="text-purple-100">
-                    Total Arsip
-                </p>
-
-
-                <h2 class="text-4xl font-bold mt-3">
-                    820
-                </h2>
-
-
-            </div>
-
-
-
-            <div class="text-5xl">
-
-                🗂️
-
-            </div>
-
-
-
-        </div>
-
-
-        <p class="mt-4 text-sm">
-
-            Dokumen tersimpan
-
-        </p>
-
-
-    </div>
-
+</div>
 
 
 </div>
@@ -262,7 +233,7 @@
 <div class="mt-8 bg-white rounded-2xl shadow p-6">
 
 
-<h2 class="text-xl font-bold mb-5">
+<h2 class="text-xl font-bold mb-5 text-gray-800">
 
 Menu Cepat
 
@@ -270,26 +241,33 @@ Menu Cepat
 
 
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
 
 <a href="/admin/users"
-class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 transition text-center">
+class="border border-blue-200 bg-blue-50 rounded-2xl p-6 min-h-[150px] flex items-center gap-5 hover:shadow-lg hover:-translate-y-1 transition">
 
 
-<div class="text-3xl">
+<div class="text-3xl text-blue-600">
 
-👥
+<i class="bi bi-people-fill"></i>
 
 </div>
 
 
-<p class="mt-2 font-semibold">
+<div>
 
+<h3 class="font-bold text-lg text-blue-700">
 Kelola User
+</h3>
 
+
+<p class="text-sm text-gray-500">
+Kelola akun pengguna
 </p>
+
+
+</div>
 
 
 </a>
@@ -299,21 +277,29 @@ Kelola User
 
 
 <a href="/admin/template-surat"
-class="p-5 rounded-xl bg-green-50 hover:bg-green-100 transition text-center">
+class="border border border-green-200 bg-green-50 rounded-2xl p-6 min-h-[150px] flex items-center gap-5 hover:shadow-lg hover:-translate-y-1 transition">
 
 
-<div class="text-3xl">
+<div class="text-3xl text-green-600">
 
-📄
+<i class="bi bi-file-earmark-text-fill"></i>
 
 </div>
 
 
-<p class="mt-2 font-semibold">
+<div>
 
+<h3 class="font-bold text-lg text-green-700">
 Template Surat
+</h3>
 
+
+<p class="text-sm text-gray-500">
+Kelola template
 </p>
+
+
+</div>
 
 
 </a>
@@ -323,21 +309,29 @@ Template Surat
 
 
 <a href="/admin/laporan"
-class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition text-center">
+class="border border border-yellow-200 bg-yellow-50 rounded-2xl p-6 min-h-[150px] flex items-center gap-5 hover:shadow-lg hover:-translate-y-1 transition">
 
 
-<div class="text-3xl">
+<div class="text-3xl text-yellow-600">
 
-📊
+<i class="bi bi-bar-chart-fill"></i>
 
 </div>
 
 
-<p class="mt-2 font-semibold">
+<div>
 
+<h3 class="font-bold text-lg text-yellow-700">
 Laporan
+</h3>
 
+
+<p class="text-sm text-gray-500">
+Lihat laporan
 </p>
+
+
+</div>
 
 
 </a>
@@ -347,25 +341,32 @@ Laporan
 
 
 <a href="/admin/arsip"
-class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 transition text-center">
+class="border border-blue-200 bg-blue-50 rounded-2xl p-6 min-h-[150px] flex items-center gap-5 hover:shadow-lg hover:-translate-y-1 transition">
 
 
-<div class="text-3xl">
+<div class="text-3xl text-purple-600">
 
-🗂️
+<i class="bi bi-archive-fill"></i>
 
 </div>
 
 
-<p class="mt-2 font-semibold">
+<div>
 
+<h3 class="font-bold text-lg text-purple-700">
 Arsip
+</h3>
 
+
+<p class="text-sm text-gray-500">
+Kelola arsip surat
 </p>
 
 
-</a>
+</div>
 
+
+</a>
 
 
 </div>

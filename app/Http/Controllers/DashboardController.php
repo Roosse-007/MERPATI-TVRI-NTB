@@ -4,39 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\Surat;
 use App\Models\Approval;
-
+use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
 
     public function index()
     {
 
-        $user = auth()->user();
+        $user = Auth::user();
 
 
         // DATA DASHBOARD SURAT
         $data = [
 
-            // semua surat selain draft
-            'suratMasuk' => Surat::where('status', '!=', 'Draft')
-                ->count(),
+    'suratMasuk' => Surat::where('status', '!=', 'Draft')->count(),
+
+    'draft' => Surat::where('status', 'Draft')->count(),
+
+    'approval' => Approval::where('status', 'Menunggu')->count(),
+
+    'arsip' => Surat::where('is_archived', true)->count(),
 
 
-            // surat draft
-            'draft' => Surat::where('status', 'Draft')
-                ->count(),
+    // DATA GRAFIK BULANAN
+    'grafikSurat' => Surat::selectRaw('MONTH(tanggal_surat) bulan, COUNT(*) jumlah')
+        ->whereYear('tanggal_surat', 2026)
+        ->groupBy('bulan')
+        ->orderBy('bulan')
+        ->pluck('jumlah','bulan'),
 
 
-            // approval menunggu
-            'approval' => Approval::where('status', 'Menunggu')
-                ->count(),
-
-
-            // arsip
-            'arsip' => Surat::where('is_archived', true)
-                ->count(),
-
-        ];
+];
 
 
 

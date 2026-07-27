@@ -20,9 +20,13 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
 
-@vite(['resources/css/app.css','resources/js/app.js'])
+@vite([
+'resources/css/app.css',
+'resources/js/app.js'
+])
 
 
 
@@ -36,151 +40,302 @@ body{
 }
 
 
-/* SIDEBAR */
+
+
+
+/* =========================
+        SIDEBAR
+========================= */
+
 
 .sidebar{
 
+
     width:280px;
+
 
     height:100vh;
 
+
     position:fixed;
+
 
     left:0;
 
+
     top:0;
 
+
+
     background:
-    linear-gradient(
-        180deg,
-        #071a52,
-        #123b9c,
-        #0ea5e9
-    );
+linear-gradient(
+    180deg,
+    #07163f,
+    #123b91,
+    #0796e8
+);
+
+
 
     color:white;
 
+
     overflow-y:auto;
 
+
     box-shadow:
-    0 0 30px rgba(0,0,0,.3);
+    0 0 30px rgba(0,0,0,.35);
+
+
 
     display:flex;
 
+
     flex-direction:column;
+
 
 }
 
 
-/* LOGO */
+
+.sidebar::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+
+
+.sidebar::-webkit-scrollbar-thumb{
+
+    background:rgba(96,165,250,.5);
+
+    border-radius:20px;
+
+}
+
+
+
+
+
+/* =========================
+        LOGO
+========================= */
+
 
 .sidebar-logo{
 
-    padding:25px;
+    padding:35px 25px 25px;
 
-    border-bottom:1px solid rgba(255,255,255,.2);
+    border-bottom:
 
-}
-
-
-.sidebar-logo h1{
-
-    font-size:30px;
-
-    font-weight:800;
-
-    margin:0;
-
-}
-
-
-.sidebar-logo small{
-
-    color:#bfdbfe;
+    1px solid rgba(255,255,255,.15);
 
 }
 
 
 
-/* MENU */
-
-.sidebar-menu{
-
-    flex:1;
-
-    padding-top:15px;
-
-}
-
-
-.sidebar a{
+.brand{
 
     display:flex;
 
     align-items:center;
 
-    gap:15px;
+    gap:18px;
+
+}
+
+
+
+.brand-icon{
+
+    width:70px;
+    height:70px;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #38bdf8,
+        #2563eb
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 10px 25px rgba(37,99,235,.45);
+
+}
+
+
+
+.brand-icon i{
+
+    font-size:32px;
 
     color:white;
 
+}
+
+.brand-bird{
+
+    width:32px;
+
+    height:32px;
+
+    color:white;
+
+}
+
+.brand-text h1{
+
+    font-size:30px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+}
+
+
+
+.brand-text p{
+
+    margin-top:5px;
+
+    margin-bottom:0;
+
+    color:#dbeafe;
+
+    font-size:16px;
+
+    font-weight:600;
+
+}
+
+
+
+
+
+
+
+/* MENU */
+
+
+.sidebar-menu{
+
+
+    flex:1;
+
+
+    padding-top:15px;
+
+
+}
+
+
+
+.sidebar a{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:15px;
+
+
+    color:#dbeafe;
+
+
     text-decoration:none;
+
 
     padding:14px 25px;
 
+
     margin:8px 15px;
+
 
     border-radius:15px;
 
+
     transition:.3s;
 
+
 }
+
 
 
 .sidebar a:hover{
 
-    background:rgba(255,255,255,.15);
+
+    background:rgba(255,255,255,.1);
+
+
+    color:white;
+
 
     transform:translateX(8px);
 
+
 }
 
 
 
-/* LABEL MENU */
 
 .menu-title{
 
+
     padding:15px 25px 5px;
+
 
     color:#bfdbfe;
 
+
     font-size:12px;
+
 
     font-weight:bold;
 
+
     letter-spacing:1px;
+
 
 }
 
 
 
-/* FOOTER */
 
 
 .sidebar-footer{
 
+
     margin:20px;
 
+
     background:
-    rgba(255,255,255,.15);
+    rgba(255,255,255,.1);
+
 
     backdrop-filter:blur(10px);
 
-    padding:15px 20px;
+
+    padding:18px 20px;
+
 
     border-radius:20px;
 
+
 }
+
 
 
 
@@ -189,7 +344,9 @@ body{
 
 .content{
 
+
     margin-left:280px;
+
 
 }
 
@@ -197,10 +354,14 @@ body{
 
 .navbar-custom{
 
+
     background:white;
 
+
     box-shadow:
+
     0 3px 10px rgba(0,0,0,.1);
+
 
 }
 
@@ -208,13 +369,18 @@ body{
 
 footer{
 
+
     text-align:center;
+
 
     padding:20px;
 
+
     color:#666;
 
+
 }
+
 
 
 </style>
@@ -230,6 +396,7 @@ footer{
 
 
 
+
 <!-- SIDEBAR -->
 
 
@@ -240,14 +407,42 @@ footer{
 <div class="sidebar-logo">
 
 
+
+<div class="brand">
+
+
+
+<div class="brand-icon">
+
+    <i 
+    data-lucide="bird"
+    class="w-8 h-8 text-white">
+    </i>
+
+</div>
+
+
+
+
+
+<div class="brand-text">
+
+
 <h1>
 MERPATI
 </h1>
 
 
-<small>
+<p>
 TVRI NTB
-</small>
+</p>
+
+
+</div>
+
+
+</div>
+
 
 
 </div>
@@ -257,10 +452,7 @@ TVRI NTB
 
 
 <div class="sidebar-menu">
-
-
-
-{{-- DASHBOARD --}}
+    {{-- DASHBOARD --}}
 
 <a href="/admin/dashboard">
 
@@ -273,9 +465,9 @@ Dashboard
 
 
 
-{{-- =====================
-MENU SURAT
-===================== --}}
+
+
+{{-- MENU SURAT --}}
 
 
 <div class="menu-title">
@@ -283,6 +475,8 @@ MENU SURAT
 SURAT
 
 </div>
+
+
 
 
 
@@ -296,6 +490,8 @@ Kotak Masuk
 
 
 
+
+
 <a href="/surat/draft">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -303,6 +499,8 @@ Kotak Masuk
 Draft
 
 </a>
+
+
 
 
 
@@ -316,6 +514,8 @@ Surat Baru
 
 
 
+
+
 <a href="/surat/approval">
 
 <i class="bi bi-check-circle fs-5"></i>
@@ -323,6 +523,8 @@ Surat Baru
 Approval
 
 </a>
+
+
 
 
 
@@ -336,6 +538,8 @@ Disposisi
 
 
 
+
+
 <a href="/surat/arsip">
 
 <i class="bi bi-archive fs-5"></i>
@@ -343,6 +547,8 @@ Disposisi
 Arsip
 
 </a>
+
+
 
 
 
@@ -359,10 +565,8 @@ Profil
 
 
 
-{{-- =====================
-ADMIN
-===================== --}}
 
+{{-- ADMINISTRATOR --}}
 
 
 <div class="menu-title">
@@ -370,6 +574,8 @@ ADMIN
 ADMINISTRATOR
 
 </div>
+
+
 
 
 
@@ -385,6 +591,8 @@ Kelola User
 
 
 
+
+
 <a href="/admin/template-surat">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -392,6 +600,8 @@ Kelola User
 Template Surat
 
 </a>
+
+
 
 
 
@@ -407,6 +617,8 @@ Nomor Surat
 
 
 
+
+
 <a href="/admin/laporan">
 
 <i class="bi bi-file-earmark-bar-graph fs-5"></i>
@@ -414,6 +626,8 @@ Nomor Surat
 Laporan
 
 </a>
+
+
 
 
 
@@ -429,6 +643,8 @@ Grafik
 
 
 
+
+
 <a href="/admin/monitoring">
 
 <i class="bi bi-activity fs-5"></i>
@@ -436,6 +652,8 @@ Grafik
 Monitoring
 
 </a>
+
+
 
 
 
@@ -451,11 +669,18 @@ Setting
 
 
 
+
 </div>
 
 
 
 
+
+
+
+
+
+{{-- FOOTER SIDEBAR --}}
 
 
 <div class="sidebar-footer">
@@ -483,7 +708,11 @@ TVRI NTB
 
 
 
+
+
 </div>
+
+
 
 
 
@@ -507,11 +736,37 @@ TVRI NTB
 
 
 
+<div class="d-flex align-items-center">
+
+
+
+<img 
+
+src="{{ asset('images/tvri-ntb.jpeg') }}"
+
+width="55"
+
+height="55"
+
+class="rounded-circle me-3"
+
+style="object-fit:cover;"
+
+>
+
+
+
 <span class="navbar-brand fw-bold">
 
 @yield('title')
 
 </span>
+
+
+
+</div>
+
+
 
 
 
@@ -532,6 +787,7 @@ TVRI NTB
 
 
 
+
 <img
 
 src="https://ui-avatars.com/api/?name={{ auth()->user()->name ?? 'Admin' }}"
@@ -544,7 +800,9 @@ class="rounded-circle"
 
 
 
+
 </div>
+
 
 
 
@@ -552,6 +810,8 @@ class="rounded-circle"
 
 
 </nav>
+
+
 
 
 
@@ -573,6 +833,8 @@ class="rounded-circle"
 
 
 
+
+
 <footer>
 
 
@@ -585,6 +847,7 @@ class="rounded-circle"
 
 
 
+
 </div>
 
 
@@ -592,7 +855,16 @@ class="rounded-circle"
 
 
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<script>
+
+lucide.createIcons();
+
+</script>
 
 
 
