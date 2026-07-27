@@ -173,9 +173,6 @@ Route::get('/dashboard',
 |--------------------------------------------------------------------------
 */
 
-<<<<<<< HEAD
-
-=======
 Route::get(
     '/admin/laporan',
     [
@@ -185,7 +182,6 @@ Route::get(
 )
 ->middleware('auth')
 ->name('admin.laporan');
->>>>>>> 8d1dfa1b4b5714c18868bb4bc368ade2e60bb1ba
 
 /*
 |--------------------------------------------------------------------------
@@ -216,44 +212,10 @@ Route::prefix('admin')
 
 
     Route::view(
-<<<<<<< HEAD
-        '/template-surat',
-        'admin.template-surat'
-    )
-    ->name('admin.template');
-
-
-
-    Route::view(
-        '/nomor-surat',
-        'admin.nomor-surat'
-    )
-    ->name('admin.nomor');
-
-
-
-    Route::view(
-        '/laporan',
-        'admin.laporan'
-    )
-    ->name('admin.laporan');
-
-
-
-      Route::get('/grafik',
-[
-    GrafikController::class,
-    'index'
-])
-->name('admin.grafik');
-
-
-=======
         '/grafik',
         'admin.grafik'
     )
     ->name('admin.grafik');
->>>>>>> 8d1dfa1b4b5714c18868bb4bc368ade2e60bb1ba
 
 
 
