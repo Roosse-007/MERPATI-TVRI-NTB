@@ -35,6 +35,20 @@
     >
 
         @csrf
+        @if ($errors->any())
+    <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded mb-4">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+        <input
+    type="hidden"
+    id="aksi"
+    name="action"
+    value="draft">
 
         {{-- ===================== INFORMASI SURAT ===================== --}}
         <div class="rounded-2xl border border-slate-200 overflow-hidden">
@@ -453,72 +467,22 @@ transition
 </a>
 
 
-
-
-
-
-
 <button
-
-type="submit"
-
-name="action"
-
-value="draft"
-
-class="
-px-8
-py-4
-rounded-2xl
-bg-blue-600
-text-white
-font-bold
-shadow-lg
-hover:bg-blue-700
-transition
-"
-
->
-
-💾 Simpan Draft
-
+    type="submit"
+    onclick="document.getElementById('aksi').value='draft';"
+    class="px-8 py-4 rounded-2xl bg-blue-600 text-white font-bold">
+    💾 Simpan Draft
 </button>
 
-
-
-
-
-
-
 <button
-
-type="submit"
-
-name="action"
-
-value="kirim"
-
-class="
-px-8
-py-4
-rounded-2xl
-bg-green-600
-text-white
-font-bold
-shadow-lg
-hover:bg-green-700
-transition
-"
-
->
-
-📨 Kirim Surat
-
+    type="button"
+    onclick="
+        document.getElementById('aksi').value='kirim';
+        document.querySelector('form').submit();
+    "
+    class="px-8 py-4 rounded-2xl bg-green-600 text-white font-bold">
+    📨 Kirim Surat
 </button>
-
-
-
-
 
 
 </div>

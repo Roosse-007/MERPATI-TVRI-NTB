@@ -100,31 +100,6 @@ digital yang cepat dan modern.
 
 </p>
 
-
-
-
-<a href="/surat/create"
-
-class="
-inline-block
-mt-8
-bg-white
-text-slate-900
-px-8
-py-3
-rounded-2xl
-font-bold
-shadow-xl
-hover:scale-105
-hover:bg-blue-50
-transition
-">
-
-Mulai Kelola Surat
-
-</a>
-
-
 </div>
 
 
@@ -159,276 +134,273 @@ flying-bird
 
 </section>
 
-
-
-
-
-
-
-
 {{-- STATISTIC CARD --}}
 
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
 
-<div class="
-grid
-grid-cols-1
-md:grid-cols-2
-xl:grid-cols-4
-gap-6
-mt-10
-">
+    {{-- SURAT MASUK --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-sky-600
+        to-blue-500
+        hover:-translate-y-1
+        hover:shadow-2xl
+        transition-all
+        duration-300
+    ">
+
+        <div class="
+            absolute
+            -right-10
+            -top-10
+            w-32
+            h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-white/80 font-medium">
+                    Surat Masuk
+                </p>
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $suratMasuk ?? 0 }}
+                </h2>
+
+                <p class="text-sm text-white/80 mt-4">
+                    Total surat diterima
+                </p>
+
+            </div>
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+            ">
+
+                <i data-lucide="mail" class="w-8 h-8"></i>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 
+    {{-- DRAFT --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-violet-600
+        to-fuchsia-500
+        hover:-translate-y-1
+        hover:shadow-2xl
+        transition-all
+        duration-300
+    ">
+
+        <div class="
+            absolute
+            -right-10
+            -top-10
+            w-32
+            h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-white/80 font-medium">
+                    Draft
+                </p>
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $draft ?? 0 }}
+                </h2>
+
+                <p class="text-sm text-white/80 mt-4">
+                    Surat masih draft
+                </p>
+
+            </div>
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+            ">
+
+                <i data-lucide="file-pen-line" class="w-8 h-8"></i>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 
-{{-- SURAT MASUK --}}
+    {{-- APPROVAL --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-emerald-600
+        to-green-500
+        hover:-translate-y-1
+        hover:shadow-2xl
+        transition-all
+        duration-300
+    ">
 
-<div class="
-rounded-[28px]
-bg-white
-p-7
-shadow-lg
-hover:-translate-y-2
-transition
-border
-border-blue-100
-">
+        <div class="
+            absolute
+            -right-10
+            -top-10
+            w-32
+            h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-white/80 font-medium">
+                    Approval
+                </p>
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $approval ?? 0 }}
+                </h2>
+
+                <p class="text-sm text-white/80 mt-4">
+                    Surat telah disetujui
+                </p>
+
+            </div>
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+            ">
+
+                <i data-lucide="badge-check" class="w-8 h-8"></i>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
-<div class="
-w-14
-h-14
-rounded-2xl
-bg-blue-100
-flex
-items-center
-justify-center
-text-3xl
-">
 
-📩
+    {{-- ARSIP --}}
+    <div class="
+        relative
+        overflow-hidden
+        rounded-3xl
+        p-6
+        text-white
+        shadow-xl
+        bg-gradient-to-br
+        from-orange-500
+        to-amber-400
+        hover:-translate-y-1
+        hover:shadow-2xl
+        transition-all
+        duration-300
+    ">
+
+        <div class="
+            absolute
+            -right-10
+            -top-10
+            w-32
+            h-32
+            bg-white/10
+            rounded-full">
+        </div>
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-white/80 font-medium">
+                    Arsip
+                </p>
+
+                <h2 class="text-5xl font-black mt-3">
+                    {{ $arsip ?? 0 }}
+                </h2>
+
+                <p class="text-sm text-white/80 mt-4">
+                    Surat telah diarsipkan
+                </p>
+
+            </div>
+
+            <div class="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+            ">
+
+                <i data-lucide="archive" class="w-8 h-8"></i>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
-
-
-<p class="
-mt-5
-text-slate-500
-">
-
-Surat Masuk
-
-</p>
-
-
-
-<h2 class="
-text-4xl
-font-black
-text-slate-800
-">
-
-{{ $suratMasuk ?? 0 }}
-
-</h2>
-
-
-</div>
-
-
-
-
-
-
-
-{{-- DRAFT --}}
-
-
-<div class="
-rounded-[28px]
-bg-white
-p-7
-shadow-lg
-hover:-translate-y-2
-transition
-border
-border-purple-100
-">
-
-
-<div class="
-w-14
-h-14
-rounded-2xl
-bg-purple-100
-flex
-items-center
-justify-center
-text-3xl
-">
-
-📝
-
-</div>
-
-
-<p class="
-mt-5
-text-slate-500
-">
-
-Draft
-
-</p>
-
-
-
-<h2 class="
-text-4xl
-font-black
-">
-
-{{ $draft ?? 0 }}
-
-</h2>
-
-
-</div>
-
-
-
-
-
-
-
-{{-- APPROVAL --}}
-
-
-<div class="
-rounded-[28px]
-bg-white
-p-7
-shadow-lg
-hover:-translate-y-2
-transition
-border
-border-green-100
-">
-
-
-<div class="
-w-14
-h-14
-rounded-2xl
-bg-green-100
-flex
-items-center
-justify-center
-text-3xl
-">
-
-✅
-
-</div>
-
-
-<p class="
-mt-5
-text-slate-500
-">
-
-Approval
-
-</p>
-
-
-<h2 class="
-text-4xl
-font-black
-">
-
-{{ $approval ?? 0 }}
-
-</h2>
-
-
-</div>
-
-
-
-
-
-
-
-
-{{-- ARSIP --}}
-
-
-<div class="
-rounded-[28px]
-bg-white
-p-7
-shadow-lg
-hover:-translate-y-2
-transition
-border
-border-orange-100
-">
-
-
-<div class="
-w-14
-h-14
-rounded-2xl
-bg-orange-100
-flex
-items-center
-justify-center
-text-3xl
-">
-
-🗄️
-
-</div>
-
-
-
-<p class="
-mt-5
-text-slate-500
-">
-
-Arsip
-
-</p>
-
-
-
-<h2 class="
-text-4xl
-font-black
-">
-
-{{ $arsip ?? 0 }}
-
-</h2>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
 
 {{-- AKTIVITAS TERBARU --}}
 

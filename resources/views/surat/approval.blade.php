@@ -7,23 +7,19 @@
 
 <div class="relative">
 
-
-{{-- MERPATI --}}
-<x-flying-dove />
-
-
-
 <div class="mb-8">
 
 <h1 class="
 text-4xl
 font-black
 text-slate-800
+flex
+items-center
+gap-3
 ">
-
-Approval Surat ✅
-
-</h1>
+<i data-lucide="shield-check" class="w-10 h-10 text-indigo-600"></i>
+Approval Surat
+</h1>   
 
 
 <p class="text-slate-500 mt-2">
@@ -39,63 +35,167 @@ Pantau perjalanan persetujuan surat secara real-time
 
 
 {{-- STATISTIK --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-    {{-- Total Surat --}}
-    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+    {{-- 1. Total Surat --}}
+    <a href="{{ route('surat.approval') }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-blue-600
+            to-cyan-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-        <div class="flex items-center gap-2 text-slate-300 text-sm">
-            <i data-lucide="files" class="w-5 h-5"></i>
-            <span>Total Surat</span>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Total Surat</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $totalSurat }}</h2>
+                </div>
+
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shadow-inner shrink-0">
+                    <i data-lucide="files" class="w-8 h-8"></i>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Jumlah seluruh surat masuk</p>
+            </div>
         </div>
+    </a>
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $totalSurat }}
-        </h2>
+    {{-- 2. Menunggu --}}
+    <a href="{{ route('surat.approval', ['status' => 'Menunggu Approval KPP']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-amber-500
+            to-orange-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-    </div>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Menunggu</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $menunggu }}</h2>
+                </div>
 
-    {{-- Menunggu --}}
-    <div class="bg-gradient-to-br from-amber-900 via-yellow-900 to-orange-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i data-lucide="clock-3" class="w-8 h-8"></i>
+                </div>
+            </div>
 
-        <div class="flex items-center gap-2 text-amber-200 text-sm">
-            <i data-lucide="clock-3" class="w-5 h-5"></i>
-            <span>Menunggu</span>
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat menunggu persetujuan</p>
+            </div>
         </div>
+    </a>
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $menunggu }}
-        </h2>
+    {{-- 3. Disetujui --}}
+    <a href="{{ route('surat.approval', ['status' => 'Disetujui']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-teal-600
+            to-emerald-500
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-    </div>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Disetujui</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $disetujui }}</h2>
+                </div>
 
-    {{-- Disetujui --}}
-    <div class="bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center shrink-0">
+                    <i data-lucide="circle-check-big" class="w-8 h-8"></i>
+                </div>
+            </div>
 
-        <div class="flex items-center gap-2 text-emerald-200 text-sm">
-            <i data-lucide="circle-check-big" class="w-5 h-5"></i>
-            <span>Disetujui</span>
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat telah disetujui</p>
+            </div>
         </div>
+    </a>
 
-        <h2 class="text-5xl font-black mt-3">
-            {{ $disetujui }}
-        </h2>
+    {{-- 4. Ditolak --}}
+    <a href="{{ route('surat.approval', ['status' => 'Ditolak']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-red-500
+            to-rose-600
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-    </div>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Ditolak</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $ditolak }}</h2>
+                </div>
 
-    {{-- Ditolak --}}
-    <div class="bg-gradient-to-br from-rose-900 via-red-900 to-red-800 rounded-3xl p-6 shadow-2xl hover:-translate-y-1 duration-300 text-white">
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i data-lucide="circle-x" class="w-8 h-8"></i>
+                </div>
+            </div>
 
-        <div class="flex items-center gap-2 text-red-200 text-sm">
-            <i data-lucide="circle-x" class="w-5 h-5"></i>
-            <span>Ditolak</span>
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat yang ditolak</p>
+            </div>
         </div>
-
-        <h2 class="text-5xl font-black mt-3">
-            {{ $ditolak }}
-        </h2>
-
-    </div>
+    </a>
 
 </div>
 
@@ -202,19 +302,22 @@ Pantau perjalanan persetujuan surat secara real-time
         @switch($item->status)
 
             @case('Disetujui')
-                <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-bold">
+                <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-bold inline-flex items-center gap-1.5">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                     Disetujui
                 </span>
             @break
 
             @case('Ditolak')
-                <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-bold">
+                <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-bold inline-flex items-center gap-1.5">
+                    <i data-lucide="x-circle" class="w-4 h-4"></i>
                     Ditolak
                 </span>
             @break
 
             @default
-                <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-bold">
+                <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-bold inline-flex items-center gap-1.5">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
                     {{ $item->status }}
                 </span>
 
@@ -224,82 +327,85 @@ Pantau perjalanan persetujuan surat secara real-time
 
     <td class="px-6 py-5 text-center">
 
-    {{-- Tahap KPP --}}
-    @if($item->status == 'Menunggu Approval KPP')
+        <div class="flex items-center justify-center gap-2">
 
-        <div class="flex justify-center gap-2">
+            {{-- Tombol Lihat/Detail --}}
+            <a href="{{ route('surat.detail', $item->id) }}" class="p-2 rounded-xl bg-sky-100 text-sky-700 hover:bg-sky-200 transition" title="Lihat Detail">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+            </a>
 
-            <form method="POST" action="{{ route('approval.kpp.approve', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
-                    ✓ Setujui
-                </button>
-            </form>
+            {{-- Tahap KPP --}}
+            @if(
+                auth()->user()->jabatan &&
+                auth()->user()->jabatan->nama_jabatan == 'Ketua Tim Perencana dan Pengendali Program' &&
+                $item->status == 'Menunggu Approval KPP'
+)
 
-            <form method="POST" action="{{ route('approval.kpp.reject', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
-                    ✕ Tolak
-                </button>
-            </form>
+                <form method="POST" action="{{ route('approval.kpp.approve', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition" title="Setujui">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('approval.kpp.reject', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition" title="Tolak">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+            {{-- Tahap KTU --}}
+            @elseif(
+                auth()->user()->jabatan &&
+                auth()->user()->jabatan->nama_jabatan == 'Kepala Sub Bagian Tata Usaha' &&
+                $item->status == 'Menunggu Approval KTU'
+            )
+
+                <form method="POST" action="{{ route('approval.ktu.approve', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition" title="Setujui">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('approval.ktu.reject', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition" title="Tolak">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+            {{-- Tahap Kepala Stasiun --}}
+            @elseif(
+                auth()->user()->jabatan &&
+                auth()->user()->jabatan->nama_jabatan == 'Kepala TVRI Stasiun NTB' &&
+                $item->status == 'Menunggu Approval Kepala Stasiun'
+            )
+
+                <form method="POST" action="{{ route('approval.kepala.approve', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition" title="Setujui">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('approval.kepala.reject', $item->id) }}">
+                    @csrf
+                    <button class="p-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition" title="Tolak">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+            @else
+
+                <span class="text-slate-400 font-semibold text-sm">
+                    Selesai
+                </span>
+
+            @endif
 
         </div>
-
-    {{-- Tahap KTU --}}
-    @elseif($item->status == 'Menunggu Approval KTU')
-
-        <div class="flex justify-center gap-2">
-
-            <form method="POST" action="{{ route('approval.ktu.approve', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
-                    ✓ Setujui
-                </button>
-            </form>
-
-            <form method="POST" action="{{ route('approval.ktu.reject', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
-                    ✕ Tolak
-                </button>
-            </form>
-
-        </div>
-
-    {{-- Tahap Kepala Stasiun --}}
-    @elseif($item->status == 'Menunggu Approval Kepala Stasiun')
-
-        <div class="flex justify-center gap-2">
-
-            <form method="POST" action="{{ route('approval.kepala.approve', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">
-                    ✓ Setujui
-                </button>
-            </form>
-
-            <form method="POST" action="{{ route('approval.kepala.reject', $item->id) }}">
-                @csrf
-                <button
-                    class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700">
-                    ✕ Tolak
-                </button>
-            </form>
-
-        </div>
-
-    @else
-
-        <span class="text-slate-400 font-semibold">
-            Selesai
-        </span>
-
-    @endif
 
 </td>
 

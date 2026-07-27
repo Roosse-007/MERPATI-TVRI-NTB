@@ -601,11 +601,19 @@ Route::post('/approval/kepala-stasiun/{id}/reject', [
 // ==========================
 
 Route::get('/surat/approval', [
-    SuratController::class,
-    'approval'
+    ApprovalController::class,
+    'index'
 ])
 ->middleware('auth')
 ->name('surat.approval');
+
+// Route::post('/surat/draft', [SuratController::class, 'storeDraft'])
+//     ->middleware('auth')
+//     ->name('surat.storeDraft');
+
+// Route::post('/surat/kirim', [SuratController::class, 'storeKirim'])
+//     ->middleware('auth')
+//     ->name('surat.storeKirim');
 
 
 
@@ -722,7 +730,8 @@ Route::put('/surat/disposisi/{id}/finish',
 ->middleware('auth')
 ->whereNumber('id');
 
-
+Route::get('/surat/filter', [SuratController::class, 'filterInbox'])
+    ->name('surat.filter');
 // ==========================
 // SELESAI
 // ==========================

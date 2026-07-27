@@ -49,315 +49,172 @@ transition">
 
 
 
-{{-- STAT CARD --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+{{-- STAT CARD CONTAINER --}}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
 
 
-    {{-- TOTAL SURAT --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-blue-600
-        to-cyan-400
-        hover:-translate-y-1
-        transition
-        duration-300
-    ">
+    {{-- 1. TOTAL SURAT --}}
+    <a href="{{ route('surat.inbox') }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-blue-600
+            to-cyan-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-        <div class="absolute -right-10 -top-10
-            w-32 h-32
-            bg-white/10
-            rounded-full">
-        </div>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Total Surat</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $totalSurat }}</h2>
+                </div>
 
-
-        <div class="flex items-center justify-between">
-
-
-            <div>
-
-                <p class="text-white/80 font-medium">
-                    Total Surat
-                </p>
-
-
-                <h2 class="text-5xl font-black mt-3">
-                    {{ $totalSurat }}
-                </h2>
-
-
-                <p class="text-sm text-white/80 mt-4">
-                    Jumlah surat masuk
-                </p>
-
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shadow-inner shrink-0">
+                    <i class="bi bi-envelope-paper-fill"></i>
+                </div>
             </div>
 
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Jumlah seluruh surat masuk</p>
+            </div>
+        </div>
+    </a>
 
 
-            <div class="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur
-                flex
-                items-center
-                justify-center
-                text-3xl
-                shadow-inner
-            ">
+    {{-- 2. MENUNGGU APPROVAL --}}
+    <a href="{{ route('surat.inbox', ['status' => 'Menunggu Approval KPP']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-amber-500
+            to-orange-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-                <i class="bi bi-envelope-paper-fill"></i>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Menunggu Approval</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $menungguApproval }}</h2>
+                </div>
 
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i class="bi bi-clock-history"></i>
+                </div>
             </div>
 
-
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat menunggu persetujuan</p>
+            </div>
         </div>
-
-    </div>
-
+    </a>
 
 
+    {{-- 3. DITERIMA --}}
+    <a href="{{ route('surat.inbox', ['status' => 'Disetujui']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-teal-600
+            to-emerald-500
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Diterima</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $diterima ?? 0 }}</h2>
+                </div>
 
-
-    {{-- MENUNGGU APPROVAL --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-amber-500
-        to-orange-400
-        hover:-translate-y-1
-        transition
-        duration-300
-    ">
-
-
-        <div class="absolute -right-10 -top-10
-            w-32 h-32
-            bg-white/10
-            rounded-full">
-        </div>
-
-
-
-        <div class="flex items-center justify-between">
-
-
-            <div>
-
-                <p class="text-white/80 font-medium">
-                    Menunggu Approval
-                </p>
-
-
-                <h2 class="text-5xl font-black mt-3">
-                    {{ $menungguApproval }}
-                </h2>
-
-
-                <p class="text-sm text-white/80 mt-4">
-                    Surat menunggu persetujuan
-                </p>
-
-
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center shrink-0">
+                    <i data-lucide="inbox" class="w-8 h-8"></i>
+                </div>
             </div>
 
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat telah disetujui</p>
+            </div>
+        </div>
+    </a>
 
 
-            <div class="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur
-                flex
-                items-center
-                justify-center
-                text-3xl
-            ">
+    {{-- 4. DITOLAK --}}
+    <a href="{{ route('surat.inbox', ['status' => 'Ditolak']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-red-500
+            to-rose-600
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-                <i class="bi bi-clock-history"></i>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Ditolak</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $ditolak }}</h2>
+                </div>
 
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i class="bi bi-file-earmark-x-fill"></i>
+                </div>
             </div>
 
-
-        </div>
-
-
-    </div>
-
-
-
-
-
-
-
-
-    {{-- DITOLAK --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-red-500
-        to-rose-600
-        hover:-translate-y-1
-        transition
-        duration-300
-    ">
-
-
-        <div class="absolute -right-10 -top-10
-            w-32 h-32
-            bg-white/10
-            rounded-full">
-        </div>
-
-
-
-        <div class="flex items-center justify-between">
-
-
-            <div>
-
-                <p class="text-white/80 font-medium">
-                    Ditolak
-                </p>
-
-
-                <h2 class="text-5xl font-black mt-3">
-                    {{ $ditolak }}
-                </h2>
-
-
-                <p class="text-sm text-white/80 mt-4">
-                    Surat yang ditolak
-                </p>
-
-
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat yang ditolak</p>
             </div>
-
-
-
-
-            <div class="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur
-                flex
-                items-center
-                justify-center
-                text-3xl
-            ">
-
-                <i class="bi bi-file-earmark-x-fill"></i>
-
-            </div>
-
-
         </div>
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-    {{-- DISPOSISI --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-purple-600
-        to-indigo-500
-        hover:-translate-y-1
-        transition
-        duration-300
-    ">
-
-
-        <div class="absolute -right-10 -top-10
-            w-32 h-32
-            bg-white/10
-            rounded-full">
-        </div>
-
-
-
-
-        <div class="flex items-center justify-between">
-
-
-            <div>
-
-                <p class="text-white/80 font-medium">
-                    Disposisi
-                </p>
-
-
-                <h2 class="text-5xl font-black mt-3">
-                    {{ $disposisi }}
-                </h2>
-
-
-                <p class="text-sm text-white/80 mt-4">
-                    Surat yang didisposisi
-                </p>
-
-
-            </div>
-
-
-
-
-            <div class="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur
-                flex
-                items-center
-                justify-center
-                text-3xl
-            ">
-
-                <i class="bi bi-diagram-3-fill"></i>
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
+    </a>
 
 </div>
 
