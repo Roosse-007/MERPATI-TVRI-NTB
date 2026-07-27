@@ -2,12 +2,15 @@
 
 @section('title','Disposisi Surat')
 
+
 @section('content')
 
 
 <div class="relative">
 
+
 <x-flying-dove />
+
 
 
 {{-- HEADER --}}
@@ -15,21 +18,16 @@
 <div class="mb-8">
 
 
-<h1 class="
-text-4xl
-font-black
-text-slate-800
-">
+<h1 class="text-4xl font-black text-slate-800 flex items-center gap-3">
 
-Disposisi Surat 📌
+<i class="fa-solid fa-paper-plane text-blue-600"></i>
+
+Disposisi Surat
 
 </h1>
 
 
-<p class="
-text-slate-500
-mt-2
-">
+<p class="text-slate-500 mt-2">
 
 Kelola alur penerusan surat antar bagian secara digital
 
@@ -42,7 +40,12 @@ Kelola alur penerusan surat antar bagian secara digital
 
 
 
+
+
+
+
 {{-- SURAT AKTIF --}}
+
 
 <div class="
 relative
@@ -74,47 +77,70 @@ blur-3xl
 <div class="relative">
 
 
-<div class="
-flex
-justify-between
-items-start
-">
+<div class="flex justify-between items-start">
 
 
 <div>
 
 
 <p class="text-blue-100">
-    Surat Aktif
+Surat Aktif
 </p>
+
 
 <h2 class="text-3xl font-black mt-3">
-    {{ $surat->perihal }}
+
+{{ $surat->perihal }}
+
 </h2>
 
+
+
 <p class="mt-3 text-blue-100">
-    Nomor :
-    <span class="font-semibold">
-        {{ $surat->nomor_surat }}
-    </span>
+
+Nomor :
+
+<span class="font-semibold">
+
+{{ $surat->nomor_surat }}
+
+</span>
+
 </p>
 
-<p class="mt-2 text-blue-100">
-    Pengirim :
-    <span class="font-semibold">
-        {{ $surat->pengirim->name }}
-    </span>
-</p>
+
 
 <p class="mt-2 text-blue-100">
-    Tanggal :
-    <span class="font-semibold">
-        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
-    </span>
+
+Pengirim :
+
+<span class="font-semibold">
+
+{{ $surat->pengirim->name ?? '-' }}
+
+</span>
+
 </p>
+
+
+
+
+<p class="mt-2 text-blue-100">
+
+Tanggal :
+
+<span class="font-semibold">
+
+{{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+
+</span>
+
+</p>
+
 
 
 </div>
+
 
 
 
@@ -126,19 +152,22 @@ rounded-2xl
 font-bold
 ">
 
+
 {{ $surat->prioritasSurat->nama_prioritas ?? '-' }}
+
 
 </span>
 
 
-</div>
-
-
 
 </div>
 
 
 </div>
+
+
+</div>
+
 
 
 
@@ -148,6 +177,7 @@ font-bold
 
 
 {{-- FLOW DISPOSISI --}}
+
 
 <div class="
 mt-10
@@ -162,11 +192,20 @@ p-10
 text-2xl
 font-black
 text-slate-800
+flex
+items-center
+gap-3
 ">
+
+
+<i class="fa-solid fa-diagram-project text-blue-600"></i>
 
 Alur Disposisi
 
+
 </h2>
+
+
 
 
 
@@ -181,29 +220,56 @@ gap-6
 
 @forelse($surat->disposisi as $item)
 
-<div class="relative bg-slate-50 rounded-[28px] p-6 text-center hover:-translate-y-2 transition">
 
-    <div class="text-5xl">
 
-        👤
+<div class="
+bg-slate-50
+rounded-[28px]
+p-6
+text-center
+hover:-translate-y-2
+transition
+">
 
-    </div>
 
-    <h3 class="mt-4 font-black">
+<div class="text-blue-600 text-4xl">
 
-        {{ $item->keUser->name }}
 
-    </h3>
+<i class="fa-solid fa-user"></i>
 
-    <p class="text-slate-500 mt-2">
-
-        {{ $item->keUser->jabatan->nama_jabatan ?? '-' }}
-
-    </p>
 
 </div>
 
+
+
+
+<h3 class="mt-4 font-black">
+
+
+{{ $item->keUser->name ?? '-' }}
+
+
+</h3>
+
+
+
+
+<p class="text-slate-500 mt-2">
+
+
+{{ $item->keUser->jabatan->nama_jabatan ?? '-' }}
+
+
+</p>
+
+
+
+</div>
+
+
+
 @empty
+
 
 <p class="text-slate-500">
 
@@ -211,14 +277,16 @@ Belum ada disposisi.
 
 </p>
 
+
 @endforelse
 
 
-</div>
-
-
 
 </div>
+
+
+</div>
+
 
 
 
@@ -228,6 +296,8 @@ Belum ada disposisi.
 
 
 {{-- DETAIL DISPOSISI --}}
+
+
 
 <div class="
 mt-10
@@ -240,7 +310,8 @@ gap-8
 
 
 
-{{-- CATATAN --}}
+{{-- INSTRUKSI --}}
+
 
 <div class="
 bg-white
@@ -254,11 +325,19 @@ p-8
 text-2xl
 font-black
 mb-6
+flex
+gap-3
+items-center
 ">
+
+
+<i class="fa-solid fa-message text-blue-600"></i>
 
 Instruksi
 
+
 </h2>
+
 
 
 
@@ -266,17 +345,115 @@ Instruksi
 bg-blue-50
 rounded-2xl
 p-5
-text-slate-700
 ">
 
 
 @if($surat->disposisi->isNotEmpty())
 
+
 {{ $surat->disposisi->last()->instruksi }}
+
 
 @else
 
+
 Belum ada instruksi.
+
+
+@endif
+
+
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{{-- STATUS --}}
+
+
+<div class="
+bg-white
+rounded-[32px]
+shadow-xl
+p-8
+">
+
+
+<h2 class="
+text-2xl
+font-black
+mb-6
+flex
+items-center
+gap-3
+">
+
+
+<i class="fa-solid fa-list-check text-blue-600"></i>
+
+Status Disposisi
+
+
+</h2>
+
+
+
+
+
+<div class="space-y-5">
+
+
+@forelse($surat->disposisi as $item)
+
+
+<div class="
+flex
+justify-between
+items-center
+bg-slate-50
+rounded-2xl
+p-5
+">
+
+
+<div>
+
+
+<p class="font-bold">
+
+{{ $item->keUser->name ?? '-' }}
+
+</p>
+
+
+
+<p class="text-sm text-slate-500">
+
+{{ $item->instruksi }}
+
+</p>
+
+
+@if($item->deadline)
+
+<p class="text-xs text-red-500 mt-2">
+
+Deadline :
+
+{{ $item->deadline->format('d M Y') }}
+
+</p>
 
 @endif
 
@@ -285,170 +462,53 @@ Belum ada instruksi.
 
 
 
-<div class="mt-6">
-
-
-<p class="
-text-sm
-text-slate-400
-">
-
-Dibuat oleh
-
-</p>
-
-
-<p class="font-bold">
-
-{{ $surat->pengirim->name }}
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-{{-- STATUS DISPOSISI --}}
-
-<div class="
-bg-white
-rounded-[32px]
-shadow-xl
-p-8
-">
-
-    <h2 class="
-    text-2xl
-    font-black
-    mb-6
-    ">
-        Status Disposisi
-    </h2>
-
-    <div class="space-y-5">
-
-        @forelse($surat->disposisi as $item)
-
-            <div class="flex justify-between items-center bg-slate-50 rounded-2xl p-5">
-
-                <div>
-
-                    <p class="font-bold">
-                        {{ $item->keUser->name }}
-                    </p>
-
-                    <p class="text-sm text-slate-500">
-                        {{ $item->instruksi }}
-                    </p>
-
-                </div>
-
-                <span
-                    class="px-4 py-2 rounded-xl font-bold
-                    @if($item->status == 'Aktif')
-                        bg-blue-100 text-blue-700
-                    @elseif($item->status == 'Selesai')
-                        bg-green-100 text-green-700
-                    @else
-                        bg-gray-100 text-gray-700
-                    @endif">
-
-                    {{ $item->status }}
-
-                </span>
-
-            </div>
-
-        @empty
-
-            <p class="text-slate-500">
-                Belum ada disposisi.
-            </p>
-
-        @endforelse
-
-    </div>
-
-</div>
-
-
 
 <span class="
-bg-green-100
-text-green-600
 px-4
 py-2
 rounded-xl
 font-bold
+
+@if($item->status == 'Selesai')
+
+bg-green-100 text-green-700
+
+@else
+
+bg-yellow-100 text-yellow-700
+
+@endif
+
 ">
 
-Selesai
+
+{{ $item->status }}
+
 
 </span>
 
 
+
 </div>
 
 
 
+@empty
 
 
-<div class="
-flex
-justify-between
-items-center
-bg-orange-50
-rounded-2xl
-p-5
-">
+<p class="text-slate-500">
 
+Belum ada disposisi.
 
-<div>
-
-<p class="font-bold">
-
-Staff Pelaksana
 
 </p>
 
 
-<p class="text-sm text-slate-500">
-
-Menunggu tindakan
-
-</p>
+@endforelse
 
 
 </div>
 
-
-
-<span class="
-bg-orange-100
-text-orange-600
-px-4
-py-2
-rounded-xl
-font-bold
-">
-
-Pending
-
-</span>
-
-
-</div>
-
-
-
-</div>
 
 
 </div>
@@ -464,12 +524,16 @@ Pending
 
 
 
-{{-- BUAT DISPOSISI --}}
+
+{{-- FORM DISPOSISI --}}
 
 
 <form
+
 method="POST"
-action="{{ route('surat.disposisi.store') }}"
+
+action="{{ route('disposisi.store') }}"
+
 class="
 mt-10
 bg-white
@@ -478,79 +542,128 @@ shadow-xl
 p-8
 ">
 
+
 @csrf
 
+
+
 <input
+
 type="hidden"
+
 name="surat_id"
-value="{{ $surat->id }}">
+
+value="{{ $surat->id }}"
+
+>
+
+
 
 
 <h2 class="
 text-2xl
 font-black
 mb-6
+flex
+items-center
+gap-3
 ">
 
+
+<i class="fa-solid fa-paper-plane text-blue-600"></i>
+
 Buat Disposisi Baru
+
 
 </h2>
 
 
 
+
+
+
+
+
+
+<label class="font-bold">
+
+Pilih Penerima
+
+</label>
+
+
+
+
+
 <div class="
+mt-4
 grid
 md:grid-cols-2
-gap-6
+gap-4
 ">
+
+
+@foreach($users as $user)
+
+
+<label class="
+flex
+items-center
+gap-4
+border
+rounded-2xl
+p-4
+cursor-pointer
+hover:bg-blue-50
+">
+
+
+<input
+
+type="checkbox"
+
+name="ke_user_id[]"
+
+value="{{ $user->id }}"
+
+class="w-5 h-5"
+
+>
 
 
 
 <div>
 
 
-<label class="font-bold">
+<p class="font-bold">
 
-Tujuan Bagian
+{{ $user->name }}
+
+</p>
+
+
+@if($user->jabatan)
+
+
+<p class="text-sm text-slate-500">
+
+{{ $user->jabatan->nama_jabatan }}
+
+</p>
+
+
+@endif
+
+
+</div>
+
+
 
 </label>
 
 
-<select
-name="ke_user_id"
-class="
-mt-2
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-">
-
-<option value="">Pilih Tujuan</option>
-
-@foreach($users as $user)
-
-<option value="{{ $user->id }}">
-    {{ $user->name }}
-    @if($user->jabatan)
-        - {{ $user->jabatan->nama_jabatan }}
-    @endif
-</option>
 
 @endforeach
-
-</select>
-
-<option>
-Produksi
-</option>
-
-<option>
-Administrasi
-</option>
-
-</select>
 
 
 </div>
@@ -558,14 +671,69 @@ Administrasi
 
 
 
-<div>
 
 
+
+
+
+<div class="mt-6">
+
+
+<label class="font-bold">
+
+Instruksi
+
+</label>
+
+
+<textarea
+
+name="instruksi"
+
+required
+
+rows="4"
+
+placeholder="Masukkan instruksi disposisi"
+
+class="
+mt-2
+w-full
+rounded-2xl
+bg-slate-100
+px-5
+py-4
+"
+
+></textarea>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="mt-6">
+
+
+<label class="font-bold">
+
+Deadline
+
+
+</label>
 
 
 <input
 
 type="date"
+
+name="deadline"
 
 class="
 mt-2
@@ -583,33 +751,17 @@ py-4
 </div>
 
 
-</div>
 
 
 
 
-<textarea
-name="instruksi"
-
-rows="4"
-
-placeholder="Tambahkan instruksi disposisi..."
-
-class="
-mt-6
-w-full
-rounded-2xl
-bg-slate-100
-px-5
-py-4
-"
-
-></textarea>
 
 
 
 <button
+
 type="submit"
+
 class="
 mt-6
 bg-gradient-to-r
@@ -625,13 +777,23 @@ hover:scale-105
 transition
 ">
 
+
+<i class="fa-solid fa-paper-plane"></i>
+
 Kirim Disposisi
+
 
 </button>
 
 
 
+
 </form>
+
+
+
+
+</div>
 
 
 @endsection

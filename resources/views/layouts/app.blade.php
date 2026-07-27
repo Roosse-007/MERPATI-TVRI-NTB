@@ -13,6 +13,10 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+    rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,13 +39,15 @@
             @include('partials.navbar')
 
             {{-- Content --}}
-            <main class="
-                flex-1
-                ml-72
-                px-8
-                pt-6
-                pb-8
-            ">
+           <main class="
+    flex-1
+    ml-72
+    px-8
+    pt-6
+    pb-8
+    relative
+    z-10
+">
 
                 @yield('content')
 

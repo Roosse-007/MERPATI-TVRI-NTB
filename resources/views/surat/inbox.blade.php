@@ -49,108 +49,196 @@ transition">
 
 
 
-{{-- STAT CARD --}}
+{{-- STAT CARD CONTAINER --}}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
 
-{{-- STAT CARD --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
 
-    {{-- Total Surat --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-blue-500 hover:-translate-y-1 transition">
+    {{-- 1. TOTAL SURAT --}}
+    <a href="{{ route('surat.inbox') }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-blue-600
+            to-cyan-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-slate-500">
-                    Total Surat
-                </p>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Total Surat</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $totalSurat }}</h2>
+                </div>
 
-                <h2 class="text-4xl font-black mt-2 text-slate-800">
-                    {{ $totalSurat }}
-                </h2>
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shadow-inner shrink-0">
+                    <i class="bi bi-envelope-paper-fill"></i>
+                </div>
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                📩
-            </div>
-        </div>
-
-    </div>
-
-    {{-- Menunggu Approval --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-yellow-500 hover:-translate-y-1 transition">
-
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-slate-500">
-                    Menunggu Approval
-                </p>
-
-                <h2 class="text-4xl font-black mt-2 text-yellow-600">
-                    {{ $menungguApproval }}
-                </h2>
-            </div>
-
-            <div class="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
-                ⏳
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Jumlah seluruh surat masuk</p>
             </div>
         </div>
+    </a>
 
-    </div>
 
-    {{-- Diproses --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-green-500 hover:-translate-y-1 transition">
+    {{-- 2. MENUNGGU APPROVAL --}}
+    @php
+    $statusApproval = match(auth()->user()->jabatan->nama_jabatan ?? '') {
+        'Ketua Tim Perencana dan Pengendali Program' => 'Menunggu Approval KPP',
+        'Kepala Sub Bagian Tata Usaha' => 'Menunggu Approval KTU',
+        'Kepala TVRI Stasiun NTB' => 'Menunggu Approval Kepala Stasiun',
+        default => '',
+    };
+    @endphp
+    <a href="{{ route('surat.inbox', ['status' => $statusApproval]) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-amber-500
+            to-orange-400
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-slate-500">
-                    Diproses
-                </p>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Menunggu Approval</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $menungguApproval }}</h2>
+                </div>
 
-                <h2 class="text-4xl font-black mt-2 text-green-600">
-                    {{ $diproses }}
-                </h2>
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i class="bi bi-clock-history"></i>
+                </div>
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
-                ⚙️
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat menunggu persetujuan</p>
             </div>
         </div>
+    </a>
 
-    </div>
 
-    {{-- Arsip --}}
-    <div class="bg-white rounded-[28px] p-6 shadow-lg border-l-4 border-purple-500 hover:-translate-y-1 transition">
+    {{-- 3. DITERIMA --}}
+    <a href="{{ route('surat.inbox', ['status' => 'Disetujui']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-teal-600
+            to-emerald-500
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
 
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-slate-500">
-                    Arsip
-                </p>
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Diterima</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $diterima ?? 0 }}</h2>
+                </div>
 
-                <h2 class="text-4xl font-black mt-2 text-purple-600">
-                    {{ $arsip }}
-                </h2>
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center shrink-0">
+                    <i data-lucide="inbox" class="w-8 h-8"></i>
+                </div>
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
-                🗂️
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat telah disetujui</p>
             </div>
         </div>
+    </a>
 
-    </div>
+
+    {{-- 4. DITOLAK --}}
+    <a href="{{ route('surat.inbox', ['status' => 'Ditolak']) }}" class="block group">
+        <div class="
+            relative
+            overflow-hidden
+            rounded-3xl
+            p-8
+            h-full
+            text-white
+            shadow-xl
+            bg-gradient-to-br
+            from-red-500
+            to-rose-600
+            group-hover:-translate-y-1
+            group-hover:shadow-2xl
+            transition
+            duration-300
+            flex
+            flex-col
+            justify-between
+        ">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+
+            <div class="flex items-center justify-between relative z-10">
+                <div class="space-y-2">
+                    <p class="text-white/80 font-medium text-base">Ditolak</p>
+                    <h2 class="text-5xl font-black tracking-tight">{{ $ditolak }}</h2>
+                </div>
+
+                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
+                    <i class="bi bi-file-earmark-x-fill"></i>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <p class="text-sm text-white/80 font-medium">Surat yang ditolak</p>
+            </div>
+        </div>
+    </a>
 
 </div>
 
 
-
-
-
 {{-- SEARCH FILTER --}}
 
-<form method="GET" action="{{ route('surat.inbox') }}" class="mt-10 bg-white rounded-[28px] p-6 shadow-lg">
+<form
+id="searchForm"
+method="GET"
+action="{{ route('surat.inbox') }}"
+class="mt-10 bg-white rounded-[28px] p-6 shadow-lg">
 
 <div class="flex flex-col md:flex-row gap-4">
 
 <input
+id="searchInput"
 type="text"
 name="search"
 value="{{ request('search') }}"
@@ -158,6 +246,7 @@ placeholder="Cari nomor surat, perihal, atau pengirim..."
 class="flex-1 bg-slate-100 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-blue-500">
 
 <select
+id="statusFilter"
 name="status"
 class="bg-slate-100 rounded-2xl px-5 py-4 outline-none">
 
@@ -168,14 +257,19 @@ class="bg-slate-100 rounded-2xl px-5 py-4 outline-none">
         Draft
     </option>
 
-    <option value="Menunggu Verifikasi KPP"
-        @selected(request('status')=='Menunggu Verifikasi KPP')>
-        Menunggu Verifikasi KPP
+    <option value="Menunggu Approval KPP"
+        @selected(request('status')=='Menunggu Approval KPP')>
+        Menunggu Approval KPP
     </option>
 
-    <option value="Diproses"
-        @selected(request('status')=='Diproses')>
-        Diproses
+    <option value="Menunggu Approval KTU"
+        @selected(request('status')=='Menunggu Approval KTU')>
+        Menunggu Approval KTU
+    </option>
+
+    <option value="Menunggu Approval Kepala Stasiun"
+        @selected(request('status')=='Menunggu Approval Kepala Stasiun')>
+        Menunggu Approval Kepala Stasiun
     </option>
 
     <option value="Disetujui"
@@ -309,13 +403,17 @@ text-sm
 
 bg-gray-100 text-gray-700
 
-@elseif($item->status=='Menunggu Verifikasi KPP')
+@elseif($item->status=='Menunggu Approval KPP')
 
 bg-yellow-100 text-yellow-700
 
-@elseif($item->status=='Diproses')
+@elseif($item->status=='Menunggu Approval KTU')
 
-bg-blue-100 text-blue-700
+bg-orange-100 text-orange-700
+
+@elseif($item->status=='Menunggu Approval Kepala Stasiun')
+
+bg-indigo-100 text-indigo-700
 
 @elseif($item->status=='Disetujui')
 
@@ -324,10 +422,6 @@ bg-green-100 text-green-700
 @elseif($item->status=='Ditolak')
 
 bg-red-100 text-red-700
-
-@elseif($item->status=='Selesai')
-
-bg-emerald-100 text-emerald-700
 
 @else
 
@@ -408,6 +502,27 @@ Belum ada data surat.
     {{ $surat->links() }}
 </div>
 
+<script>
+const form = document.getElementById('searchForm');
+const search = document.getElementById('searchInput');
+const status = document.getElementById('statusFilter');
+
+let timer;
+
+search.addEventListener('input', function () {
+
+    clearTimeout(timer);
+
+    timer = setTimeout(function () {
+        form.submit();
+    }, 500);
+
+});
+
+status.addEventListener('change', function () {
+    form.submit();
+});
+</script>
 
 
 @endsection

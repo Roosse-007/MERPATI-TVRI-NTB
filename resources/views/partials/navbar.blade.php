@@ -23,42 +23,20 @@ py-5
 
 
 
-{{-- LEFT TITLE --}}
+{{-- LEFT LOGO --}}
+<div class="flex items-center gap-3">
+
+<!-- GANTI BAGIAN INI DENGAN FILE GAMBAR LOGO ANDA -->
+<div class="w-35 h-35 flex items-center justify-center shrink-0">
+    <img src="{{ asset('image/tvri.png') }}"
+         alt="Logo TVRI NTB"
+         class="w-full h-full object-contain">
+</div>
+
 <div>
 
 
-<h2 class="
-text-3xl
-font-black
-text-slate-800
-tracking-tight
-">
-
-@yield('title')
-
-
-</h2>
-
-
-
-<p class="
-text-slate-500
-mt-1
-">
-
-Sistem Informasi Surat Digital
-
-<span class="
-text-blue-600
-font-semibold
-">
-
-TVRI NTB
-
-</span>
-
-</p>
-
+</div>
 
 </div>
 
@@ -70,139 +48,6 @@ TVRI NTB
 
 {{-- RIGHT MENU --}}
 <div class="flex items-center gap-5">
-
-
-
-
-
-{{-- SEARCH --}}
-
-<div class="relative">
-
-
-<i data-lucide="search"
-class="
-absolute
-left-4
-top-3.5
-w-5
-h-5
-text-slate-400
-">
-</i>
-
-
-<input
-
-type="text"
-
-placeholder="Cari surat..."
-
-class="
-pl-12
-pr-5
-py-3
-w-72
-
-rounded-2xl
-
-bg-slate-100
-
-border-none
-
-outline-none
-
-focus:ring-2
-focus:ring-blue-500
-
-transition
-
-"
-
->
-
-
-</div>
-
-
-
-
-
-
-
-{{-- NOTIFICATION --}}
-
-<button
-
-class="
-relative
-
-w-12
-h-12
-
-rounded-2xl
-
-bg-slate-100
-
-hover:bg-blue-100
-
-transition
-
-flex
-items-center
-justify-center
-
-"
-
-
->
-
-
-<i data-lucide="bell"
-
-class="
-w-5
-h-5
-text-slate-600
-">
-
-</i>
-
-
-
-
-<span
-
-class="
-absolute
-top-2
-right-2
-
-w-3
-h-3
-
-bg-red-500
-
-rounded-full
-
-border-2
-
-border-white
-
-">
-
-</span>
-
-
-</button>
-
-
-
-
-
-
-
-
 
 {{-- PROFILE --}}
 

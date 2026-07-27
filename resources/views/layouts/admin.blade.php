@@ -9,24 +9,49 @@
 
 
 <title>
-@yield('title') | MERPATI TVRI NTB
+    @yield('title') | MERPATI TVRI NTB
 </title>
 
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+{{-- Font Awesome --}}
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+{{-- Bootstrap --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
 
 
+
+{{-- Bootstrap Icons --}}
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+
+{{-- SweetAlert --}}
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
+
+{{-- Chart JS --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 
 
+
+{{-- Vite --}}
 @vite([
 'resources/css/app.css',
 'resources/js/app.js'
 ])
+
+
+
+@stack('styles')
 
 
 
@@ -41,183 +66,71 @@ body{
 
 
 
-
-
-/* =========================
-        SIDEBAR
-========================= */
-
+/* SIDEBAR */
 
 .sidebar{
 
-
     width:280px;
-
 
     height:100vh;
 
-
     position:fixed;
-
 
     left:0;
 
-
     top:0;
-
-
-
-    background:
-linear-gradient(
-    180deg,
-    #07163f,
-    #123b91,
-    #0796e8
-);
-
-
-
-    color:white;
-
-
-    overflow-y:auto;
-
-
-    box-shadow:
-    0 0 30px rgba(0,0,0,.35);
-
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-}
-
-
-
-.sidebar::-webkit-scrollbar{
-
-    width:6px;
-
-}
-
-
-
-.sidebar::-webkit-scrollbar-thumb{
-
-    background:rgba(96,165,250,.5);
-
-    border-radius:20px;
-
-}
-
-
-
-
-
-/* =========================
-        LOGO
-========================= */
-
-
-.sidebar-logo{
-
-    padding:35px 25px 25px;
-
-    border-bottom:
-
-    1px solid rgba(255,255,255,.15);
-
-}
-
-
-
-.brand{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:18px;
-
-}
-
-
-
-.brand-icon{
-
-    width:70px;
-    height:70px;
-
-    border-radius:18px;
 
     background:
     linear-gradient(
-        135deg,
-        #38bdf8,
-        #2563eb
+        180deg,
+        #071a52,
+        #123b9c,
+        #0ea5e9
     );
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    color:white;
 
-    overflow:hidden;
+    overflow-y:auto;
 
     box-shadow:
-    0 10px 25px rgba(37,99,235,.45);
+    0 0 30px rgba(0,0,0,.3);
+
+    display:flex;
+
+    flex-direction:column;
 
 }
 
 
 
-.brand-icon i{
+/* LOGO */
 
-    font-size:32px;
+.sidebar-logo{
 
-    color:white;
+    padding:25px;
 
-}
-
-.brand-bird{
-
-    width:32px;
-
-    height:32px;
-
-    color:white;
+    border-bottom:
+    1px solid rgba(255,255,255,.2);
 
 }
 
-.brand-text h1{
+
+.sidebar-logo h1{
 
     font-size:30px;
 
-    font-weight:900;
+    font-weight:800;
 
-    letter-spacing:2px;
-
-}
-
-
-
-.brand-text p{
-
-    margin-top:5px;
-
-    margin-bottom:0;
-
-    color:#dbeafe;
-
-    font-size:16px;
-
-    font-weight:600;
+    margin:0;
 
 }
 
+
+.sidebar-logo small{
+
+    color:#bfdbfe;
+
+}
 
 
 
@@ -226,15 +139,11 @@ linear-gradient(
 
 /* MENU */
 
-
 .sidebar-menu{
-
 
     flex:1;
 
-
     padding-top:15px;
-
 
 }
 
@@ -242,33 +151,23 @@ linear-gradient(
 
 .sidebar a{
 
-
     display:flex;
-
 
     align-items:center;
 
-
     gap:15px;
 
-
-    color:#dbeafe;
-
+    color:white;
 
     text-decoration:none;
 
-
     padding:14px 25px;
-
 
     margin:8px 15px;
 
-
     border-radius:15px;
 
-
     transition:.3s;
-
 
 }
 
@@ -276,15 +175,10 @@ linear-gradient(
 
 .sidebar a:hover{
 
-
-    background:rgba(255,255,255,.1);
-
-
-    color:white;
-
+    background:
+    rgba(255,255,255,.15);
 
     transform:translateX(8px);
-
 
 }
 
@@ -293,21 +187,16 @@ linear-gradient(
 
 .menu-title{
 
-
-    padding:15px 25px 5px;
-
+    padding:
+    15px 25px 5px;
 
     color:#bfdbfe;
 
-
     font-size:12px;
-
 
     font-weight:bold;
 
-
     letter-spacing:1px;
-
 
 }
 
@@ -317,24 +206,19 @@ linear-gradient(
 
 .sidebar-footer{
 
-
     margin:20px;
 
-
     background:
-    rgba(255,255,255,.1);
-
+    rgba(255,255,255,.15);
 
     backdrop-filter:blur(10px);
 
-
-    padding:18px 20px;
-
+    padding:15px 20px;
 
     border-radius:20px;
 
-
 }
+
 
 
 
@@ -344,9 +228,7 @@ linear-gradient(
 
 .content{
 
-
     margin-left:280px;
-
 
 }
 
@@ -354,14 +236,10 @@ linear-gradient(
 
 .navbar-custom{
 
-
     background:white;
 
-
     box-shadow:
-
     0 3px 10px rgba(0,0,0,.1);
-
 
 }
 
@@ -369,15 +247,11 @@ linear-gradient(
 
 footer{
 
-
     text-align:center;
-
 
     padding:20px;
 
-
     color:#666;
-
 
 }
 
@@ -390,14 +264,12 @@ footer{
 
 
 
-
 <body>
 
 
 
 
-
-<!-- SIDEBAR -->
+{{-- SIDEBAR --}}
 
 
 <div class="sidebar">
@@ -406,43 +278,14 @@ footer{
 
 <div class="sidebar-logo">
 
-
-
-<div class="brand">
-
-
-
-<div class="brand-icon">
-
-    <i 
-    data-lucide="bird"
-    class="w-8 h-8 text-white">
-    </i>
-
-</div>
-
-
-
-
-
-<div class="brand-text">
-
-
 <h1>
 MERPATI
 </h1>
 
 
-<p>
+<small>
 TVRI NTB
-</p>
-
-
-</div>
-
-
-</div>
-
+</small>
 
 
 </div>
@@ -452,7 +295,10 @@ TVRI NTB
 
 
 <div class="sidebar-menu">
-    {{-- DASHBOARD --}}
+
+
+
+
 
 <a href="/admin/dashboard">
 
@@ -466,16 +312,9 @@ Dashboard
 
 
 
-
-{{-- MENU SURAT --}}
-
-
 <div class="menu-title">
-
 SURAT
-
 </div>
-
 
 
 
@@ -566,15 +405,11 @@ Profil
 
 
 
-{{-- ADMINISTRATOR --}}
-
-
 <div class="menu-title">
 
 ADMINISTRATOR
 
 </div>
-
 
 
 
@@ -592,7 +427,6 @@ Kelola User
 
 
 
-
 <a href="/admin/template-surat">
 
 <i class="bi bi-file-earmark-text fs-5"></i>
@@ -600,7 +434,6 @@ Kelola User
 Template Surat
 
 </a>
-
 
 
 
@@ -618,7 +451,6 @@ Nomor Surat
 
 
 
-
 <a href="/admin/laporan">
 
 <i class="bi bi-file-earmark-bar-graph fs-5"></i>
@@ -626,7 +458,6 @@ Nomor Surat
 Laporan
 
 </a>
-
 
 
 
@@ -644,7 +475,6 @@ Grafik
 
 
 
-
 <a href="/admin/monitoring">
 
 <i class="bi bi-activity fs-5"></i>
@@ -652,7 +482,6 @@ Grafik
 Monitoring
 
 </a>
-
 
 
 
@@ -669,7 +498,6 @@ Setting
 
 
 
-
 </div>
 
 
@@ -678,28 +506,16 @@ Setting
 
 
 
-
-
-{{-- FOOTER SIDEBAR --}}
-
-
 <div class="sidebar-footer">
 
-
 <small>
-
 Sistem E-Surat
-
 </small>
-
 
 <br>
 
-
 <b>
-
 TVRI NTB
-
 </b>
 
 
@@ -707,9 +523,6 @@ TVRI NTB
 
 
 
-
-
-
 </div>
 
 
@@ -718,9 +531,8 @@ TVRI NTB
 
 
 
+{{-- CONTENT --}}
 
-
-<!-- CONTENT -->
 
 
 <div class="content">
@@ -736,36 +548,11 @@ TVRI NTB
 
 
 
-<div class="d-flex align-items-center">
-
-
-
-<img 
-
-src="{{ asset('images/tvri-ntb.jpeg') }}"
-
-width="55"
-
-height="55"
-
-class="rounded-circle me-3"
-
-style="object-fit:cover;"
-
->
-
-
-
 <span class="navbar-brand fw-bold">
 
 @yield('title')
 
 </span>
-
-
-
-</div>
-
 
 
 
@@ -777,12 +564,9 @@ style="object-fit:cover;"
 
 <button class="btn btn-light me-3">
 
-
 <i class="bi bi-bell"></i>
 
-
 </button>
-
 
 
 
@@ -800,9 +584,7 @@ class="rounded-circle"
 
 
 
-
 </div>
-
 
 
 
@@ -810,8 +592,6 @@ class="rounded-circle"
 
 
 </nav>
-
-
 
 
 
@@ -833,18 +613,11 @@ class="rounded-circle"
 
 
 
-
-
 <footer>
 
-
-© {{date('Y')}} MERPATI TVRI NTB
-
+© {{ date('Y') }} MERPATI TVRI NTB
 
 </footer>
-
-
-
 
 
 
@@ -856,19 +629,80 @@ class="rounded-circle"
 
 
 
+{{-- Bootstrap JS --}}
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
+{{-- SweetAlert JS --}}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+@stack('scripts')
+
+
+
+
+
+
+@if(session('success'))
+
 <script>
 
-lucide.createIcons();
+Swal.fire({
+
+toast:true,
+
+position:'top-end',
+
+icon:'success',
+
+title:"{{ session('success') }}",
+
+showConfirmButton:false,
+
+timer:2500,
+
+timerProgressBar:true
+
+});
 
 </script>
+
+@endif
+
+
+
+
+
+
+@if(session('error'))
+
+<script>
+
+Swal.fire({
+
+icon:'error',
+
+title:'Terjadi Kesalahan',
+
+text:"{{ session('error') }}",
+
+confirmButtonColor:'#dc2626'
+
+});
+
+</script>
+
+@endif
+
+
 
 
 
 </body>
-
 
 </html>

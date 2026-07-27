@@ -58,13 +58,13 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('nomor_surat',100)->unique();
+            $table->string('nomor_surat', 100)->unique();
 
-            $table->string('perihal',255);
+            $table->string('perihal', 255);
 
-            $table->string('ringkasan',255)->nullable();
+            $table->string('ringkasan', 255)->nullable();
 
-            $table->longText('isi_surat');
+            // isi_surat dihapus
 
             /*
             |--------------------------------------------------------------------------
@@ -73,6 +73,8 @@ return new class extends Migration
             */
 
             $table->date('tanggal_surat');
+
+            $table->date('deadline')->nullable();
 
             $table->dateTime('tanggal_kirim')->nullable();
 
@@ -84,7 +86,7 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('status',40)->default('Draft');
+            $table->string('status', 40)->default('Draft');
 
             /*
             |--------------------------------------------------------------------------
@@ -100,7 +102,7 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('file_surat',255)->nullable();
+            $table->string('file_surat', 255)->nullable();
 
             /*
             |--------------------------------------------------------------------------

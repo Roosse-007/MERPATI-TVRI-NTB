@@ -6,8 +6,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\UnitKerja;
+
 
 class User extends Authenticatable
 {
@@ -44,6 +47,16 @@ class User extends Authenticatable
         ];
     }
 
+
+    public function pengesahanSurat(): HasMany
+{
+
+    return $this->hasMany(
+        PengesahanSurat::class,
+        'user_id'
+    );
+
+}
     public function unitKerja(): BelongsTo
     {
         return $this->belongsTo(UnitKerja::class);

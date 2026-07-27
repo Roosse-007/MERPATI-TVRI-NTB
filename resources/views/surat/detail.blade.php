@@ -270,7 +270,7 @@
 
     <div class="flex justify-end">
 
-        <a href="{{ asset('storage/surat/'.$surat->file_surat) }}"
+        <a href="{{ asset('storage/'.$surat->file_surat) }}"
            target="_blank"
            download
            class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">
