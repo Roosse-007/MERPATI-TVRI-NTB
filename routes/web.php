@@ -927,6 +927,17 @@ Route::delete(
 )
 ->middleware('auth')
 ->name('lampiran.destroy');
+
+Route::get(
+    '/lampiran/{id}/download',
+    [LampiranController::class,'download']
+)
+->name('lampiran.download');
+
+Route::get(
+    '/lampiran/{id}/lihat',
+    [LampiranController::class,'view']
+)->name('lampiran.view');
 // ==========================
 // PENGESAHAN SURAT
 // ==========================

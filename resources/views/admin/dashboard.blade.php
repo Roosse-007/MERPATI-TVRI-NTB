@@ -462,68 +462,137 @@ style="width:{{ $total }}%">
 
 
 
-
-
-<!-- AKTIVITAS -->
-
+<!-- AKTIVITAS TERBARU -->
 
 <div class="bg-white rounded-2xl shadow mt-8 p-6">
 
 
-<h2 class="text-xl font-bold mb-5">
+    <div class="flex items-center justify-between mb-6">
 
-Aktivitas Terbaru
-
-</h2>
-
-
+        <h2 class="text-xl font-bold text-gray-800">
+            Aktivitas Terbaru
+        </h2>
 
 
-<div class="space-y-5">
+        <span class="text-sm text-gray-400">
+            Update terakhir
+        </span>
+
+    </div>
 
 
-@foreach($aktivitas as $item)
+
+    <div class="space-y-4">
+
+
+        @forelse($aktivitas as $item)
+
+
+        <div class="
+            flex
+            items-start
+            gap-4
+            p-4
+            rounded-xl
+            bg-gray-50
+            hover:bg-blue-50
+            transition
+        ">
+
+
+            <div class="
+                w-10
+                h-10
+                rounded-full
+                bg-blue-100
+                text-blue-600
+                flex
+                items-center
+                justify-center
+                shrink-0
+            ">
+
+                <i class="fa-solid fa-file-lines"></i>
+
+            </div>
 
 
 
-<div class="border-l-4 border-blue-600 pl-4">
+
+            <div class="flex-1">
 
 
-<p class="font-semibold">
+                <p class="font-bold text-gray-800">
 
-Surat :
-{{ $item->perihal }}
+                    {{ $item['judul'] }}
 
-</p>
+                </p>
 
 
-<small class="text-gray-400">
 
-{{ $item->created_at->diffForHumans() }}
+                <p class="text-sm text-gray-600 mt-1">
 
-</small>
+                    {{ $item['deskripsi'] }}
+
+                </p>
+
+
+
+                <div class="flex items-center gap-3 mt-2">
+
+
+                    <span class="
+                        text-xs
+                        px-3
+                        py-1
+                        rounded-full
+                        bg-blue-100
+                        text-blue-700
+                        font-semibold
+                    ">
+
+                        {{ $item['status'] }}
+
+                    </span>
+
+
+
+
+                    <span class="text-xs text-gray-400">
+
+                        {{ $item['waktu']->diffForHumans() }}
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+
+
+        @empty
+
+
+        <div class="text-center py-8 text-gray-400">
+
+            Belum ada aktivitas
+
+        </div>
+
+
+        @endforelse
+
+
+
+    </div>
 
 
 </div>
-
-
-
-@endforeach
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <!-- SURAT TERBARU -->
 

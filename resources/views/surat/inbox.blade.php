@@ -344,7 +344,15 @@ justify-center
 text-2xl
 ">
 
+@if($item->parent_surat_id)
+
+↩️
+
+@else
+
 📩
+
+@endif
 
 </div>
 
@@ -353,15 +361,32 @@ text-2xl
 
 
 <h3 class="font-black text-xl text-slate-800">
-    {{ $item->perihal }}
+
+@if($item->parent_surat_id)
+
+    <span class="text-blue-600">
+        ↩ Balasan:
+    </span>
+
+@endif
+
+{{ $item->perihal }}
+
 </h3>
 
-<p class="text-sm text-slate-500 mt-1">
-    Nomor Surat :
-    <span class="font-semibold text-slate-700">
-        {{ $item->nomor_surat ?? '-' }}
+@if($item->parent_surat_id)
+
+<p class="text-sm text-purple-600 mt-1">
+
+    <span class="font-semibold">
+        Bagian dari surat:
     </span>
+
+    {{ $item->suratInduk->nomor_surat ?? '-' }}
+
 </p>
+
+@endif
 
 <p class="text-sm text-slate-500">
     Jenis Surat :
@@ -445,12 +470,15 @@ bg-slate-100 text-slate-700
 
 
 <div class="mt-5 flex gap-3">
+<a href="{{ route(
+    'surat.detail',
+    $item->parent_surat_id ?? $item->id
+) }}"
+class="px-5 py-2 bg-blue-600 text-white rounded-xl">
 
-    <a
-    href="{{ route('surat.detail',$item->id) }}"
-    class="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
-        Lihat
-    </a>
+    Lihat
+
+</a>
 
     @if($item->file_surat)
 

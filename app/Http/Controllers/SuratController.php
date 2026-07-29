@@ -13,7 +13,7 @@ use App\Models\JenisSurat;
 use App\Models\SifatSurat;
 use App\Services\ApprovalWorkflowService;
 use App\Models\TemplateSurat;
-
+use App\Models\Lampiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +25,95 @@ class SuratController extends Controller
 {
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL SURAT RIWAYAT BALASAN
+    |--------------------------------------------------------------------------
+    */
+public function detail($id)
+{
+
+    $surat = Surat::with([
+
+        'pengirim',
+
+        'tujuan.user',
+
+        'suratInduk',
+
+
+        'balasan' => function($query){
+
+            $query->with([
+
+                'pengirim',
+
+                'tujuan.user',
+
+                'lampiran'
+
+            ])
+            ->orderBy('created_at','desc');
+
+        }
+
+
+    ])->findOrFail($id);
+
+
+
+
+
+    // Ambil surat induk utama
+
+    $rootId = $surat->parent_surat_id ?? $surat->id;
+
+
+
+
+
+    // Ambil semua riwayat balasan
+    // terbaru tampil paling atas
+
+    $riwayatBalasan = Surat::where(
+        'parent_surat_id',
+        $rootId
+    )
+    ->with([
+
+        'pengirim',
+
+        'tujuan.user',
+
+        'lampiran'
+
+    ])
+    ->orderBy(
+        'created_at',
+        'desc'
+    )
+    ->get();
+
+
+
+
+
+    return view(
+
+        'surat.detail',
+
+        compact(
+
+            'surat',
+
+            'riwayatBalasan'
+
+        )
+
+    );
+
+}
     /*
     |--------------------------------------------------------------------------
     | DAFTAR SURAT API
@@ -219,6 +308,37 @@ public function store(Request $request)
             'user_id'  => $request->tujuan_id,
             'dibaca'   => false,
         ]);
+
+            if($request->hasFile('lampiran')) {
+
+
+    $file = $request->file('lampiran');
+
+
+    $path = $file->store(
+        'lampiran',
+        'public'
+    );
+
+
+    Lampiran::create([
+
+        'surat_id'=>$surat->id,
+
+        'nama_file'=>$file->getClientOriginalName(),
+
+        'path_file'=>$path,
+
+        'mime_type'=>$file->getMimeType(),
+
+        'ukuran_file'=>$file->getSize(),
+
+        'uploaded_by'=>auth()->id()
+
+    ]);
+
+
+}
 
         // Jika langsung dikirim, buat approval pertama
         if ($status !== 'Draft') {
@@ -520,19 +640,38 @@ public function inboxWeb(Request $request)
 {
     $user = Auth::user();
     $jabatan = $user->jabatan->nama_jabatan ?? '';
+$query = Surat::with([
+    'pengirim.jabatan',
+    'jenisSurat',
+    'sifatSurat',
+    'prioritasSurat',
+    'tujuan.user',
+    'approval',
+])
 
-    $query = Surat::with([
-        'pengirim.jabatan',
-        'jenisSurat',
-        'sifatSurat',
-        'prioritasSurat',
-        'tujuan.user',
-        'approval',
-    ])
-    ->whereHas('tujuan', function ($q) use ($user) {
-        $q->where('user_id', $user->id);
+->whereHas('tujuan', function ($q) use ($user) {
+
+    $q->where('user_id', $user->id);
+
+})
+
+->where(function($q){
+
+    // surat asli
+    $q->whereNull('parent_surat_id')
+
+
+    // atau hanya balasan terbaru dari setiap thread
+    ->orWhereIn('id', function($sub){
+
+        $sub->selectRaw('MAX(id)')
+            ->from('surat')
+            ->whereNotNull('parent_surat_id')
+            ->groupBy('parent_surat_id');
+
     });
 
+});
     // ==========================
     // SEARCH
     // ==========================
@@ -907,16 +1046,21 @@ public function archive($id)
     */
 public function showWeb($id)
 {
-            $surat = Surat::with([
-            'pengirim.jabatan',
-            'tujuan.user.jabatan',
-            'jenisSurat',
-            'sifatSurat',
-            'prioritasSurat',
-            'lampiran',
-            'disposisi.keUser.jabatan',
-            'approval.approver'
-        ])->findOrFail($id);
+      $surat = Surat::with([
+
+    'pengirim.jabatan',
+    'tujuan.user.jabatan',
+    'jenisSurat',
+    'sifatSurat',
+    'prioritasSurat',
+    'lampiran',
+    'disposisi.keUser.jabatan',
+    'approval.approver',
+
+    'suratInduk.balasan',
+    'balasan'
+
+])->findOrFail($id);
 
     $users = User::with('jabatan')
         ->where('is_active', 1)
@@ -954,15 +1098,31 @@ public function showWeb($id)
     }
 
     $aktivitas = $aktivitas->sortByDesc('waktu');
+    $riwayatBalasan = collect();
 
-    return view(
-        'surat.detail',
-        compact(
-            'surat',
-            'users',
-            'aktivitas'
-        )
-    );
+
+if($surat->parent_surat_id){
+
+    $suratInduk = $surat->suratInduk;
+
+    $riwayatBalasan = $suratInduk->balasan()
+        ->orderBy('created_at','desc')
+        ->get();
+
+}else{
+
+    $riwayatBalasan = $surat->balasan()
+        ->orderBy('created_at','desc')
+        ->get();
+
+}
+
+    return view('surat.detail', compact(
+    'surat',
+    'users',
+    'aktivitas',
+    'riwayatBalasan'
+));
 }
     /*
     |--------------------------------------------------------------------------

@@ -47,6 +47,7 @@ class DashboardController extends Controller
             ->orderBy(DB::raw('MONTH(created_at)'))
             ->get()
             ->map(function ($item) {
+                
 
                 return [
                     'bulan' => date(
@@ -70,29 +71,31 @@ class DashboardController extends Controller
             )
             ->groupBy('status')
             ->get();
+/*
+|--------------------------------------------------------------------------
+| AKTIVITAS TERBARU
+|--------------------------------------------------------------------------
+*/
 
-        /*
-        |--------------------------------------------------------------------------
-        | AKTIVITAS TERBARU
-        |--------------------------------------------------------------------------
-        */
 
-        $aktivitas = collect();
+$aktivitas = collect();
 
-        $suratTerbaru = Surat::latest()
-            ->take(5)
-            ->get();
 
-        foreach ($suratTerbaru as $surat) {
+$suratTerbaru = Surat::latest()
+    ->take(5)
+    ->get();
 
-            $aktivitas->push([
-                'judul'      => 'Surat Baru',
-                'deskripsi'  => $surat->perihal,
-                'status'     => 'Baru',
-                'waktu'      => $surat->created_at,
-            ]);
-        }
 
+foreach ($suratTerbaru as $surat) {
+
+    $aktivitas->push([
+        'judul'      => 'Surat Baru',
+        'deskripsi'  => $surat->perihal,
+        'status'     => $surat->status,
+        'waktu'      => $surat->created_at,
+    ]);
+
+}
         $approvalTerbaru = Approval::with('surat')
             ->latest()
             ->take(5)

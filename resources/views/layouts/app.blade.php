@@ -46,7 +46,7 @@
     pt-6
     pb-8
     relative
-    z-10
+    
 ">
 
                 @yield('content')

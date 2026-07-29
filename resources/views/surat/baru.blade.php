@@ -395,29 +395,38 @@ text-sm
 text-slate-500
 ">
 
-Masukkan Docx/PDF
+Masukkan File
 
 </p>
 
 
 
-
 <input
-
-type="file"
-
-name="file_surat"
-
-accept=".pdf,.doc,.docx"
-
-class="
-mt-5
-mx-auto
-block
-"
-
->
-
+    type="file"
+    name="lampiran"
+    accept="
+        .pdf,
+        .doc,
+        .docx,
+        .xls,
+        .xlsx,
+        .csv,
+        .jpg,
+        .jpeg,
+        .png,
+        .zip,
+        .rar,
+        .txt
+    "
+    class="
+        mt-5
+        mx-auto
+        block
+        w-full
+        text-sm
+        text-slate-600
+    "
+>   
 
 
 </div>
