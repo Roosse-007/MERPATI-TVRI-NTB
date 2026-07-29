@@ -21,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
+use App\Http\Controllers\GrafikController;
 
 
 
