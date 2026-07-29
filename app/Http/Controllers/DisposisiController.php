@@ -555,37 +555,45 @@ public function showWeb($id)
     */
 
     public function indexWeb()
-    {
+{
+
+    $userId = Auth::id();
 
 
-        $disposisi = Disposisi::with([
+    $disposisi = Disposisi::with([
 
-            'surat',
+        'surat',
 
-            'dariUser.jabatan',
+        'dariUser.jabatan',
 
-            'keUser.jabatan'
-
-
-        ])
-
-        ->latest()
-
-        ->paginate(10);
+        'keUser.jabatan'
 
 
+    ])
+
+    ->where(function($query) use ($userId){
+
+        $query->where('dari_user_id',$userId)
+
+              ->orWhere('ke_user_id',$userId);
+
+    })
+
+    ->latest()
+
+    ->paginate(10);
 
 
-        return view(
 
-            'surat.disposisi-index',
+    return view(
 
-            compact('disposisi')
+        'surat.disposisi-index',
 
-        );
+        compact('disposisi')
 
+    );
 
-    }
+}
 
 
 

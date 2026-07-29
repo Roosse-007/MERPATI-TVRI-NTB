@@ -237,3 +237,14 @@ to {
 
 }
 }
+
+/* Hilangkan icon password bawaan browser */
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container {
+    display: none;
+}

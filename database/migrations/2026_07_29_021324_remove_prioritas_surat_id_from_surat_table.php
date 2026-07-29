@@ -6,17 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+
     public function up(): void
     {
         Schema::table('surat', function (Blueprint $table) {
-            $table->date('deadline')->nullable()->after('tanggal_surat');
+
+            $table->dropColumn('prioritas_surat_id');
+
         });
     }
+
 
     public function down(): void
     {
         Schema::table('surat', function (Blueprint $table) {
-            $table->dropColumn('deadline');
+
+            $table->foreignId('prioritas_surat_id')
+                ->constrained('prioritas_surat');
+
         });
     }
+
 };

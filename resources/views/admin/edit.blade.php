@@ -358,7 +358,7 @@
                     <label class="font-semibold text-slate-700">
                         Role
                     </label>
-
+            
                     <div class="relative mt-2">
 
                         <i class="bi bi-shield-check

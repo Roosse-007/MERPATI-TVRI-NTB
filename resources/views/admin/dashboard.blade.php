@@ -431,10 +431,10 @@ $total = $totalSurat > 0
 <div class="bg-gray-200 rounded-full h-3 mt-2">
 
 
-<div class="bg-blue-600 h-3 rounded-full"
-style="width:{{ $total }}%">
+<div 
+class="bg-blue-600 h-3 rounded-full"
+style="width: {{ $total }}%">
 </div>
-
 
 </div>
 
@@ -484,28 +484,31 @@ Aktivitas Terbaru
 
 @foreach($aktivitas as $item)
 
-
-
 <div class="border-l-4 border-blue-600 pl-4">
 
 
 <p class="font-semibold">
 
-Surat :
-{{ $item->perihal }}
+{{ $item['judul'] }}
+
+</p>
+
+
+<p class="text-gray-600">
+
+{{ $item['deskripsi'] }}
 
 </p>
 
 
 <small class="text-gray-400">
 
-{{ $item->created_at->diffForHumans() }}
+{{ $item['waktu']->diffForHumans() }}
 
 </small>
 
 
 </div>
-
 
 
 @endforeach
