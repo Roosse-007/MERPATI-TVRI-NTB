@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title','Dashboard Admin')
 
@@ -484,29 +484,27 @@ Aktivitas Terbaru
 
 @foreach($aktivitas as $item)
 
-
-
 <div class="border-l-4 border-blue-600 pl-4">
 
+    <p class="font-semibold">
+        {{ $item['judul'] }}
+    </p>
 
-<p class="font-semibold">
+    <p class="text-gray-600">
+        {{ $item['deskripsi'] }}
+    </p>
 
-Surat :
-{{ $item->perihal }}
+    <span class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+        {{ $item['status'] }}
+    </span>
 
-</p>
+    <br>
 
-
-<small class="text-gray-400">
-
-{{ $item->created_at->diffForHumans() }}
-
-</small>
-
+    <small class="text-gray-400">
+        {{ \Carbon\Carbon::parse($item['waktu'])->diffForHumans() }}
+    </small>
 
 </div>
-
-
 
 @endforeach
 
@@ -516,12 +514,6 @@ Surat :
 
 
 </div>
-
-
-
-
-
-
 
 
 

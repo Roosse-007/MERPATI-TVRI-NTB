@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -14,31 +17,47 @@ class AuthController extends Controller
 
 public function login(Request $request)
 {
-    $credentials = $request->validate([
-        'username' => ['required'],
-        'password' => ['required'],
+    $request->validate([
+        'username' => ['required', 'string'],
+        'password' => ['required', 'string'],
     ]);
 
-    if (Auth::attempt($credentials)) {
+    $key = Str::lower($request->username).'|'.$request->ip();
 
-        $request->session()->regenerate();
+    if (RateLimiter::tooManyAttempts($key, 8)) {
 
-        return redirect()->route('dashboard');
+        $seconds = RateLimiter::availableIn($key);
+
+        throw ValidationException::withMessages([
+            'username' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$seconds} detik."
+        ]);
+
     }
 
-    return back()->withErrors([
-        'username' => 'Username atau Password salah.',
-    ])->onlyInput('username');
-}
+    if (!Auth::attempt($request->only('username','password'))) {
 
-public function logout(Request $request)
-{
-    Auth::logout();
+        RateLimiter::hit($key, 300); // 300 detik = 5 menit
 
-    $request->session()->invalidate();
+        $remaining = 8 - RateLimiter::attempts($key);
 
-    $request->session()->regenerateToken();
+        throw ValidationException::withMessages([
+            'username' => "Username atau Password salah. Sisa percobaan login: {$remaining} kali."
+        ]);
 
-    return redirect('/login');
+        $user = Auth::user();
+
+        if ($user->force_password_change) {
+
+            return redirect()->route('password.change')
+                ->with('warning','Silakan ganti password terlebih dahulu.');
+        }
+
+    }
+
+    RateLimiter::clear($key);
+
+    $request->session()->regenerate();
+
+    return redirect()->route('dashboard');
 }
 }

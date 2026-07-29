@@ -226,10 +226,10 @@ to-cyan-500
             <div>
 
                 <label class="
-                block
-                mb-2
-                font-semibold
-                text-slate-700
+                    block
+                    mb-2
+                    font-semibold
+                    text-slate-700
                 ">
                     Password
                 </label>
@@ -239,13 +239,13 @@ to-cyan-500
                     <i
                         data-lucide="lock-keyhole"
                         class="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        w-5
-                        h-5
-                        text-blue-600
+                            absolute
+                            left-4
+                            top-1/2
+                            -translate-y-1/2
+                            w-5
+                            h-5
+                            text-blue-600
                         ">
                     </i>
 
@@ -255,22 +255,23 @@ to-cyan-500
                         name="password"
                         placeholder="Masukkan password"
                         required
+                        autocomplete="current-password"
 
                         class="
-                        w-full
-                        rounded-2xl
-                        bg-slate-100
-                        border
-                        border-transparent
-                        pl-12
-                        pr-12
-                        py-4
-                        outline-none
-                        transition-all
-                        duration-300
-                        focus:border-blue-500
-                        focus:ring-4
-                        focus:ring-blue-200
+                            w-full
+                            rounded-2xl
+                            bg-slate-100
+                            border
+                            border-transparent
+                            pl-12
+                            pr-12
+                            py-4
+                            outline-none
+                            transition-all
+                            duration-300
+                            focus:border-blue-500
+                            focus:ring-4
+                            focus:ring-blue-200
                         ">
 
                     <button
@@ -278,13 +279,13 @@ to-cyan-500
                         onclick="togglePassword()"
 
                         class="
-                        absolute
-                        right-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-500
-                        hover:text-blue-600
-                        transition
+                            absolute
+                            right-4
+                            top-1/2
+                            -translate-y-1/2
+                            text-slate-500
+                            hover:text-blue-600
+                            transition
                         ">
 
                         <i
@@ -295,6 +296,15 @@ to-cyan-500
 
                     </button>
 
+                </div>
+
+                {{-- Lupa Password --}}
+                <div class="flex justify-end mt-2">
+                    <a
+                        href="{{ route('password.request') }}"
+                        class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
+                        Lupa Password?
+                    </a>
                 </div>
 
             </div>

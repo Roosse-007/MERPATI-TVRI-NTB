@@ -65,6 +65,28 @@
         lucide.createIcons();
     </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const sidebar = document.querySelector("nav");
+
+    if (!sidebar) return;
+
+    // Kembalikan posisi scroll
+    const saved = sessionStorage.getItem("sidebarScroll");
+
+    if (saved !== null) {
+        sidebar.scrollTop = parseInt(saved);
+    }
+
+    // Simpan posisi scroll setiap kali digeser
+    sidebar.addEventListener("scroll", function () {
+        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
+    });
+
+});
+</script>
+
 </body>
 
 </html>

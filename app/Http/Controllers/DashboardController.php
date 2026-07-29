@@ -135,7 +135,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-if ($jabatan === 'Admin') {
+if ($user->hasRole('Admin')) {
 
     $suratMasuk = Surat::where('status', '!=', 'Draft')->count();
 
@@ -146,6 +146,10 @@ if ($jabatan === 'Admin') {
         'Menunggu Approval KTU',
         'Menunggu Approval Kepala Stasiun',
     ])->count();
+
+    $diterima = Surat::where('status', 'Disetujui')->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
 
     $diterima = Surat::where('status', 'Disetujui')->count();
 
@@ -286,7 +290,7 @@ if ($jabatan === 'Admin') {
         |--------------------------------------------------------------------------
         */
 
-        if ($jabatan === 'Admin') {
+        if ($user->hasRole('Admin')) {
 
             return view('admin.dashboard', $data);
 
