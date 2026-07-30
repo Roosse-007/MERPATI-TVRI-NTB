@@ -21,6 +21,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
+use App\Http\Controllers\GrafikController;
+ use App\Http\Controllers\Auth\PasswordController;
 
 
 
@@ -209,12 +211,10 @@ Route::prefix('admin')
     ->name('admin.users');
 
 
-
-    Route::view(
-        '/grafik',
-        'admin.grafik'
-    )
-    ->name('admin.grafik');
+Route::get(
+    '/admin/grafik',
+    [GrafikController::class,'index']
+)->name('admin.grafik');
 
 
 
@@ -1083,6 +1083,72 @@ Route::post(
 
 Route::get('/surat/{surat}/download', [SuratController::class, 'download'])
     ->name('surat.download');
+
+    use App\Http\Controllers\Auth\ForgotPasswordController;
+
+/*
+|--------------------------------------------------------------------------
+| FORGOT PASSWORD
+|--------------------------------------------------------------------------
+*/
+
+
+
+// Halaman lupa password
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPassword'])
+    ->name('password.request');
+
+// Kirim OTP ke email
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])
+    ->name('password.sendOtp');
+
+/*
+|--------------------------------------------------------------------------
+| VERIFIKASI OTP
+|--------------------------------------------------------------------------
+*/
+
+// Halaman verifikasi OTP
+Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtp'])
+    ->name('password.verify');
+
+// Proses verifikasi OTP
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])
+    ->name('password.verifyOtp');
+
+// Kirim ulang OTP
+Route::post('/resend-otp', [ForgotPasswordController::class, 'resendOtp'])
+    ->name('password.resendOtp');
+
+/*
+|--------------------------------------------------------------------------
+| RESET PASSWORD
+|--------------------------------------------------------------------------
+*/
+
+// Halaman reset password
+Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])
+    ->middleware('otp.verified')
+    ->name('password.reset.form');
+
+// Simpan password baru
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])
+    ->middleware('otp.verified')
+    ->name('password.reset');
+
+   
+
+Route::get('/change-password', [PasswordController::class, 'showChangePassword'])
+    ->name('password.change');
+
+Route::post('/change-password', [PasswordController::class, 'updatePassword'])
+    ->name('password.change.update');
+
+    Route::get('/profile', function () {
+    return view('profile.index');
+        })
+        ->middleware('auth')
+        ->name('profile');
 // ==========================
 // SELESAI
 // ==========================

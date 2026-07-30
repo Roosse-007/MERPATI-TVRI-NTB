@@ -47,7 +47,6 @@ class DashboardController extends Controller
             ->orderBy(DB::raw('MONTH(created_at)'))
             ->get()
             ->map(function ($item) {
-                
 
                 return [
                     'bulan' => date(
@@ -71,31 +70,29 @@ class DashboardController extends Controller
             )
             ->groupBy('status')
             ->get();
-/*
-|--------------------------------------------------------------------------
-| AKTIVITAS TERBARU
-|--------------------------------------------------------------------------
-*/
 
+        /*
+        |--------------------------------------------------------------------------
+        | AKTIVITAS TERBARU
+        |--------------------------------------------------------------------------
+        */
 
-$aktivitas = collect();
+        $aktivitas = collect();
 
+        $suratTerbaru = Surat::latest()
+            ->take(5)
+            ->get();
 
-$suratTerbaru = Surat::latest()
-    ->take(5)
-    ->get();
+        foreach ($suratTerbaru as $surat) {
 
+            $aktivitas->push([
+                'judul'      => 'Surat Baru',
+                'deskripsi'  => $surat->perihal,
+                'status'     => 'Baru',
+                'waktu'      => $surat->created_at,
+            ]);
+        }
 
-foreach ($suratTerbaru as $surat) {
-
-    $aktivitas->push([
-        'judul'      => 'Surat Baru',
-        'deskripsi'  => $surat->perihal,
-        'status'     => $surat->status,
-        'waktu'      => $surat->created_at,
-    ]);
-
-}
         $approvalTerbaru = Approval::with('surat')
             ->latest()
             ->take(5)
@@ -138,7 +135,7 @@ foreach ($suratTerbaru as $surat) {
         |--------------------------------------------------------------------------
         */
 
-if ($jabatan === 'Admin') {
+if ($user->hasRole('Admin')) {
 
     $suratMasuk = Surat::where('status', '!=', 'Draft')->count();
 
@@ -149,6 +146,10 @@ if ($jabatan === 'Admin') {
         'Menunggu Approval KTU',
         'Menunggu Approval Kepala Stasiun',
     ])->count();
+
+    $diterima = Surat::where('status', 'Disetujui')->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
 
     $diterima = Surat::where('status', 'Disetujui')->count();
 
@@ -289,7 +290,7 @@ if ($jabatan === 'Admin') {
         |--------------------------------------------------------------------------
         */
 
-        if ($jabatan === 'Admin') {
+        if ($user->hasRole('Admin')) {
 
             return view('admin.dashboard', $data);
 

@@ -124,168 +124,117 @@ scrollbar-thumb-blue-400/40
 
 @php
 
-$current = request()->path();
+$current = request()->route()->getName();
 
 $user = auth()->user();
 
-
+$isAdmin = $user && $user->hasRole('Admin');
 
 $menus = [
 
+    [
+        'icon'  => 'layout-dashboard',
+        'name'  => 'Dashboard',
+        'route' => $isAdmin
+            ? 'admin.dashboard'
+            : 'dashboard',
+    ],
 
-[
-'icon'=>'layout-dashboard',
-'name'=>'Dashboard',
-'url'=>'dashboard'
-],
+    [
+        'icon'  => 'inbox',
+        'name'  => 'Kotak Masuk',
+        'route' => 'surat.inbox',
+    ],
 
+    [
+        'icon'  => 'file-pen-line',
+        'name'  => 'Draft',
+        'route' => 'surat.draft',
+    ],
 
+    [
+        'icon'  => 'file-plus',
+        'name'  => 'Surat Baru',
+        'route' => 'surat.create',
+    ],
 
-[
-'icon'=>'inbox',
-'name'=>'Kotak Masuk',
-'url'=>'inbox'
-],
+    [
+        'icon'  => 'circle-check-big',
+        'name'  => 'Approval',
+        'route' => 'surat.approval',
+    ],
 
+    [
+        'icon'  => 'send',
+        'name'  => 'Disposisi',
+        'route' => 'disposisi.index',
+    ],
 
+    [
+        'icon'  => 'archive',
+        'name'  => 'Arsip',
+        'route' => 'surat.arsip',
+    ],
 
-[
-'icon'=>'file-pen-line',
-'name'=>'Draft',
-'url'=>'surat/draft'
-],
-
-
-
-[
-'icon'=>'file-plus',
-'name'=>'Surat Baru',
-'url'=>'surat/baru'
-],
-
-
-
-[
-'icon'=>'circle-check-big',
-'name'=>'Approval',
-'url'=>'surat/approval'
-],
-
-
-
-[
-'icon'=>'send',
-'name'=>'Disposisi',
-'url'=>'surat/disposisi'
-],
-
-
-
-[
-'icon'=>'archive',
-'name'=>'Arsip',
-'url'=>'surat/arsip'
-],
-
-
-
-[
-'icon'=>'user-round',
-'name'=>'Profil',
-'url'=>'profile'
-],
-
-
+    [
+        'icon'  => 'user-round',
+        'name'  => 'Profil',
+        'route' => 'profile',
+    ],
 
 ];
 
+if ($isAdmin) {
 
+    $menus = array_merge($menus, [
 
+        [
+            'icon'=>'users',
+            'name'=>'Kelola User',
+            'route'=>'admin.users'
+        ],
 
+        [
+            'icon'=>'file-text',
+            'name'=>'Template Surat',
+            'route'=>'admin.template'
+        ],
 
-$isAdmin =
-$user &&
-$user->jabatan &&
-$user->jabatan->nama_jabatan == 'Admin';
+        [
+            'icon'=>'hash',
+            'name'=>'Nomor Surat',
+            'route'=>'admin.nomor'
+        ],
 
+        [
+            'icon'=>'monitor',
+            'name'=>'Monitoring',
+            'route'=>'admin.monitoring'
+        ],
 
+        [
+            'icon'=>'file-bar-chart',
+            'name'=>'Laporan',
+            'route'=>'admin.laporan'
+        ],
 
+        [
+            'icon'=>'chart-column',
+            'name'=>'Grafik',
+            'route'=>'admin.grafik'
+        ],
 
-if($isAdmin){
+        [
+            'icon'=>'settings',
+            'name'=>'Setting',
+            'route'=>'admin.setting'
+        ],
 
-
-$menus = array_merge($menus,[
-
-
-
-[
-'icon'=>'users',
-'name'=>'Kelola User',
-'url'=>'admin/users'
-],
-
-
-
-[
-'icon'=>'file-text',
-'name'=>'Template Surat',
-'url'=>'admin/template-surat'
-],
-
-
-
-[
-'icon'=>'hash',
-'name'=>'Nomor Surat',
-'url'=>'admin/nomor-surat'
-],
-
-
-
-[
-'icon'=>'monitor',
-'name'=>'Monitoring',
-'url'=>'admin/monitoring'
-],
-
-
-
-[
-'icon'=>'file-bar-chart',
-'name'=>'Laporan',
-'url'=>'admin/laporan'
-],
-
-
-
-[
-'icon'=>'chart-column',
-'name'=>'Grafik',
-'url'=>'admin/grafik'
-],
-
-
-
-[
-'icon'=>'settings',
-'name'=>'Setting',
-'url'=>'admin/setting'
-],
-
-
-
-]);
-
+    ]);
 
 }
 
-
-
 @endphp
-
-
-
-
 
 
 @foreach($menus as $menu)
@@ -293,15 +242,12 @@ $menus = array_merge($menus,[
 
 @php
 
-$active = $current == $menu['url'];
+$active = request()->routeIs($menu['route']);
 
 @endphp
 
 
-
-
-<a href="/{{ $menu['url'] }}"
-
+<a href="{{ route($menu['route']) }}"
 class="
 group
 flex
@@ -313,19 +259,10 @@ rounded-2xl
 transition-all
 duration-300
 
-
 {{ $active
-
-?
-
-'bg-white/20 text-white shadow-lg translate-x-2'
-
-:
-
-'text-blue-100 hover:bg-white/10 hover:text-white hover:translate-x-2'
-
+    ? 'bg-white/20 text-white shadow-lg translate-x-2'
+    : 'text-blue-100 hover:bg-white/10 hover:text-white hover:translate-x-2'
 }}
-
 ">
 
 

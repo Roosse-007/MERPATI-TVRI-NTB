@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\PasswordResetOtp;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
+
+class ForgotPasswordController extends Controller
+{
+    /**
+     * Tampilkan halaman lupa password
+     */
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    /**
+     * Kirim OTP ke email
+     */
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $email = strtolower(trim($request->email));
+
+        /*
+        |--------------------------------------------------------------------------
+        | Rate Limit
+        | Maksimal 3 kali request OTP dalam 15 menit
+        |--------------------------------------------------------------------------
+        */
+
+        $key = 'forgot-password:' . $request->ip() . ':' . $email;
+
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+
+            $seconds = RateLimiter::availableIn($key);
+
+            return back()->withErrors([
+                'email' => "Terlalu banyak permintaan OTP. Silakan coba lagi dalam {$seconds} detik."
+            ])->withInput();
+        }
+
+        RateLimiter::hit($key, 900); // 15 menit
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cari User
+        |--------------------------------------------------------------------------
+        */
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+
+            // Logging untuk audit
+            Log::warning('Forgot password menggunakan email yang tidak terdaftar.', [
+                'email' => $email,
+                'ip' => $request->ip(),
+            ]);
+
+            // Demi keamanan jangan beritahu apakah email ada atau tidak
+            return back()->with(
+                'success',
+                'Jika email tersebut terdaftar, kode OTP akan dikirim ke alamat email tersebut.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cek apakah OTP lama masih aktif
+        |--------------------------------------------------------------------------
+        */
+
+        $existingOtp = PasswordResetOtp::where('email', $email)
+            ->where('expired_at', '>', now())
+            ->first();
+
+        if ($existingOtp) {
+
+            return back()->with(
+                'success',
+                'Kode OTP masih aktif. Silakan cek email Anda atau tunggu hingga OTP kadaluarsa.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate OTP
+        |--------------------------------------------------------------------------
+        */
+
+        $otp = random_int(100000, 999999);
+
+        PasswordResetOtp::updateOrCreate(
+
+            [
+                'email' => $email,
+            ],
+
+            [
+                'otp' => Hash::make($otp),
+                'attempts' => 0,
+                'expired_at' => Carbon::now()->addMinutes(5),
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Kirim Email
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            Mail::raw(
+                "Halo {$user->username},
+
+Kode OTP untuk reset password MERPATI TVRI NTB adalah:
+
+{$otp}
+
+Kode ini berlaku selama 5 menit.
+
+Apabila Anda tidak melakukan permintaan reset password, abaikan email ini.
+
+MERPATI TVRI NTB",
+                function ($mail) use ($email) {
+
+                    $mail->to($email)
+                        ->subject('Kode OTP Reset Password MERPATI TVRI NTB');
+                }
+            );
+
+        } catch (\Exception $e) {
+
+            Log::error('Gagal mengirim OTP.', [
+                'email' => $email,
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors([
+                'email' => 'Gagal mengirim email OTP. Silakan coba beberapa saat lagi.'
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan Session
+        |--------------------------------------------------------------------------
+        */
+
+        session([
+            'reset_email' => $email,
+        ]);
+
+        Log::info('OTP berhasil dikirim.', [
+            'email' => $email,
+        ]);
+
+        return redirect()->route('password.verify');
+    }
+}

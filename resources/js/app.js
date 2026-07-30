@@ -1,3 +1,7 @@
+import Chart from 'chart.js/auto';
+
+window.Chart = Chart;
+
 console.log("MERPATI JS AKTIF");
 
 
