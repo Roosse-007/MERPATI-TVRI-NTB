@@ -72,7 +72,7 @@ Total Surat
 
 
 <div class="text-5xl">
-📄
+    <i class="bi bi-file-earmark-text"></i>
 </div>
 
 
@@ -119,7 +119,7 @@ Total User
 
 
 <div class="text-5xl">
-👥
+    <i class="bi bi-people-fill"></i>
 </div>
 
 
@@ -168,7 +168,7 @@ Pending Approval
 
 
 <div class="text-5xl">
-⏳
+    <i class="bi bi-hourglass-split"></i>
 </div>
 
 
@@ -218,7 +218,7 @@ Total Arsip
 
 
 <div class="text-5xl">
-🗂️
+    <i class="bi bi-archive-fill"></i>
 </div>
 
 
@@ -265,8 +265,8 @@ Menu Cepat
 class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 text-center">
 
 
-<div class="text-3xl">
-👥
+<div class="text-3xl text-blue-600">
+    <i class="bi bi-person-gear"></i>
 </div>
 
 
@@ -283,10 +283,9 @@ Kelola User
 class="p-5 rounded-xl bg-green-50 hover:bg-green-100 text-center">
 
 
-<div class="text-3xl">
-📄
+<div class="text-3xl text-green-600">
+    <i class="bi bi-file-earmark-richtext"></i>
 </div>
-
 
 <p class="mt-2 font-semibold">
 Template Surat
@@ -302,8 +301,8 @@ Template Surat
 class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-center">
 
 
-<div class="text-3xl">
-📊
+<div class="text-3xl text-yellow-600">
+    <i class="bi bi-bar-chart-fill"></i>
 </div>
 
 
@@ -321,8 +320,8 @@ Laporan
 class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 text-center">
 
 
-<div class="text-3xl">
-🗂️
+<div class="text-3xl text-purple-600">
+    <i class="bi bi-folder-fill"></i>
 </div>
 
 
@@ -428,16 +427,19 @@ $total = $totalSurat > 0
 
 
 
-<div class="bg-gray-200 rounded-full h-3 mt-2">
+<div class="bg-gray-200 rounded-full h-3 mt-2 overflow-hidden">
 
+    <div 
+        class="bg-blue-600 h-3 rounded-full progress-bar"
+        data-width="{{ $total }}">
+    </div>
 
-<div class="bg-blue-600 h-3 rounded-full"
-style="width:{{ $total }}%">
 </div>
 
-
-</div>
-
+    <div 
+        class="bg-blue-600 h-3 rounded-full progress-bar"
+        data-width="{{ $total }}">
+    </div>
 
 </div>
 
@@ -683,62 +685,64 @@ Tanggal
 <!-- CHART SCRIPT -->
 
 
+<script id="chart-data" type="application/json">
+{
+    "labels": {!! json_encode($statistikSurat->pluck('bulan')) !!},
+    "jumlah": {!! json_encode($statistikSurat->pluck('jumlah')) !!}
+}
+</script>
+
+
 <script>
 
-
-document.addEventListener('DOMContentLoaded',()=>{
-
-
-const ctx=document.getElementById('chartSurat');
+document.addEventListener('DOMContentLoaded', function () {
 
 
-new Chart(ctx,{
+    const dataChart = JSON.parse(
+        document.getElementById('chart-data').textContent
+    );
 
 
-type:'line',
+    const ctx = document.getElementById('chartSurat');
 
 
-data:{
+    if(ctx){
+
+        new Chart(ctx, {
+
+            type: 'line',
+
+            data: {
+
+                labels: dataChart.labels,
+
+                datasets: [{
+
+                    label: 'Jumlah Surat',
+
+                    data: dataChart.jumlah,
+
+                    borderWidth: 3,
+
+                    tension: 0.3
+
+                }]
+
+            },
 
 
-labels:@json($statistikSurat->pluck('bulan')),
+            options: {
 
+                responsive:true
 
-datasets:[{
+            }
 
+        });
 
-label:'Jumlah Surat',
-
-
-data:@json($statistikSurat->pluck('jumlah')),
-
-
-borderWidth:3
-
-
-}]
-
-
-},
-
-
-
-options:{
-
-
-responsive:true
-
-
-}
-
-
-
-});
-
+    }
 
 
 });
-
 
 </script>
 

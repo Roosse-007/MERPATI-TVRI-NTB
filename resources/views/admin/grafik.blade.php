@@ -561,10 +561,11 @@ document.addEventListener('DOMContentLoaded', function(){
             data:{
 
                 labels:[
-                    'Disetujui',
-                    'Diproses',
-                    'Ditolak'
-                ],
+                'Draft',
+                'Diproses',
+                'Disetujui',
+                'Ditolak'
+            ],
 
                 datasets:[{
 
@@ -597,12 +598,15 @@ document.addEventListener('DOMContentLoaded', function(){
 
             data:{
 
-                labels:[
-                    'Dinas',
-                    'Undangan',
-                    'Nota',
-                    'Laporan'
-                ],
+               labels:[
+                'Surat Masuk',
+                'Surat Keluar',
+                'Surat Internal',
+                'Nota Dinas',
+                'Surat Produksi',
+                'Surat Undangan',
+                'Surat Tugas'
+            ],
 
                 datasets:[{
 

@@ -211,10 +211,11 @@ Route::prefix('admin')
 
 
 
-    Route::view(
-        '/grafik',
-        'admin.grafik'
-    )
+    Route::get('/grafik',
+    [
+        GrafikController::class,
+        'index'
+    ])
     ->name('admin.grafik');
 
 
@@ -461,7 +462,28 @@ Route::get('/surat/draft',
 ->middleware('auth')
 ->name('surat.draft');
 
+// PREVIEW FILE SURAT
 
+Route::get('/surat/{id}/preview',
+[
+    SuratController::class,
+    'preview'
+
+])
+->middleware('auth')
+->whereNumber('id')
+->name('surat.preview');
+
+// Detail surat
+
+Route::get('/surat/{id}',
+[
+    SuratController::class,
+    'show'
+
+])
+->middleware('auth')
+->name('surat.show');
 
 
 

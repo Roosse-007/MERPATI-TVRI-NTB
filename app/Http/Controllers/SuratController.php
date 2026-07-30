@@ -256,20 +256,141 @@ public function store(Request $request)
     | DAFTAR DRAFT
     |--------------------------------------------------------------------------
     */
-public function draft()
+public function draft(Request $request)
 {
-    $draft = Surat::with([
+
+    $query = Surat::with([
         'jenisSurat',
         'sifatSurat',
         'prioritasSurat',
         'tujuan.user',
+        'pengirim'
     ])
     ->where('pengirim_id', Auth::id())
-    ->where('status', 'Draft')
-    ->latest()
-    ->paginate(10);
+    ->where('status','Draft');
 
-    return view('surat.draft', compact('draft'));
+
+
+    // =====================
+    // SEARCH
+    // =====================
+
+    if($request->filled('search')){
+
+
+        $keyword = $request->search;
+
+
+        $query->where(function($q) use ($keyword){
+
+
+            $q->where(
+                'nomor_surat',
+                'like',
+                "%{$keyword}%"
+            )
+
+
+            ->orWhere(
+                'perihal',
+                'like',
+                "%{$keyword}%"
+            )
+
+
+            ->orWhereHas(
+                'pengirim',
+                function($user) use ($keyword){
+
+                    $user->where(
+                        'name',
+                        'like',
+                        "%{$keyword}%"
+                    );
+
+                }
+            );
+
+
+        });
+
+
+    }
+
+
+
+
+
+    // =====================
+    // FILTER STATUS
+    // =====================
+
+    if($request->filled('status')){
+
+
+        $query->where(
+            'status',
+            $request->status
+        );
+
+
+    }
+
+
+
+
+
+    $draft = $query
+
+        ->latest()
+
+        ->paginate(10)
+
+        ->withQueryString();
+
+
+
+
+    return view(
+        'surat.draft',
+        compact('draft')
+    );
+
+
+}
+
+// ===============================
+// TAMBAHKAN FUNCTION PREVIEW DISINI
+// ===============================
+
+
+public function preview($id)
+{
+
+    $surat = Surat::findOrFail($id);
+
+
+    if(!$surat->file_surat){
+
+        abort(404);
+
+    }
+
+
+    $path = storage_path(
+        'app/public/'.$surat->file_surat
+    );
+
+
+    if(!file_exists($path)){
+
+        abort(404);
+
+    }
+
+
+    return response()->file($path);
+
 }
 
 public function edit($id)

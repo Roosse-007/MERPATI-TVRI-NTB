@@ -1,31 +1,45 @@
 @extends('layouts.app')
 
-
 @section('title','Draft Surat')
-
 
 @section('content')
 
-
-<div class="max-w-6xl mx-auto">
-
+<div class="max-w-7xl mx-auto">
 
 
 {{-- HEADER --}}
 
-<div class="mb-8">
+<div class="flex justify-between items-center mb-5">
+
+
+<div>
+
+<div class="flex items-center gap-3">
+
+<div class="
+bg-blue-100
+text-blue-600
+p-3
+rounded-xl
+">
+
+<i class="fa-solid fa-file-pen text-2xl"></i>
+
+</div>
 
 
 <h1 class="
-text-4xl
+text-3xl
 font-black
 text-slate-800
 ">
 
-📝 Draft Surat
+Draft Surat
 
 </h1>
 
+
+</div>
 
 
 <p class="
@@ -43,51 +57,7 @@ Surat yang masih dalam proses penyusunan
 
 
 
-
-
-
-{{-- CARD --}}
-
-
-<div class="
-bg-white
-rounded-[32px]
-shadow-xl
-p-8
-">
-
-
-
-
-
-{{-- HEADER CARD --}}
-
-
-<div class="
-flex
-justify-between
-items-center
-mb-8
-">
-
-
-
-<h2 class="
-text-2xl
-font-black
-text-slate-800
-">
-
-Daftar Draft
-
-</h2>
-
-
-
-
-
 <a href="{{route('surat.create')}}"
-
 
 class="
 bg-gradient-to-r
@@ -99,7 +69,7 @@ text-white
 px-6
 py-3
 
-rounded-2xl
+rounded-xl
 
 font-bold
 
@@ -110,9 +80,7 @@ hover:scale-105
 transition
 ">
 
-
 + Draft Baru
-
 
 </a>
 
@@ -124,37 +92,234 @@ transition
 
 
 
+{{-- SEARCH FILTER --}}
+
+<div class="
+bg-white
+rounded-[28px]
+shadow-xl
+p-5
+mb-6
+">
+
+
+<form 
+method="GET"
+action="{{ route('surat.draft') }}"
+>
+
+
+<div class="
+flex
+gap-4
+items-center
+">
+
+
+{{-- INPUT SEARCH --}}
+
+<div class="flex-1">
+
+
+<input
+
+type="text"
+
+name="search"
+
+value="{{ request('search') }}"
+
+placeholder="Cari nomor surat, perihal, atau pengirim..."
+
+class="
+w-full
+bg-slate-100
+border-0
+rounded-2xl
+px-6
+py-4
+text-slate-700
+focus:ring-2
+focus:ring-blue-500
+outline-none
+"
+
+>
+
+
+</div>
 
 
 
 
-{{-- LIST DATA --}}
+
+
+{{-- STATUS --}}
+
+<div class="w-80">
+
+
+<select
+
+name="status"
+
+class="
+w-full
+bg-slate-100
+border-0
+rounded-2xl
+px-6
+py-4
+text-slate-700
+focus:ring-2
+focus:ring-blue-500
+outline-none
+"
+
+>
+
+
+<option value="">
+Semua Status
+</option>
+
+
+
+<option value="Draft"
+
+@if(request('status')=='Draft')
+selected
+@endif
+
+>
+
+Draft
+
+</option>
+
+
+
+
+<option value="Terkirim"
+
+@if(request('status')=='Terkirim')
+selected
+@endif
+
+>
+
+Terkirim
+
+</option>
+
+
+
+
+<option value="Disetujui"
+
+@if(request('status')=='Disetujui')
+selected
+@endif
+
+>
+
+Disetujui
+
+</option>
+
+
+
+
+<option value="Ditolak"
+
+@if(request('status')=='Ditolak')
+selected
+@endif
+
+>
+
+Ditolak
+
+</option>
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+
+{{-- BUTTON CARI --}}
+
+<button
+
+type="submit"
+
+class="
+bg-blue-600
+hover:bg-blue-700
+text-white
+px-8
+py-4
+rounded-2xl
+font-bold
+transition
+"
+
+>
+
+Cari
+
+
+</button>
+
+
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+
+{{-- LIST DRAFT --}}
 
 
 @forelse($draft as $item)
 
 
 
+<div class="
+bg-white
+rounded-3xl
+shadow-sm
+border
+p-6
+mb-5
+hover:shadow-lg
+transition
+">
+
 
 
 <div class="
-bg-slate-50
-
-rounded-2xl
-
-p-6
-
-mb-4
-
-flex
-
-justify-between
-
+grid
+grid-cols-12
+gap-5
 items-center
-
-hover:bg-blue-50
-
-transition
 ">
 
 
@@ -162,12 +327,44 @@ transition
 
 
 
+{{-- KIRI INFORMASI SURAT --}}
 
-{{-- INFORMASI SURAT --}}
+
+<div class="
+col-span-12
+lg:col-span-7
+flex
+gap-5
+">
+
+
+<div class="
+w-16
+h-16
+bg-blue-100
+rounded-2xl
+flex
+items-center
+justify-center
+shrink-0
+">
+
+
+<i class="
+fa-solid
+fa-file-lines
+text-blue-600
+text-3xl
+"></i>
+
+
+</div>
+
+
+
 
 
 <div>
-
 
 
 <h3 class="
@@ -182,10 +379,6 @@ text-slate-800
 
 
 
-
-
-
-
 <div class="
 mt-3
 space-y-2
@@ -195,18 +388,17 @@ text-slate-500
 
 
 
-<p>
+<p class="flex gap-2 items-center">
 
-Nomor :
+<i class="
+fa-solid
+fa-hashtag
+text-blue-500
+"></i>
 
-<span class="
-font-bold
-text-slate-700
-">
 
-{{$item->nomor_surat}}
+{{$item->nomor_surat ?? '-'}}
 
-</span>
 
 </p>
 
@@ -214,56 +406,51 @@ text-slate-700
 
 
 
-<p>
+<p class="flex gap-2 items-center">
 
-Tanggal :
 
-<span class="
-font-bold
-text-slate-700
+<i class="
+fa-solid
+fa-calendar
+text-blue-500
+"></i>
+
+
+{{\Carbon\Carbon::parse($item->tanggal_surat)->translatedFormat('d M Y')}}
+
+
+</p>
+
+
+
+
+
+@if($item->deadline)
+
+<p class="
+flex
+gap-2
+items-center
+text-red-500
+font-semibold
 ">
 
 
-@if($item->tanggal_surat)
+<i class="
+fa-solid
+fa-clock
+"></i>
 
-{{\Carbon\Carbon::parse($item->tanggal_surat)->translatedFormat('d F Y')}}
 
-@else
+{{\Carbon\Carbon::parse($item->deadline)->translatedFormat('d M Y')}}
 
--
+
+</p>
+
 
 @endif
 
 
-
-</span>
-
-</p>
-
-
-
-
-
-
-<p>
-
-Status :
-
-<span class="
-bg-yellow-100
-text-yellow-700
-px-3
-py-1
-rounded-full
-font-bold
-">
-
-{{$item->status}}
-
-</span>
-
-
-</p>
 
 
 
@@ -271,18 +458,21 @@ font-bold
 @if($item->tujuan->first())
 
 
-<p>
-
-Kepada :
-
-<span class="
-font-bold
-text-slate-700
+<p class="
+flex
+gap-2
+items-center
 ">
 
-{{$item->tujuan->first()->user->name ?? '-'}}
 
-</span>
+<i class="
+fa-solid
+fa-user
+text-blue-500
+"></i>
+
+
+{{$item->tujuan->first()->user->name ?? '-'}}
 
 
 </p>
@@ -293,55 +483,267 @@ text-slate-700
 
 
 
-</div>
-
-
-
 
 </div>
 
 
 
+</div>
+
+
+
+</div>
 
 
 
 
 
+{{-- FILE DOKUMEN --}}
 
-{{-- AKSI --}}
+<div class="
+col-span-12
+lg:col-span-4
+flex
+items-center
+justify-end
+gap-2
+border-l
+pl-4
+">
 
 
-<div class="flex gap-3">
+@if($item->file_surat)
 
 
+@php
+
+$ext = pathinfo($item->file_surat, PATHINFO_EXTENSION);
+
+@endphp
+
+
+
+{{-- BOX FILE --}}
+
+<div class="
+bg-blue-50
+rounded-xl
+px-4
+py-3
+flex
+items-center
+gap-3
+">
+
+
+@if($ext == 'pdf')
+
+<i class="
+fa-solid
+fa-file-pdf
+text-red-600
+text-3xl
+"></i>
+
+
+@else
+
+
+<i class="
+fa-solid
+fa-file-word
+text-blue-600
+text-3xl
+"></i>
+
+
+@endif
+
+
+
+<div>
+
+
+<p class="
+font-bold
+text-sm
+text-slate-700
+">
+
+
+{{Str::limit(
+basename($item->file_surat),
+18
+)}}
+
+
+</p>
+
+
+
+<p class="
+text-xs
+text-slate-400
+uppercase
+">
+
+{{$ext}}
+
+</p>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+{{-- BUTTON PREVIEW --}}
+
+
+<a
+
+href="{{route('surat.preview',$item->id)}}"
+
+target="_blank"
+
+class="
+border
+p-2
+rounded-xl
+hover:bg-blue-50
+transition
+"
+
+title="Preview Dokumen"
+
+>
+
+
+<i class="
+fa-solid
+fa-eye
+text-blue-600
+"></i>
+
+
+</a>
+
+
+@endif
+
+
+</div>
+
+
+
+
+
+{{-- STATUS + MENU --}}
+
+<div class="
+col-span-12
+lg:col-span-1
+flex
+justify-end
+items-center
+gap-2
+pl-2
+">
+
+
+{{-- STATUS --}}
+
+<span class="
+bg-yellow-100
+text-yellow-700
+px-4
+py-2
+rounded-xl
+font-bold
+text-sm
+">
+
+{{$item->status}}
+
+</span>
+
+
+
+{{-- TITIK TIGA --}}
+
+<div class="relative">
+
+
+<button
+
+onclick="toggleMenu('{{$item->id}}')"
+
+class="
+text-slate-500
+text-lg
+hover:text-slate-800
+">
+
+<i class="
+fa-solid
+fa-ellipsis-vertical
+"></i>
+
+</button>
+
+
+
+
+{{-- DROPDOWN --}}
+
+<div
+
+id="menu{{$item->id}}"
+
+class="
+hidden
+absolute
+right-0
+top-8
+w-36
+bg-white
+border
+rounded-xl
+shadow-xl
+z-50
+">
 
 
 
 {{-- EDIT --}}
 
+<a
 
-<a href="{{route('surat.edit',$item->id)}}"
+href="{{route('surat.edit',$item->id)}}"
 
 class="
-bg-blue-600
-
-text-white
-
-px-5
-
-py-2
-
-rounded-xl
-
-font-bold
-
-hover:bg-blue-700
-
-transition
+block
+px-4
+py-3
+text-sm
+hover:bg-green-50
+text-slate-700
 ">
 
-✏️ Edit
+<i class="
+fa-solid
+fa-pen
+text-green-600
+mr-2
+"></i>
 
+
+Edit
 
 </a>
 
@@ -349,19 +751,15 @@ transition
 
 
 
-
-
-
 {{-- HAPUS --}}
 
-
 <form
-
-id="delete{{$item->id}}"
 
 action="{{route('surat.destroy',$item->id)}}"
 
 method="POST"
+
+id="delete{{$item->id}}"
 
 >
 
@@ -372,36 +770,34 @@ method="POST"
 
 
 
-
 <button
 
 type="button"
 
-onclick="hapusDraft({{$item->id}})"
+onclick="hapusDraft('{{$item->id}}')"
 
 class="
-bg-red-100
-
+w-full
+text-left
+px-4
+py-3
+text-sm
 text-red-600
-
-px-5
-
-py-2
-
-rounded-xl
-
-font-bold
-
-hover:bg-red-200
-
-transition
+hover:bg-red-50
 ">
 
-🗑 Hapus
+
+<i class="
+fa-solid
+fa-trash
+mr-2
+"></i>
+
+
+Hapus
 
 
 </button>
-
 
 
 </form>
@@ -409,7 +805,10 @@ transition
 
 
 
+</div>
 
+
+</div>
 
 
 </div>
@@ -418,12 +817,10 @@ transition
 
 
 
-
 </div>
 
 
-
-
+</div>
 
 
 
@@ -431,29 +828,23 @@ transition
 
 
 
-
-
 <div class="
+bg-white
+rounded-3xl
+p-10
 text-center
-
-py-12
-
 text-slate-400
 ">
 
 
-<div class="
-text-5xl
-mb-4
-">
+<div class="text-5xl mb-4">
 
 📭
 
 </div>
 
 
-
-<p class="font-semibold">
+<p class="font-bold">
 
 Belum ada draft surat
 
@@ -461,39 +852,25 @@ Belum ada draft surat
 
 
 
-
-
-
 <a href="{{route('surat.create')}}"
 
 class="
 inline-block
-
 mt-5
-
 bg-blue-600
-
 text-white
-
 px-6
-
 py-3
-
 rounded-xl
-
 font-bold
 ">
 
-Buat Draft Pertama
+Buat Draft
 
 </a>
 
 
-
-
 </div>
-
-
 
 
 
@@ -503,21 +880,15 @@ Buat Draft Pertama
 
 
 
+<div class="mt-6">
+
+{{$draft->links()}}
 
 </div>
 
 
 
-
-
-
 </div>
-
-
-
-
-
-
 
 
 
@@ -529,8 +900,67 @@ Buat Draft Pertama
 
 
 
-
 <script>
+
+
+function toggleMenu(id)
+{
+
+    let menu = document.getElementById('menu'+id);
+
+
+    // tutup semua menu lain dulu
+    document.querySelectorAll('[id^="menu"]').forEach(function(item){
+
+        if(item.id !== 'menu'+id)
+        {
+            item.classList.add('hidden');
+        }
+
+    });
+
+
+    // buka menu yang diklik
+    menu.classList.toggle('hidden');
+
+}
+
+
+
+
+
+// klik area luar untuk menutup dropdown
+
+document.addEventListener('click', function(event){
+
+
+    let isButton = event.target.closest('button');
+
+    let isMenu = event.target.closest('[id^="menu"]');
+
+
+
+    if(!isButton && !isMenu)
+    {
+
+
+        document
+        .querySelectorAll('[id^="menu"]')
+        .forEach(function(menu){
+
+
+            menu.classList.add('hidden');
+
+
+        });
+
+
+    }
+
+
+});
+
+
 
 
 function hapusDraft(id)
@@ -542,26 +972,20 @@ Swal.fire({
 
 title:'Hapus Draft Surat?',
 
-text:'Draft yang sudah dihapus tidak dapat dikembalikan.',
+text:'Data yang sudah dihapus tidak dapat dikembalikan.',
 
 icon:'warning',
 
 showCancelButton:true,
 
-
 confirmButtonText:'Ya, Hapus',
 
 cancelButtonText:'Batal',
 
-
-confirmButtonColor:'#dc2626',
-
-cancelButtonColor:'#64748b'
+confirmButtonColor:'#dc2626'
 
 
-})
-
-.then((result)=>{
+}).then((result)=>{
 
 
 if(result.isConfirmed)
@@ -577,6 +1001,7 @@ document
 }
 
 
+
 })
 
 
@@ -584,9 +1009,7 @@ document
 
 
 
-
 </script>
-
 
 
 
