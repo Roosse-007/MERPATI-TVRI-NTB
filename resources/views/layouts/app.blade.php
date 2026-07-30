@@ -17,6 +17,11 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
     rel="stylesheet">
 
+    <link 
+
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -64,28 +69,6 @@
     <script>
         lucide.createIcons();
     </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const sidebar = document.querySelector("nav");
-
-    if (!sidebar) return;
-
-    // Kembalikan posisi scroll
-    const saved = sessionStorage.getItem("sidebarScroll");
-
-    if (saved !== null) {
-        sidebar.scrollTop = parseInt(saved);
-    }
-
-    // Simpan posisi scroll setiap kali digeser
-    sidebar.addEventListener("scroll", function () {
-        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
-    });
-
-});
-</script>
 
 </body>
 

@@ -53,12 +53,18 @@
         {{-- ===================== INFORMASI SURAT ===================== --}}
         <div class="rounded-2xl border border-slate-200 overflow-hidden">
 
-            <div class="px-6 py-4 bg-slate-50 border-b">
-                <h2 class="text-xl font-bold text-slate-800">
-                    📄 Informasi Surat
-                </h2>
-            </div>
+            <div class="flex items-center gap-3">
 
+    <i data-lucide="file-text"
+    class="w-6 h-6 text-blue-800">
+    </i>
+
+
+    <h2 class="text-2xl font-black text-slate-800">
+        Informasi Surat
+    </h2>
+
+</div>
             <div class="p-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -371,8 +377,28 @@ bg-blue-50
 ">
 
 
-<div class="text-5xl">
-📂
+<div class="
+w-16
+h-16
+mx-auto
+mb-4
+rounded-2xl
+bg-blue-100
+flex
+items-center
+justify-center
+">
+
+
+<i data-lucide="folder-open"
+class="
+w-10
+h-10
+text-blue-600
+">
+</i>
+
+
 </div>
 
 
@@ -470,8 +496,24 @@ transition
 <button
     type="submit"
     onclick="document.getElementById('aksi').value='draft';"
-    class="px-8 py-4 rounded-2xl bg-blue-600 text-white font-bold">
-    💾 Simpan Draft
+    class="
+    px-8
+    py-4
+    rounded-2xl
+    bg-blue-600
+    text-white
+    font-bold
+    flex
+    items-center
+    gap-2
+    ">
+
+    <i data-lucide="save"
+    class="w-5 h-5">
+    </i>
+
+    Simpan Draft
+
 </button>
 
 <button
@@ -480,10 +522,25 @@ transition
         document.getElementById('aksi').value='kirim';
         document.querySelector('form').submit();
     "
-    class="px-8 py-4 rounded-2xl bg-green-600 text-white font-bold">
-    📨 Kirim Surat
-</button>
+    class="
+    px-8
+    py-4
+    rounded-2xl
+    bg-green-600
+    text-white
+    font-bold
+    flex
+    items-center
+    gap-2
+    ">
 
+    <i data-lucide="send"
+    class="w-5 h-5">
+    </i>
+
+    Kirim Surat
+
+</button>
 
 </div>
 

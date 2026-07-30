@@ -481,7 +481,26 @@ bg-slate-100 text-slate-700
 
 <div class="bg-white rounded-3xl p-10 text-center shadow-lg">
 
-<div class="text-6xl">📭</div>
+<div class="
+w-20
+h-20
+mx-auto
+rounded-2xl
+bg-blue-100
+flex
+items-center
+justify-center
+">
+
+<i data-lucide="mail-open"
+class="
+w-10
+h-10
+text-blue-600
+">
+</i>
+
+</div>
 
 <h2 class="text-2xl font-bold mt-5">
 Tidak ada surat
