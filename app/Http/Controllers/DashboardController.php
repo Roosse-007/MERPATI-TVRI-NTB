@@ -7,6 +7,8 @@ use App\Models\Disposisi;
 use App\Models\Surat;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
@@ -221,8 +223,21 @@ foreach ($approvalSaya as $approval) {
 
 $aktivitas = $aktivitas
     ->sortByDesc('waktu')
-    ->take(8)
     ->values();
+
+
+$page = request()->get('page', 1);
+$perPage = 8;
+
+$aktivitas = new LengthAwarePaginator(
+    $aktivitas->forPage($page, $perPage),
+    $aktivitas->count(),
+    $perPage,
+    $page,
+    [
+        'path' => request()->url()
+    ]
+);
 
             /*
         |--------------------------------------------------------------------------
@@ -387,6 +402,16 @@ if ($user->hasRole('Admin')) {
         | VIEW
         |--------------------------------------------------------------------------
         */
+        if(request()->ajax()){
+
+    return view(
+        'dashboard.partials.aktivitas',
+        [
+            'aktivitas'=>$aktivitas
+        ]
+    );
+
+}
 
         if ($user->hasRole('Admin')) {
 

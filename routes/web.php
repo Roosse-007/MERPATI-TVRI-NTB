@@ -253,6 +253,23 @@ Route::get(
 )
 ->name('admin.template');
 
+
+/*
+|--------------------------------------------------------------------------
+| TEMPLATE SURAT USER
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/template-surat',
+    [TemplateSuratController::class,'userIndex']
+)
+->middleware('auth')
+->name('template.user');
+
+
+
+
 // TAMBAH TEMPLATE
 
 Route::post(

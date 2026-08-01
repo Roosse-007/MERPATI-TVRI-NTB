@@ -1,97 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>@yield('title', 'MERPATI TVRI NTB')</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
-    rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-
-    {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest"></script>
-
-
-    {{-- SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </head>
+<body class="overflow-x-hidden bg-slate-50">
 
-<body class="overflow-x-hidden">
+<div class="flex min-h-screen">
 
-    <div class="flex">
+    {{-- SIDEBAR --}}
+    @include('partials.sidebar')
 
-        {{-- Sidebar --}}
-        @include('partials.sidebar')
+    {{-- AREA KANAN (Dibuat full flex column agar footer otomatis turun ke bawah) --}}
+    <div class="flex-1 ml-72 flex flex-col justify-between min-h-screen">
 
-        <div class="flex-1 flex flex-col min-h-screen">
-
-            {{-- Navbar --}}
+        <div>
+            {{-- NAVBAR --}}
             @include('partials.navbar')
 
-            {{-- Content --}}
-           <main class="
-    flex-1
-    ml-72
-    px-8
-    pt-6
-    pb-8
-    relative
-    z-10
-">
+            {{-- CONTENT --}}
+        <main class="px-8 pt-6 pb-16 flex-1">
+            @yield('content')
+        </main>
 
-                @yield('content')
+        {{-- FOOTER YANG DIKUNCI DI TENGAH BAWAH AREA KONTEN --}}
+        <footer class="py-6 text-center text-slate-400 text-sm border-t border-slate-200 mx-8">
+            &copy; {{ date('Y') }} MERPATI TVRI NTB
+        </footer>
 
-            </main>
-
-            {{-- Footer --}}
-            @include('partials.footer')
-
-        </div>
-
-    </div>
-
-    {{-- Aktifkan semua icon Lucide --}}
-    <script>
-        lucide.createIcons();
-    </script>
-
+    </div> <!-- Tutup area kanan -->
+</div> <!-- Tutup flex min-h-screen -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const sidebar = document.querySelector("nav");
-
-    if (!sidebar) return;
-
-    // Kembalikan posisi scroll
-    const saved = sessionStorage.getItem("sidebarScroll");
-
-    if (saved !== null) {
-        sidebar.scrollTop = parseInt(saved);
-    }
-
-    // Simpan posisi scroll setiap kali digeser
-    sidebar.addEventListener("scroll", function () {
-        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
-    });
-
-});
+    lucide.createIcons();
 </script>
-
 </body>
-
 </html>
