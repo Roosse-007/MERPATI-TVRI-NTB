@@ -262,6 +262,19 @@ Route::get(
 ->name('admin.template');
 
 
+/*
+|--------------------------------------------------------------------------
+| TEMPLATE SURAT USER
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/template-surat',
+    [TemplateSuratController::class,'userIndex']
+)
+->middleware('auth')
+->name('template.user');
+
 
 
 
@@ -808,6 +821,19 @@ Route::post('/surat/disposisi',
 
 
 
+// ==========================
+// INBOX DISPOSISI USER
+// ==========================
+
+Route::get('/surat/disposisi/inbox/{userId}',
+[
+    DisposisiController::class,
+    'inbox'
+
+])
+->middleware('auth')
+->whereNumber('userId');
+
 
 
 
@@ -842,25 +868,6 @@ Route::get('/surat/disposisi',
 ])
 ->middleware('auth')
 ->name('disposisi.index');
-
-
-
-
-
-
-// ==========================
-// INBOX DISPOSISI USER
-// ==========================
-
-Route::get('/surat/disposisi/inbox/{userId}',
-[
-    DisposisiController::class,
-    'inbox'
-
-])
-->middleware('auth')
-->whereNumber('userId');
-
 
 
 

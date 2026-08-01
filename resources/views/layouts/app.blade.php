@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+    
 
     <meta charset="UTF-8">
 
@@ -13,9 +14,16 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+ 
+
     <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
     rel="stylesheet">
+
+    <link 
+
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -29,7 +37,10 @@
     {{-- SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 </head>
+
 
 <body class="overflow-x-hidden">
 
@@ -51,7 +62,6 @@
     pt-6
     pb-8
     relative
-    z-10
 ">
 
                 @yield('content')
@@ -69,29 +79,7 @@
     <script>
         lucide.createIcons();
     </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const sidebar = document.querySelector("nav");
-
-    if (!sidebar) return;
-
-    // Kembalikan posisi scroll
-    const saved = sessionStorage.getItem("sidebarScroll");
-
-    if (saved !== null) {
-        sidebar.scrollTop = parseInt(saved);
-    }
-
-    // Simpan posisi scroll setiap kali digeser
-    sidebar.addEventListener("scroll", function () {
-        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
-    });
-
-});
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 
 </html>

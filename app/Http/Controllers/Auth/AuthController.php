@@ -60,24 +60,14 @@ public function login(Request $request)
     return redirect()->route('dashboard');
 }
 
-
-
 public function logout(Request $request)
 {
-
     Auth::logout();
-
 
     $request->session()->invalidate();
 
-
     $request->session()->regenerateToken();
 
-
-    return redirect()
-        ->route('login')
-        ->with('success', 'Berhasil logout.');
-
+    return redirect()->route('login');
 }
-
 }

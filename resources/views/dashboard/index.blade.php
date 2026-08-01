@@ -61,14 +61,7 @@ items-center
 <div>
 
 
-<p class="
-text-blue-100
-text-lg
-">
 
-Selamat Datang 👋
-
-</p>
 
 
 
@@ -79,26 +72,22 @@ font-black
 mt-3
 ">
 
-Sistem E-Surat
-<br>
 MERPATI TVRI NTB
 
 </h1>
 
 
-
-
 <p class="
-mt-5
+mt-4
+text-xl
+font-semibold
 text-blue-100
-max-w-xl
 ">
 
-Kelola surat masuk, surat keluar,
-approval dan disposisi dengan sistem
-digital yang cepat dan modern.
+Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
 
 </p>
+
 
 </div>
 
@@ -139,21 +128,23 @@ flying-bird
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
 
     {{-- SURAT MASUK --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-sky-600
-        to-blue-500
-        hover:-translate-y-1
-        hover:shadow-2xl
-        transition-all
-        duration-300
-    ">
+   <a href="/inbox"
+class="
+    block
+    relative
+    overflow-hidden
+    rounded-3xl
+    p-6
+    text-white
+    shadow-xl
+    bg-gradient-to-br
+    from-sky-600
+    to-blue-500
+    hover:-translate-y-1
+    hover:shadow-2xl
+    transition-all
+    duration-300
+">
 
         <div class="
             absolute
@@ -200,26 +191,28 @@ flying-bird
 
         </div>
 
-    </div>
+    </a>
 
 
 
     {{-- DRAFT --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-violet-600
-        to-fuchsia-500
-        hover:-translate-y-1
-        hover:shadow-2xl
-        transition-all
-        duration-300
-    ">
+<a href="/surat/draft"
+class="
+    block
+    relative
+    overflow-hidden
+    rounded-3xl
+    p-6
+    text-white
+    shadow-xl
+    bg-gradient-to-br
+    from-violet-600
+    to-fuchsia-500
+    hover:-translate-y-1
+    hover:shadow-2xl
+    transition-all
+    duration-300
+">
 
         <div class="
             absolute
@@ -266,26 +259,28 @@ flying-bird
 
         </div>
 
-    </div>
+    </a>
 
 
 
     {{-- APPROVAL --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-emerald-600
-        to-green-500
-        hover:-translate-y-1
-        hover:shadow-2xl
-        transition-all
-        duration-300
-    ">
+    <a href="/surat/approval"
+class="
+    block
+    relative
+    overflow-hidden
+    rounded-3xl
+    p-6
+    text-white
+    shadow-xl
+    bg-gradient-to-br
+    from-emerald-600
+    to-green-500
+    hover:-translate-y-1
+    hover:shadow-2xl
+    transition-all
+    duration-300
+">
 
         <div class="
             absolute
@@ -332,26 +327,29 @@ flying-bird
 
         </div>
 
-    </div>
+    </a>
 
 
 
     {{-- ARSIP --}}
-    <div class="
-        relative
-        overflow-hidden
-        rounded-3xl
-        p-6
-        text-white
-        shadow-xl
-        bg-gradient-to-br
-        from-orange-500
-        to-amber-400
-        hover:-translate-y-1
-        hover:shadow-2xl
-        transition-all
-        duration-300
-    ">
+
+<a href="/surat/arsip"
+class="
+    block
+    relative
+    overflow-hidden
+    rounded-3xl
+    p-6
+    text-white
+    shadow-xl
+    bg-gradient-to-br
+    from-orange-500
+    to-amber-400
+    hover:-translate-y-1
+    hover:shadow-2xl
+    transition-all
+    duration-300
+">
 
         <div class="
             absolute
@@ -398,121 +396,250 @@ flying-bird
 
         </div>
 
-    </div>
-
+    </a>
+    
 </div>
+
 
 {{-- AKTIVITAS TERBARU --}}
 
 <div class="
 mt-10
+w-full
 bg-white
 rounded-[32px]
-p-8
+p-10
 shadow-lg
 ">
 
+
+{{-- HEADER --}}
+
+<div class="
+flex
+items-center
+gap-4
+mb-8
+">
+
+
+<div class="flex items-center gap-4">
+
+    <div class="
+    w-12
+    h-12
+    rounded-2xl
+    bg-blue-100
+    flex
+    items-center
+    justify-center
+    ">
+
+        <i data-lucide="activity"
+        class="
+        w-6
+        h-6
+        text-blue-600
+        ">
+        </i>
+
+    </div>
+
+
     <h2 class="
-    text-2xl
+    text-3xl
     font-black
     text-slate-800
     ">
         Aktivitas Terbaru
     </h2>
 
-    <div class="
-    mt-6
-    space-y-4
-    ">
-
-        @forelse($aktivitas as $item)
-
-            <div class="
-            flex
-            items-center
-            justify-between
-            bg-slate-50
-            p-5
-            rounded-2xl
-            ">
-
-                <div>
-
-                    <p class="font-bold">
-                        {{ $item['judul'] }}
-                    </p>
-
-                    <p class="
-                    text-sm
-                    text-slate-500
-                    ">
-                        {{ $item['deskripsi'] }}
-                    </p>
-
-                    <p class="
-                    text-xs
-                    text-slate-400
-                    mt-2
-                    ">
-                        {{ $item['waktu']->diffForHumans() }}
-                    </p>
-
-                </div>
-
-                <span
-                class="
-                px-4
-                py-2
-                rounded-xl
-                font-bold
-
-                @if($item['status'] == 'Baru')
-                    bg-blue-100 text-blue-600
-
-                @elseif($item['status'] == 'Menunggu')
-                    bg-yellow-100 text-yellow-700
-
-                @elseif($item['status'] == 'Disetujui')
-                    bg-green-100 text-green-700
-
-                @elseif($item['status'] == 'Ditolak')
-                    bg-red-100 text-red-700
-
-                @elseif($item['status'] == 'Disposisi')
-                    bg-purple-100 text-purple-700
-
-                @elseif($item['status'] == 'Arsip')
-                    bg-orange-100 text-orange-700
-
-                @else
-                    bg-gray-100 text-gray-700
-                @endif
-                ">
-
-                    {{ $item['status'] }}
-
-                </span>
-
-            </div>
-
-        @empty
-
-            <div class="
-            text-center
-            text-slate-500
-            py-10
-            ">
-
-                Belum ada aktivitas terbaru.
-
-            </div>
-
-        @endforelse
-
-    </div>
 
 </div>
 
+
+</div>
+
+
+
+
+
+<div class="
+space-y-4
+">
+
+
+@forelse($aktivitas as $item)
+
+
+
+<div class="
+flex
+items-center
+justify-between
+bg-slate-50
+hover:bg-blue-50
+transition
+p-5
+rounded-2xl
+">
+
+
+
+<div>
+
+
+<p class="
+font-bold
+text-slate-800
+">
+
+{{ $item['judul'] }}
+
+</p>
+
+
+
+<p class="
+text-sm
+text-slate-500
+mt-1
+">
+
+{{ $item['deskripsi'] }}
+
+</p>
+
+
+
+<p class="
+text-xs
+text-slate-400
+mt-2
+">
+
+{{ $item['waktu']->diffForHumans() }}
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+<span
+class="
+px-4
+py-2
+rounded-xl
+font-bold
+text-sm
+
+
+@if($item['status'] == 'Baru')
+bg-blue-100 text-blue-600
+
+@elseif($item['status'] == 'Menunggu')
+bg-yellow-100 text-yellow-700
+
+@elseif($item['status'] == 'Disetujui')
+bg-green-100 text-green-700
+
+@elseif($item['status'] == 'Ditolak')
+bg-red-100 text-red-700
+
+@elseif($item['status'] == 'Disposisi')
+bg-purple-100 text-purple-700
+
+@elseif($item['status'] == 'Arsip')
+bg-orange-100 text-orange-700
+
+@else
+bg-gray-100 text-gray-700
+@endif
+">
+
+{{ $item['status'] }}
+
+</span>
+
+
+</div>
+
+
+
+@empty
+
+
+
+<div class="
+text-center
+py-12
+">
+
+
+<div class="
+w-16
+h-16
+mx-auto
+mb-4
+rounded-2xl
+bg-blue-100
+flex
+items-center
+justify-center
+">
+
+
+<i data-lucide="inbox"
+class="
+w-8
+h-8
+text-blue-700
+">
+</i>
+
+
+</div>
+
+
+
+<p class="
+font-bold
+text-slate-700
+text-lg
+">
+
+Belum ada aktivitas terbaru.
+
+</p>
+
+
+
+<p class="
+text-sm
+text-slate-400
+mt-2
+">
+
+Aktivitas surat akan muncul di sini.
+
+</p>
+
+
+</div>
+
+
+@endforelse
+
+
+</div>
+
+
+</div>
 
 
 

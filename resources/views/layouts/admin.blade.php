@@ -5,6 +5,7 @@
 
 <meta charset="UTF-8">
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -12,7 +13,7 @@
     @yield('title') | MERPATI TVRI NTB
 </title>
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {{-- Font Awesome --}}
 <link rel="stylesheet"
@@ -702,7 +703,7 @@ confirmButtonColor:'#dc2626'
 
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 
 </html>

@@ -16,15 +16,26 @@
 <div class="mb-8">
 
 
-<h1 class="
-text-4xl
-font-black
-text-slate-800
+<div class="flex items-center gap-3">
+
+   <i data-lucide="file-pen-line"
+class="
+w-10
+h-10
+text-blue-800
 ">
+</i>
 
-📝 Draft Surat
 
-</h1>
+    <h1 class="
+    text-4xl
+    font-black
+    text-slate-800
+    ">
+        Draft Surat
+    </h1>
+
+</div>
 
 
 
@@ -319,29 +330,26 @@ text-slate-700
 
 {{-- EDIT --}}
 
-
 <a href="{{route('surat.edit',$item->id)}}"
 
 class="
 bg-blue-600
-
 text-white
-
 px-5
-
 py-2
-
 rounded-xl
-
 font-bold
-
 hover:bg-blue-700
-
 transition
+
+flex
+items-center
+gap-2
 ">
 
-✏️ Edit
+<i data-lucide="pen-line" class="w-5 h-5"></i>
 
+Edit
 
 </a>
 
@@ -377,31 +385,32 @@ method="POST"
 
 type="button"
 
-onclick="hapusDraft({{$item->id}})"
+onclick="hapusDraft('{{ $item->id }}')"
 
 class="
 bg-red-100
-
 text-red-600
-
 px-5
-
 py-2
-
 rounded-xl
-
 font-bold
-
 hover:bg-red-200
-
 transition
+flex
+items-center
+gap-2
 ">
 
-🗑 Hapus
+
+<i data-lucide="trash-2"
+class="w-5 h-5">
+</i>
+
+
+Hapus
 
 
 </button>
-
 
 
 </form>
@@ -443,11 +452,24 @@ text-slate-400
 
 
 <div class="
-text-5xl
+w-16
+h-16
+mx-auto
 mb-4
+rounded-2xl
+bg-blue-100
+flex
+items-center
+justify-center
 ">
 
-📭
+<i data-lucide="mail-open"
+class="
+w-10
+h-10
+text-blue-700
+">
+</i>
 
 </div>
 

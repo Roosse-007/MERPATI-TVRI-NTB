@@ -25,7 +25,7 @@ class Disposisi extends Model
     return [
         'dibaca' => 'boolean',
         'dibaca_at' => 'datetime',
-        'deadline' => 'date',
+         'deadline'=>'datetime',
     ];
 }
 
