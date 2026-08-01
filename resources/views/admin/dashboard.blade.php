@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title','Dashboard Admin')
 
@@ -72,7 +72,7 @@ Total Surat
 
 
 <div class="text-5xl">
-📄
+    <i class="bi bi-file-earmark-text"></i>
 </div>
 
 
@@ -119,7 +119,7 @@ Total User
 
 
 <div class="text-5xl">
-👥
+    <i class="bi bi-people-fill"></i>
 </div>
 
 
@@ -168,7 +168,7 @@ Pending Approval
 
 
 <div class="text-5xl">
-⏳
+    <i class="bi bi-hourglass-split"></i>
 </div>
 
 
@@ -218,7 +218,7 @@ Total Arsip
 
 
 <div class="text-5xl">
-🗂️
+    <i class="bi bi-archive-fill"></i>
 </div>
 
 
@@ -240,113 +240,99 @@ Dokumen tersimpan
 
 
 
-
-
-
-
-
 <!-- QUICK MENU -->
 
+<div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
 
-<div class="mt-8 bg-white rounded-2xl shadow p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        Menu Cepat
+    </h2>
 
+    <div class="quick-menu grid grid-cols-2 md:grid-cols-4 gap-6">
 
-<h2 class="text-xl font-bold mb-5">
+        <!-- Kelola User -->
+        <a href="/admin/users"
+            class="block bg-blue-100 hover:bg-blue-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-Menu Cepat
+            <div class="w-16 h-16 mx-auto rounded-full bg-blue-600 flex items-center justify-center mb-4">
 
-</h2>
+                <i class="bi bi-person-gear text-white text-3xl"></i>
 
+            </div>
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <h3 class="text-gray-800 font-medium text-lg">
+                Kelola User
+            </h3>
 
+            <p class="text-gray-600 text-sm mt-2">
+                Manajemen akun pengguna
+            </p>
 
-<a href="/admin/users"
-class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 text-center">
+        </a>
 
+        <!-- Template Surat -->
+        <a href="/admin/template-surat"
+            class="block bg-green-100 hover:bg-green-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-<div class="text-3xl">
-👥
+            <div class="w-16 h-16 mx-auto rounded-full bg-green-600 flex items-center justify-center mb-4">
+
+                <i class="bi bi-file-earmark-richtext-fill text-white text-3xl"></i>
+
+            </div>
+
+           <h3 class="text-gray-800 font-normal text-lg">
+                Template Surat
+            </h3>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Kelola template surat
+            </p>
+
+        </a>
+
+        <!-- Laporan -->
+        <a href="/admin/laporan"
+            class="block bg-yellow-100 hover:bg-yellow-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
+
+            <div class="w-16 h-16 mx-auto rounded-full bg-yellow-600 flex items-center justify-center mb-4">
+
+                <i class="bi bi-bar-chart-fill text-white text-3xl"></i>
+
+            </div>
+
+            <h3 class="text-gray-800 font-normal text-lg">
+                Laporan
+            </h3>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Statistik dan laporan
+            </p>
+
+        </a>
+
+        <!-- Arsip -->
+        <a href="/surat/arsip"
+            class="block bg-purple-100 hover:bg-purple-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
+
+            <div class="w-16 h-16 mx-auto rounded-full bg-purple-600 flex items-center justify-center mb-4">
+
+                <i class="bi bi-folder-fill text-white text-3xl"></i>
+
+            </div>
+
+            <h3 class="text-gray-800 font-normal text-lg">
+                Arsip
+            </h3>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Dokumen yang diarsipkan
+            </p>
+
+        </a>
+
+    </div>
+
 </div>
-
-
-<p class="mt-2 font-semibold">
-Kelola User
-</p>
-
-
-</a>
-
-
-
-<a href="/admin/template-surat"
-class="p-5 rounded-xl bg-green-50 hover:bg-green-100 text-center">
-
-
-<div class="text-3xl">
-📄
-</div>
-
-
-<p class="mt-2 font-semibold">
-Template Surat
-</p>
-
-
-</a>
-
-
-
-
-<a href="/admin/laporan"
-class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-center">
-
-
-<div class="text-3xl">
-📊
-</div>
-
-
-<p class="mt-2 font-semibold">
-Laporan
-</p>
-
-
-</a>
-
-
-
-
-<a href="/surat/arsip"
-class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 text-center">
-
-
-<div class="text-3xl">
-🗂️
-</div>
-
-
-<p class="mt-2 font-semibold">
-Arsip
-</p>
-
-
-</a>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
 
 <!-- CHART -->
 
@@ -428,16 +414,14 @@ $total = $totalSurat > 0
 
 
 
-<div class="bg-gray-200 rounded-full h-3 mt-2">
+<div class="bg-gray-200 rounded-full h-3 mt-2 overflow-hidden">
 
+    <div 
+        class="bg-blue-600 h-3 rounded-full progress-bar"
+        data-width="{{ $total }}">
+    </div>
 
-<div 
-class="bg-blue-600 h-3 rounded-full"
-style="width: {{ $total }}%">
 </div>
-
-</div>
-
 
 </div>
 
@@ -486,40 +470,32 @@ Aktivitas Terbaru
 
 <div class="border-l-4 border-blue-600 pl-4">
 
+    <p class="font-semibold">
+        {{ $item['judul'] }}
+    </p>
 
-<p class="font-semibold">
+    <p class="text-gray-600">
+        {{ $item['deskripsi'] }}
+    </p>
 
-{{ $item['judul'] }}
+    <span class="inline-block mt-2 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+        {{ $item['status'] }}
+    </span>
 
-</p>
+    <br>
 
-
-<p class="text-gray-600">
-
-{{ $item['deskripsi'] }}
-
-</p>
-
-
-<small class="text-gray-400">
-
-{{ $item['waktu']->diffForHumans() }}
-
-</small>
-
+    <small class="text-gray-400">
+        {{ \Carbon\Carbon::parse($item['waktu'])->diffForHumans() }}
+    </small>
 
 </div>
-
 
 @endforeach
 
-
-
 </div>
 
 
 </div>
-
 
 
 
@@ -686,62 +662,64 @@ Tanggal
 <!-- CHART SCRIPT -->
 
 
+<script id="chart-data" type="application/json">
+{
+    "labels": {!! json_encode($statistikSurat->pluck('bulan')) !!},
+    "jumlah": {!! json_encode($statistikSurat->pluck('jumlah')) !!}
+}
+</script>
+
+
 <script>
 
-
-document.addEventListener('DOMContentLoaded',()=>{
-
-
-const ctx=document.getElementById('chartSurat');
+document.addEventListener('DOMContentLoaded', function () {
 
 
-new Chart(ctx,{
+    const dataChart = JSON.parse(
+        document.getElementById('chart-data').textContent
+    );
 
 
-type:'line',
+    const ctx = document.getElementById('chartSurat');
 
 
-data:{
+    if(ctx){
+
+        new Chart(ctx, {
+
+            type: 'line',
+
+            data: {
+
+                labels: dataChart.labels,
+
+                datasets: [{
+
+                    label: 'Jumlah Surat',
+
+                    data: dataChart.jumlah,
+
+                    borderWidth: 3,
+
+                    tension: 0.3
+
+                }]
+
+            },
 
 
-labels:@json($statistikSurat->pluck('bulan')),
+            options: {
 
+                responsive:true
 
-datasets:[{
+            }
 
+        });
 
-label:'Jumlah Surat',
-
-
-data:@json($statistikSurat->pluck('jumlah')),
-
-
-borderWidth:3
-
-
-}]
-
-
-},
-
-
-
-options:{
-
-
-responsive:true
-
-
-}
-
-
-
-});
-
+    }
 
 
 });
-
 
 </script>
 

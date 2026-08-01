@@ -71,63 +71,158 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->get();
 
+            /*
+|--------------------------------------------------------------------------
+| SURAT TERBARU GLOBAL
+|--------------------------------------------------------------------------
+*/
+
+$suratTerbaru = Surat::latest()
+    ->take(5)
+    ->get();
         /*
-        |--------------------------------------------------------------------------
-        | AKTIVITAS TERBARU
-        |--------------------------------------------------------------------------
-        */
+|--------------------------------------------------------------------------
+| AKTIVITAS TERBARU USER
+|--------------------------------------------------------------------------
+*/
 
-        $aktivitas = collect();
+$aktivitas = collect();
 
-        $suratTerbaru = Surat::latest()
-            ->take(5)
-            ->get();
 
-        foreach ($suratTerbaru as $surat) {
 
-            $aktivitas->push([
-                'judul'      => 'Surat Baru',
-                'deskripsi'  => $surat->perihal,
-                'status'     => 'Baru',
-                'waktu'      => $surat->created_at,
-            ]);
-        }
+/*
+|--------------------------------------------------------------------------
+| SURAT YANG DIBUAT USER
+|--------------------------------------------------------------------------
+*/
 
-        $approvalTerbaru = Approval::with('surat')
-            ->latest()
-            ->take(5)
-            ->get();
+$suratSaya = Surat::where('pengirim_id', $user->id)
+    ->latest()
+    ->take(5)
+    ->get();
 
-        foreach ($approvalTerbaru as $approval) {
 
-            $aktivitas->push([
-                'judul'      => 'Approval Surat',
-                'deskripsi'  => $approval->surat->perihal ?? '-',
-                'status'     => $approval->status,
-                'waktu'      => $approval->created_at,
-            ]);
-        }
+foreach ($suratSaya as $surat) {
 
-        $disposisiTerbaru = Disposisi::with('surat')
-            ->latest()
-            ->take(5)
-            ->get();
+    $aktivitas->push([
 
-        foreach ($disposisiTerbaru as $disposisi) {
+        'judul' => 'Surat Dibuat',
 
-            $aktivitas->push([
-                'judul'      => 'Disposisi Surat',
-                'deskripsi'  => $disposisi->surat->perihal ?? '-',
-                'status'     => 'Disposisi',
-                'waktu'      => $disposisi->created_at,
-            ]);
-        }
+        'deskripsi' => $surat->perihal,
 
-        $aktivitas = $aktivitas
-            ->sortByDesc('waktu')
-            ->take(8)
-            ->values();
-            
+        'status' => $surat->status,
+
+        'waktu' => $surat->created_at,
+
+    ]);
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| SURAT MASUK USER
+|--------------------------------------------------------------------------
+*/
+
+$suratMasukSaya = Surat::whereHas('tujuan', function ($query) use ($user) {
+
+    $query->where('user_id', $user->id);
+
+})
+->latest()
+->take(5)
+->get();
+
+
+
+foreach ($suratMasukSaya as $surat) {
+
+    $aktivitas->push([
+
+        'judul' => 'Surat Masuk',
+
+        'deskripsi' => $surat->perihal,
+
+        'status' => $surat->status,
+
+        'waktu' => $surat->created_at,
+
+    ]);
+
+}
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| DISPOSISI YANG DITERIMA USER
+|--------------------------------------------------------------------------
+*/
+
+$disposisiSaya = Disposisi::with('surat')
+    ->where('ke_user_id', $user->id)
+    ->latest()
+    ->take(5)
+    ->get();
+
+
+
+foreach ($disposisiSaya as $disposisi) {
+
+    $aktivitas->push([
+
+        'judul' => 'Disposisi Surat',
+
+        'deskripsi' => $disposisi->surat->perihal ?? '-',
+
+        'status' => $disposisi->status,
+
+        'waktu' => $disposisi->created_at,
+
+    ]);
+
+}
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| APPROVAL USER
+|--------------------------------------------------------------------------
+*/
+
+$approvalSaya = Approval::with('surat')
+    ->latest()
+    ->take(5)
+    ->get();
+
+
+
+foreach ($approvalSaya as $approval) {
+
+    $aktivitas->push([
+
+        'judul' => 'Approval Surat',
+
+        'deskripsi' => $approval->surat->perihal ?? '-',
+
+        'status' => $approval->status,
+
+        'waktu' => $approval->created_at,
+
+    ]);
+
+}
+
+
+
+
+$aktivitas = $aktivitas
+    ->sortByDesc('waktu')
+    ->take(8)
+    ->values();
 
             /*
         |--------------------------------------------------------------------------
@@ -135,7 +230,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-if ($jabatan === 'Admin') {
+if ($user->hasRole('Admin')) {
 
     $suratMasuk = Surat::where('status', '!=', 'Draft')->count();
 
@@ -146,6 +241,10 @@ if ($jabatan === 'Admin') {
         'Menunggu Approval KTU',
         'Menunggu Approval Kepala Stasiun',
     ])->count();
+
+    $diterima = Surat::where('status', 'Disetujui')->count();
+
+    $arsip = Surat::where('is_archived', true)->count();
 
     $diterima = Surat::where('status', 'Disetujui')->count();
 
@@ -231,10 +330,13 @@ if ($jabatan === 'Admin') {
 
         } else {
 
-            $suratMasuk = Surat::where('pengirim_id', $user->id)
-                ->where('status', '!=', 'Draft')
-                ->count();
+            $suratMasuk = Surat::whereHas('tujuan', function ($query) use ($user) {
 
+    $query->where('user_id', $user->id);
+
+})
+->where('status', '!=', 'Draft')
+->count();
             $draft = Surat::where('pengirim_id', $user->id)
                 ->where('status', 'Draft')
                 ->count();
@@ -286,7 +388,7 @@ if ($jabatan === 'Admin') {
         |--------------------------------------------------------------------------
         */
 
-        if ($jabatan === 'Admin') {
+        if ($user->hasRole('Admin')) {
 
             return view('admin.dashboard', $data);
 

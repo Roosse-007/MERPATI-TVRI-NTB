@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title','Grafik Statistik')
 
@@ -110,7 +110,7 @@ Surat Masuk
 
 
 <h2 class="text-4xl font-bold mt-3">
-245
+{{ $suratMasuk }}
 </h2>
 
 
@@ -118,7 +118,9 @@ Surat Masuk
 
 
 <div class="text-5xl">
-📥
+
+<i class="bi bi-envelope-arrow-down"></i>
+
 </div>
 
 
@@ -152,7 +154,7 @@ Surat Keluar
 
 
 <h2 class="text-4xl font-bold mt-3">
-186
+{{ $suratKeluar }}
 </h2>
 
 
@@ -160,7 +162,9 @@ Surat Keluar
 
 
 <div class="text-5xl">
-📤
+
+<i class="bi bi-envelope-arrow-up"></i>
+
 </div>
 
 
@@ -194,7 +198,7 @@ Approval
 
 
 <h2 class="text-4xl font-bold mt-3">
-32
+{{ $approval }}
 </h2>
 
 
@@ -202,7 +206,9 @@ Approval
 
 
 <div class="text-5xl">
-⏳
+
+<i class="bi bi-hourglass-split"></i>
+
 </div>
 
 
@@ -236,7 +242,7 @@ Arsip
 
 
 <h2 class="text-4xl font-bold mt-3">
-786
+{{ $arsip }}
 </h2>
 
 
@@ -244,9 +250,10 @@ Arsip
 
 
 <div class="text-5xl">
-🗂️
-</div>
 
+    <i class="bi bi-archive-fill"></i>
+
+</div>
 
 </div>
 
@@ -276,26 +283,22 @@ Dokumen tersimpan
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
-
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 <h2 class="text-xl font-bold mb-5">
 Trend Surat Bulanan
 </h2>
 
+<div class="relative w-full h-[350px]">
 
 <canvas id="trendSurat"></canvas>
 
+</div>
 
 </div>
 
 
-
-
-
-
-
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -303,7 +306,11 @@ Perbandingan Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="compareSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -321,7 +328,7 @@ Perbandingan Surat
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -329,7 +336,11 @@ Status Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="statusSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -338,7 +349,7 @@ Status Surat
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -346,7 +357,11 @@ Kategori Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="kategoriSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -364,7 +379,7 @@ Kategori Surat
 
 <!-- INSIGHT -->
 
-<div class="bg-white rounded-2xl shadow p-6 mt-8">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -431,324 +446,199 @@ Status Aktif
 
 
 
+<script id="chart-data" type="application/json">
+{!! json_encode($chartData ?? []) !!}
+</script>
 
 <script>
 
+const chartData = JSON.parse(
+    document.getElementById('chart-data').textContent
+);
 
-let chartTrend;
 
 
+const grafikData = chartData.grafik ?? [];
 
-document.addEventListener('DOMContentLoaded',function(){
+const compareData = chartData.compare ?? [];
 
+const statusData = chartData.status ?? [];
 
+const kategoriData = chartData.kategori ?? [];
 
-chartTrend = new Chart(
-document.getElementById('trendSurat'),
-{
 
+document.addEventListener('DOMContentLoaded', function(){
 
-type:'line',
 
+    // TREND SURAT
 
-data:{
+    new Chart(
+        document.getElementById('trendSurat'),
+        {
 
+            type:'line',
 
-labels:[
-'Jan',
-'Feb',
-'Mar',
-'Apr',
-'Mei',
-'Jun',
-'Jul'
-],
+            data:{
 
+                labels:[
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'Mei',
+                    'Jun',
+                    'Jul',
+                    'Ags',
+                    'Sep',
+                    'Okt',
+                    'Nov',
+                    'Des'
+                ],
 
-datasets:[{
+                datasets:[{
 
-label:'Jumlah Surat',
+                    label:'Jumlah Surat',
 
+                    data:grafikData,
 
-data:[
-30,
-45,
-40,
-60,
-55,
-75,
-90
-],
+                    borderWidth:3
 
+                }]
 
-borderWidth:3,
+            },
 
-fill:true
+            options:{
+                responsive:true,
+                maintainAspectRatio:false
+            }
 
+        }
 
-}]
+    );
 
 
-},
 
 
-options:{
+    // PERBANDINGAN SURAT
 
+    new Chart(
+        document.getElementById('compareSurat'),
+        {
 
-responsive:true
+            type:'bar',
 
+            data:{
 
-}
+                labels:[
+                    'Surat Masuk',
+                    'Surat Keluar'
+                ],
 
+                datasets:[{
 
-});
+                    label:'Jumlah Surat',
 
+                    data:compareData,
 
+                    borderWidth:2
 
+                }]
 
+            },
 
 
-new Chart(
-document.getElementById('compareSurat'),
-{
+            options:{
+                responsive:true,
+                maintainAspectRatio:false
+            }
 
+        }
 
-type:'bar',
+    );
 
 
-data:{
 
 
-labels:[
-'Surat Masuk',
-'Surat Keluar'
-],
+    // STATUS SURAT
 
+    new Chart(
+        document.getElementById('statusSurat'),
+        {
 
-datasets:[{
+            type:'doughnut',
 
-label:'Jumlah',
+            data:{
 
-data:[
-245,
-186
-]
+                labels:[
+                'Draft',
+                'Diproses',
+                'Disetujui',
+                'Ditolak'
+            ],
 
+                datasets:[{
 
-}]
+                    data:statusData
 
+                }]
 
-},
+            },
 
 
-options:{
-responsive:true
-}
+            options:{
+                responsive:true,
+                maintainAspectRatio:false
+            }
 
+        }
 
-});
+    );
 
 
 
 
 
+    // KATEGORI SURAT
 
+    new Chart(
+        document.getElementById('kategoriSurat'),
+        {
 
-new Chart(
-document.getElementById('statusSurat'),
-{
+            type:'polarArea',
 
+            data:{
 
-type:'doughnut',
+               labels:[
+                'Surat Masuk',
+                'Surat Keluar',
+                'Surat Internal',
+                'Nota Dinas',
+                'Surat Produksi',
+                'Surat Undangan',
+                'Surat Tugas'
+            ],
 
+                datasets:[{
 
-data:{
+                    data:kategoriData
 
+                }]
 
-labels:[
-'Disetujui',
-'Diproses',
-'Ditolak'
-],
+            },
 
 
-datasets:[{
+          options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
 
+        }
 
-data:[
-60,
-25,
-15
-]
-
-
-}]
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-new Chart(
-document.getElementById('kategoriSurat'),
-{
-
-
-type:'polarArea',
-
-
-data:{
-
-
-labels:[
-'Dinas',
-'Undangan',
-'Nota',
-'Laporan'
-],
-
-
-datasets:[{
-
-
-data:[
-40,
-30,
-20,
-10
-]
-
-
-}]
-
-
-}
+    );
 
 
 
 });
-
-
-
-});
-
-
-
-
-
-
-
-
-
-function filterGrafik(){
-
-
-
-let tahun =
-document.getElementById('tahunGrafik').value;
-
-
-
-let alert =
-document.getElementById('alertGrafik');
-
-
-
-alert.innerHTML =
-"Menampilkan statistik surat tahun " + tahun;
-
-
-
-alert.classList.remove('hidden');
-
-
-
-
-
-let data;
-
-
-
-if(tahun=="2026"){
-
-
-data=[
-30,
-45,
-40,
-60,
-55,
-75,
-90
-];
-
-
-}
-
-else if(tahun=="2025"){
-
-
-data=[
-20,
-35,
-30,
-45,
-50,
-60,
-70
-];
-
-
-}
-
-else{
-
-
-data=[
-15,
-25,
-30,
-40,
-45,
-55,
-65
-];
-
-
-}
-
-
-
-
-chartTrend.data.datasets[0].data=data;
-
-
-chartTrend.update();
-
-
-
-
-
-setTimeout(function(){
-
-
-alert.classList.add('hidden');
-
-
-},3000);
-
-
-
-}
-
 
 
 </script>

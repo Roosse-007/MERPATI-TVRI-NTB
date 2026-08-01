@@ -77,12 +77,12 @@ return view('admin.users', compact(
         $jabatan = Jabatan::where('is_active', 1)->get();
         $roles = Role::all();
 
-        return view('admin.edit', compact(
-            'user',
-            'unitKerja',
-            'jabatan',
-            'roles'
-        ));
+        return view('admin.edit', [
+            'user' => null,
+            'unitKerja' => $unitKerja,
+            'jabatan' => $jabatan,
+            'roles' => $roles,
+        ]);
     }
 
     /**
@@ -91,26 +91,26 @@ return view('admin.users', compact(
     public function store(Request $request)
     {
         $request->validate([
-            'name'            => 'required|max:255',
-            'username'        => 'required|max:255|unique:users,username',
-            'email'           => 'required|email|unique:users,email',
-            'password'        => 'required|min:8',
-            'nip'             => 'nullable',
-            'unit_kerja_id'   => 'nullable',
-            'jabatan_id'      => 'nullable',
-            'role'            => 'nullable',
-            'is_active' => 'required|boolean',
+            'name'            => 'required|string|max:255',
+            'username'        => 'required|string|max:255|unique:users,username',
+            'email'           => 'required|email|max:255|unique:users,email',
+            'password'        => 'required|string|min:8',
+            'nip'             => 'nullable|string',
+            'unit_kerja_id'   => 'nullable|exists:unit_kerja,id',
+            'jabatan_id'      => 'nullable|exists:jabatan,id',
+            'role'            => 'nullable|exists:roles,name',
+            'is_active'       => 'required|boolean',
         ]);
 
         $user = User::create([
-            'name'            => $request->name,
-            'username'        => $request->username,
-            'email'           => $request->email,
-            'password'        => Hash::make($request->password),
-            'nip'             => null,
-            'unit_kerja_id'   => null,
-            'jabatan_id'      => null,
-            'is_active'       => $request->is_active,
+            'name'          => $request->name,
+            'username'      => $request->username,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'nip'           => $request->nip,
+            'unit_kerja_id' => $request->unit_kerja_id,
+            'jabatan_id'    => $request->jabatan_id,
+            'is_active'     => $request->is_active,
         ]);
 
         // Assign Role Spatie
@@ -163,10 +163,11 @@ public function update(Request $request, string $id)
         'name'            => 'required|max:255',
         'username'        => 'required|max:255|unique:users,username,' . $user->id,
         'email'           => 'required|email|unique:users,email,' . $user->id,
-        'password'        => 'nullable|min:8',
+        'password'        => 'nullable|string|min:8',
         'nip'             => 'nullable|unique:users,nip,' . $user->id,
         'unit_kerja_id'   => 'nullable|exists:unit_kerja,id',
         'jabatan_id'      => 'nullable|exists:jabatan,id',
+        'role'            => 'nullable|exists:roles,name',
         'is_active'       => 'required|boolean',
     ]);
 
@@ -183,13 +184,20 @@ public function update(Request $request, string $id)
 
 
     // update password hanya jika diganti
-    if($request->filled('password')){
+        if ($request->filled('password')) {
 
-        $user->update([
-            'password' => Hash::make($request->password)
-        ]);
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
 
-    }
+        }
+
+        // update role
+        if ($request->filled('role')) {
+
+            $user->syncRoles([$request->role]);
+
+        }
 
 
     return redirect()
@@ -197,21 +205,4 @@ public function update(Request $request, string $id)
         ->with('success','Data user berhasil diperbarui.');
 }
 
-    /**
-     * Menghapus user.
-     */
-    public function destroy(string $id)
-    {
-        $user = User::findOrFail($id);
-
-        // Hapus semua role yang dimiliki user
-        $user->syncRoles([]);
-
-        // Hapus user
-        $user->delete();
-
-        return redirect()
-            ->route('users.index')
-            ->with('success', 'User berhasil dihapus.');
-    }
 }

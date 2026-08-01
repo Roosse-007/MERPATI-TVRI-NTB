@@ -21,8 +21,13 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -64,6 +69,28 @@
     <script>
         lucide.createIcons();
     </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const sidebar = document.querySelector("nav");
+
+    if (!sidebar) return;
+
+    // Kembalikan posisi scroll
+    const saved = sessionStorage.getItem("sidebarScroll");
+
+    if (saved !== null) {
+        sidebar.scrollTop = parseInt(saved);
+    }
+
+    // Simpan posisi scroll setiap kali digeser
+    sidebar.addEventListener("scroll", function () {
+        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
+    });
+
+});
+</script>
 
 </body>
 

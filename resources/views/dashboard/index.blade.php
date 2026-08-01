@@ -412,110 +412,334 @@ p-8
 shadow-lg
 ">
 
-    <h2 class="
-    text-2xl
-    font-black
-    text-slate-800
-    ">
-        Aktivitas Terbaru
-    </h2>
 
-    <div class="
-    mt-6
-    space-y-4
-    ">
+<div class="flex justify-between items-center mb-6">
 
-        @forelse($aktivitas as $item)
 
-            <div class="
-            flex
-            items-center
-            justify-between
-            bg-slate-50
-            p-5
-            rounded-2xl
-            ">
+<h2 class="
+text-2xl
+font-black
+text-slate-800
+">
+Aktivitas Terbaru
+</h2>
 
-                <div>
 
-                    <p class="font-bold">
-                        {{ $item['judul'] }}
-                    </p>
+<div class="
+bg-slate-100
+rounded-xl
+px-4
+py-2
+">
 
-                    <p class="
-                    text-sm
-                    text-slate-500
-                    ">
-                        {{ $item['deskripsi'] }}
-                    </p>
+<div class="relative">
 
-                    <p class="
-                    text-xs
-                    text-slate-400
-                    mt-2
-                    ">
-                        {{ $item['waktu']->diffForHumans() }}
-                    </p>
+    <i class="bi bi-search 
+        absolute 
+        left-4 
+        top-1/2 
+        -translate-y-1/2 
+        text-slate-400">
+    </i>
 
-                </div>
 
-                <span
-                class="
-                px-4
-                py-2
-                rounded-xl
-                font-bold
+    <input 
+        id="searchAktivitas"
+        type="text"
+        placeholder="Cari aktivitas..."
+        class="
+            w-64
+            pl-11
+            pr-4
+            py-3
+            rounded-xl
+            bg-slate-100
+            border
+            border-slate-200
+            focus:ring-2
+            focus:ring-blue-500
+            focus:outline-none
+            text-sm
+        "
+    >
 
-                @if($item['status'] == 'Baru')
-                    bg-blue-100 text-blue-600
+</div>
 
-                @elseif($item['status'] == 'Menunggu')
-                    bg-yellow-100 text-yellow-700
 
-                @elseif($item['status'] == 'Disetujui')
-                    bg-green-100 text-green-700
+</div>
 
-                @elseif($item['status'] == 'Ditolak')
-                    bg-red-100 text-red-700
-
-                @elseif($item['status'] == 'Disposisi')
-                    bg-purple-100 text-purple-700
-
-                @elseif($item['status'] == 'Arsip')
-                    bg-orange-100 text-orange-700
-
-                @else
-                    bg-gray-100 text-gray-700
-                @endif
-                ">
-
-                    {{ $item['status'] }}
-
-                </span>
-
-            </div>
-
-        @empty
-
-            <div class="
-            text-center
-            text-slate-500
-            py-10
-            ">
-
-                Belum ada aktivitas terbaru.
-
-            </div>
-
-        @endforelse
-
-    </div>
 
 </div>
 
 
 
 
+<div class="overflow-hidden rounded-2xl border">
+
+
+<table class="w-full">
+
+
+<thead>
+
+
+<tr class="
+bg-gradient-to-r
+from-blue-700
+to-cyan-500
+text-white
+">
+
+
+<th class="px-5 py-4 text-left">
+No
+</th>
+
+
+<th class="px-5 py-4 text-left">
+Aktivitas
+</th>
+
+
+<th class="px-5 py-4 text-left">
+Deskripsi
+</th>
+
+
+<th class="px-5 py-4 text-left">
+Waktu
+</th>
+
+
+<th class="px-5 py-4 text-left">
+Status
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody class="bg-white">
+
+
+@foreach($aktivitas as $index=>$item)
+
+
+<tr class="
+aktivitas-row
+border-b
+hover:bg-blue-50
+transition
+">
+
+<td class="px-5 py-5">
+
+
+<div class="
+w-9
+h-9
+rounded-full
+bg-blue-100
+text-blue-600
+flex
+items-center
+justify-center
+font-bold
+">
+
+{{ $index+1 }}
+
+</div>
+
+
+</td>
+
+
+
+
+<td class="px-5 py-5">
+
+
+<div class="flex items-center gap-3">
+
+
+<div class="
+w-10
+h-10
+rounded-xl
+bg-gradient-to-br
+from-blue-500
+to-cyan-400
+text-white
+flex
+items-center
+justify-center
+">
+
+<i data-lucide="mail"></i>
+
+</div>
+
+
+<div>
+
+<p class="font-bold text-slate-800">
+
+{{ $item['judul'] }}
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</td>
+
+
+
+
+<td class="
+px-5
+py-5
+text-slate-500
+">
+
+{{ $item['deskripsi'] }}
+
+</td>
+
+
+
+
+<td class="
+px-5
+py-5
+text-slate-500
+">
+
+{{ $item['waktu']->format('d M Y, H:i') }}
+
+</td>
+
+
+
+
+<td class="px-5 py-5">
+
+
+<span class="
+px-4
+py-2
+rounded-full
+text-xs
+font-bold
+
+@if($item['status']=='Baru')
+bg-blue-100 text-blue-600
+
+@elseif($item['status']=='Disetujui')
+bg-green-100 text-green-600
+
+@elseif($item['status']=='Menunggu')
+bg-yellow-100 text-yellow-600
+
+@elseif($item['status']=='Ditolak')
+bg-red-100 text-red-600
+
+@else
+bg-gray-100 text-gray-600
+
+@endif
+
+">
+
+{{ $item['status'] }}
+
+</span>
+
+
+</td>
+
+
+</tr>
+
+
+@endforeach
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<div class="flex justify-center gap-2 mt-8">
+
+
+<button class="
+w-10 h-10
+rounded-xl
+bg-slate-100
+text-slate-500
+">
+←
+</button>
+
+
+<button class="
+w-10 h-10
+rounded-xl
+bg-blue-600
+text-white
+font-bold
+">
+1
+</button>
+
+
+<button class="
+w-10 h-10
+rounded-xl
+bg-slate-100
+">
+2
+</button>
+
+
+<button class="
+w-10 h-10
+rounded-xl
+bg-slate-100
+">
+3
+</button>
+
+
+<button class="
+w-10 h-10
+rounded-xl
+bg-slate-100
+">
+→
+</button>
+
+
+</div>
+
+
+</div>
 
 
 
