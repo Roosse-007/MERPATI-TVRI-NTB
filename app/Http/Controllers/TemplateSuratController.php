@@ -50,8 +50,45 @@ class TemplateSuratController extends Controller
         );
 
     }
+/*
+|--------------------------------------------------------------------------
+| LIST TEMPLATE USER
+|--------------------------------------------------------------------------
+*/
+
+public function userIndex()
+{
+
+    $templates = TemplateSurat::latest()->get();
 
 
+    $totalTemplate = TemplateSurat::count();
+
+
+    $templateAktif = TemplateSurat::where(
+        'is_active',
+        true
+    )->count();
+
+
+    $templateNonaktif = TemplateSurat::where(
+        'is_active',
+        false
+    )->count();
+
+
+
+    return view(
+        'users.template-surat',
+        compact(
+            'templates',
+            'totalTemplate',
+            'templateAktif',
+            'templateNonaktif'
+        )
+    );
+
+}
 
 
 

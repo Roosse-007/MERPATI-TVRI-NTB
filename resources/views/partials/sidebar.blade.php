@@ -183,6 +183,13 @@ $menus = [
     ],
 
     [
+        'icon'  => 'file-text',
+        'name'  => 'Template Surat',
+        'route' => 'template.user',
+    ],
+
+
+    [
         'icon'  => 'user-round',
         'name'  => 'Profil',
         'route' => 'profile',
