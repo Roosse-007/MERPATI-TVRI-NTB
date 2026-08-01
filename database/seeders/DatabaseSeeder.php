@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
 
             // User terakhir karena membutuhkan role, unit, jabatan
             UserSeeder::class,
+            ApprovalWorkflowSeeder::class,
 
         ]);
     }

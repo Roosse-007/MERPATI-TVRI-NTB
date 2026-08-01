@@ -190,43 +190,35 @@
                 </div>
 
                 {{-- STATUS --}}
-                <div class="lg:col-span-3">
+<div class="lg:col-span-3">
 
-                    <select
-                        name="status"
-                        class="w-full rounded-2xl border-slate-300 py-3">
+    <select
+        name="status"
+        class="w-full rounded-2xl border-slate-300 py-3">
 
-                        <option value="">Semua Status</option>
+        <option value="">Semua Status</option>
 
-                        <option value="Menunggu Approval KPP"
-                            {{ request('status')=='Menunggu Approval KPP'?'selected':'' }}>
-                            Menunggu Approval KPP
-                        </option>
+        <option
+            value="Menunggu Approval"
+            {{ request('status') == 'Menunggu Approval' ? 'selected' : '' }}>
+            Menunggu Approval
+        </option>
 
-                        <option value="Menunggu Approval KTU"
-                            {{ request('status')=='Menunggu Approval KTU'?'selected':'' }}>
-                            Menunggu Approval KTU
-                        </option>
+        <option
+            value="Disetujui"
+            {{ request('status') == 'Disetujui' ? 'selected' : '' }}>
+            Disetujui
+        </option>
 
-                        <option value="Menunggu Approval Kepala Stasiun"
-                            {{ request('status')=='Menunggu Approval Kepala Stasiun'?'selected':'' }}>
-                            Menunggu Approval Kepala Stasiun
-                        </option>
+        <option
+            value="Ditolak"
+            {{ request('status') == 'Ditolak' ? 'selected' : '' }}>
+            Ditolak
+        </option>
 
-                        <option value="Disetujui"
-                            {{ request('status')=='Disetujui'?'selected':'' }}>
-                            Disetujui
-                        </option>
+    </select>
 
-                        <option value="Ditolak"
-                            {{ request('status')=='Ditolak'?'selected':'' }}>
-                            Ditolak
-                        </option>
-
-                    </select>
-
-                </div>
-
+</div>
                 {{-- BUTTON --}}
                 <div class="lg:col-span-4 flex gap-3">
 
@@ -263,39 +255,40 @@
 
         @php
 
-            $status = $item->status;
-
-            $badgeColor='bg-gray-100 text-gray-700';
-
-            $badgeIcon='clock-3';
-
-            if(str_contains($status,'KPP')){
-                $badgeColor='bg-yellow-100 text-yellow-700';
-                $badgeIcon='clock-3';
-            }
-
-            elseif(str_contains($status,'KTU')){
-                $badgeColor='bg-blue-100 text-blue-700';
-                $badgeIcon='file-pen-line';
-            }
-
-            elseif(str_contains($status,'Kepala')){
-                $badgeColor='bg-purple-100 text-purple-700';
-                $badgeIcon='badge-check';
-            }
-
-            elseif($status=='Disetujui'){
-                $badgeColor='bg-green-100 text-green-700';
-                $badgeIcon='circle-check-big';
-            }
-
-            elseif($status=='Ditolak'){
-                $badgeColor='bg-red-100 text-red-700';
-                $badgeIcon='circle-x';
-            }
+        $currentApproval = $item->approval
+            ->where('approver_id', auth()->id())
+            ->where('status','Menunggu')
+            ->first();
 
         @endphp
 
+@php
+
+$status = $item->status;
+
+$badgeColor = 'bg-yellow-100 text-yellow-700';
+$badgeIcon  = 'clock-3';
+
+switch ($status) {
+
+    case 'Disetujui':
+        $badgeColor = 'bg-green-100 text-green-700';
+        $badgeIcon  = 'circle-check-big';
+        break;
+
+    case 'Ditolak':
+        $badgeColor = 'bg-red-100 text-red-700';
+        $badgeIcon  = 'circle-x';
+        break;
+
+    case 'Menunggu Approval':
+        $badgeColor = 'bg-yellow-100 text-yellow-700';
+        $badgeIcon  = 'clock-3';
+        break;
+
+}
+
+@endphp
         <div
             class="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
 
@@ -369,219 +362,152 @@
                         </div>
 
                     </div>
+{{-- PROGRESS APPROVAL --}}
 
-                                        {{-- PROGRESS APPROVAL --}}
-                    @php
+@php
 
-                        $step = 0;
+    $approvedCount = $item->approval
+        ->where('status', 'Disetujui')
+        ->count();
 
-                        if ($status == 'Menunggu Approval KPP') {
-                            $step = 1;
-                        } elseif ($status == 'Menunggu Approval KTU') {
-                            $step = 2;
-                        } elseif ($status == 'Menunggu Approval Kepala Stasiun') {
-                            $step = 3;
-                        } elseif ($status == 'Disetujui') {
-                            $step = 4;
-                        }
+    $step = $approvedCount;
 
-                    @endphp
+    if ($item->status === 'Disetujui') {
+        $step = 4;
+    }
 
-                    <div class="mt-10 pt-8 border-t border-slate-200">
+@endphp
 
-                        <h4 class="font-bold text-slate-700 mb-4">
-                            Progress Approval
-                        </h4>
+<div class="mt-10 pt-8 border-t border-slate-200">
 
-                        <div class="grid grid-cols-4 gap-3">
+    <h4 class="font-bold text-slate-700 mb-4">
+        Progress Approval
+    </h4>
 
-                            {{-- KPP --}}
-                            <div class="text-center">
+    <div class="grid grid-cols-4 gap-3">
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 1 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+        {{-- KPP --}}
+        <div class="text-center">
 
-                                    <i data-lucide="check"></i>
+            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
+                {{ $step >= 1 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
 
-                                </div>
+                <i data-lucide="check"></i>
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    KPP
-                                </p>
+            </div>
 
-                            </div>
+            <p class="text-sm mt-2 font-semibold">
+                KPP
+            </p>
 
-                            {{-- KTU --}}
-                            <div class="text-center">
+        </div>
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 2 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+        {{-- KTU --}}
+        <div class="text-center">
 
-                                    <i data-lucide="file-pen-line"></i>
+            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
+                {{ $step >= 2 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
 
-                                </div>
+                <i data-lucide="file-pen-line"></i>
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    KTU
-                                </p>
+            </div>
 
-                            </div>
+            <p class="text-sm mt-2 font-semibold">
+                KTU
+            </p>
 
-                            {{-- Kepala --}}
-                            <div class="text-center">
+        </div>
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 3 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+        {{-- Kepala Stasiun --}}
+        <div class="text-center">
 
-                                    <i data-lucide="badge-check"></i>
+            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
+                {{ $step >= 3 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
 
-                                </div>
+                <i data-lucide="badge-check"></i>
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    Kepala
-                                </p>
+            </div>
 
-                            </div>
+            <p class="text-sm mt-2 font-semibold">
+                Kepala
+            </p>
 
-                            {{-- Final --}}
-                            <div class="text-center">
+        </div>
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 4 ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-500' }}">
+        {{-- Final --}}
+        <div class="text-center">
 
-                                    <i data-lucide="circle-check-big"></i>
+            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
+                {{ $step >= 4 ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-500' }}">
 
-                                </div>
+                <i data-lucide="circle-check-big"></i>
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    Final
-                                </p>
+            </div>
 
-                            </div>
+            <p class="text-sm mt-2 font-semibold">
+                Final
+            </p>
 
-                        </div>
+        </div>
 
-                    </div>
+    </div>
 
+</div>
 
-                    {{-- ACTION --}}
-                    <div class="mt-10 pt-8 border-t border-slate-200 flex flex-wrap items-center gap-4">
+{{-- ACTION --}}
+<div class="mt-10 pt-8 border-t border-slate-200 flex flex-wrap items-center gap-3">
 
-                      <a
-                            href="{{ route('surat.detail', $item->id) }}"
-                            title="Detail"
-                            class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+    {{-- Detail --}}
+    <a
+        href="{{ route('surat.detail', $item->id) }}"
+        title="Lihat Detail"
+        class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
 
-                            <i data-lucide="eye" class="w-5 h-5"></i>
+        <i data-lucide="eye" class="w-5 h-5"></i>
 
-                        </a>
+    </a>
 
-                        {{-- KPP --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Ketua Tim Perencana dan Pengendali Program' &&
-                            $status=='Menunggu Approval KPP')
+    @if($currentApproval)
 
-                            <form method="POST" action="{{ route('approval.kpp.approve',$item->id) }}">
-                                @csrf
+        {{-- Setujui --}}
+        <form
+            method="POST"
+            action="{{ route('approval.approve', $item->id) }}">
 
-                                <button
-                                    title="Setujui"
-                                    class="w-11 h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition">
+            @csrf
 
-                                    <i data-lucide="check" class="w-5 h-5"></i>
+            <button
+                type="submit"
+                title="Setujui Surat"
+                class="w-11 h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition">
 
-                                </button>
+                <i data-lucide="check" class="w-5 h-5"></i>
 
-                            </form>
+            </button>
 
-                            <form method="POST" action="{{ route('approval.kpp.reject',$item->id) }}">
-                                @csrf
+        </form>
 
-                                <button
-                                    title="Tolak"
-                                    class="w-11 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition">
+        {{-- Tolak --}}
+        <form
+            method="POST"
+            action="{{ route('approval.reject', $item->id) }}">
 
-                                    <i data-lucide="x" class="w-5 h-5"></i>
+            @csrf
 
-                                </button>
+            <button
+                type="submit"
+                title="Tolak Surat"
+                class="w-11 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition">
 
-                            </form>
+                <i data-lucide="x" class="w-5 h-5"></i>
 
-                        @endif
+            </button>
 
+        </form>
 
-                        {{-- KTU --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Kepala Sub Bagian Tata Usaha' &&
-                            $status=='Menunggu Approval KTU')
+    @endif
 
-                            <form method="POST" action="{{ route('approval.ktu.approve',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold">
-
-                                    <i data-lucide="check"></i>
-
-                                    Setujui
-
-                                </button>
-
-                            </form>
-
-                            <form method="POST" action="{{ route('approval.ktu.reject',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold">
-
-                                    <i data-lucide="x"></i>
-
-                                    Tolak
-
-                                </button>
-
-                            </form>
-
-                        @endif
-
-
-                        {{-- Kepala --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Kepala TVRI Stasiun NTB' &&
-                            $status=='Menunggu Approval Kepala Stasiun')
-
-                            <form method="POST" action="{{ route('approval.kepala.approve',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold">
-
-                                    <i data-lucide="check"></i>
-
-                                    Setujui
-
-                                </button>
-
-                            </form>
-
-                            <form method="POST" action="{{ route('approval.kepala.reject',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold">
-
-                                    <i data-lucide="x"></i>
-
-                                    Tolak
-
-                                </button>
-
-                            </form>
-
-                        @endif
-
-                </div>
+</div>
 
             </div>
         

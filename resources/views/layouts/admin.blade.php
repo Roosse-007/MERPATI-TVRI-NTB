@@ -256,7 +256,41 @@ footer{
 
 }
 
+/* ===========================
+   QUICK MENU
+=========================== */
 
+.quick-menu a{
+
+    display:block;
+
+    text-decoration:none !important;
+
+    color:#1f2937 !important;
+
+}
+
+.quick-menu a:hover{
+
+    text-decoration:none !important;
+
+    color:#111827 !important;
+
+}
+
+.quick-menu h3{
+
+    color:#111827 !important;
+
+    font-weight:700;
+
+}
+
+.quick-menu p{
+
+    color:#6b7280 !important;
+
+}
 
 </style>
 

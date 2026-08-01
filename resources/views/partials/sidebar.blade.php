@@ -109,14 +109,11 @@ scrollbar-thin
 scrollbar-thumb-blue-400/40
 ">
 
-
 @php
-
 
 $user = auth()->user();
 
 $isAdmin = $user && $user->hasRole('Admin');
-
 
 
 $menus = [
@@ -138,6 +135,13 @@ $menus = [
 
 
     [
+        'icon'=>'file-plus',
+        'name'=>'Surat Baru',
+        'route'=>'surat.create',
+    ],
+
+
+    [
         'icon'=>'file-pen-line',
         'name'=>'Draft',
         'route'=>'surat.draft',
@@ -145,9 +149,9 @@ $menus = [
 
 
     [
-        'icon'=>'file-plus',
-        'name'=>'Surat Baru',
-        'route'=>'surat.create',
+        'icon'=>'send',
+        'name'=>'Surat Terkirim',
+        'route'=>'surat.terkirim',
     ],
 
 
@@ -159,7 +163,7 @@ $menus = [
 
 
     [
-        'icon'=>'send',
+        'icon'=>'git-branch',
         'name'=>'Disposisi',
         'route'=>'disposisi.index',
     ],
@@ -172,20 +176,13 @@ $menus = [
     ],
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | TEMPLATE USER
-    |--------------------------------------------------------------------------
-    */
-
 ];
 
 
 
 // ==========================
 // TEMPLATE USER
-// hanya untuk non admin
+// hanya non admin
 // ==========================
 
 if(!$isAdmin){
@@ -201,18 +198,6 @@ if(!$isAdmin){
 }
 
 
-
-// ==========================
-// PROFIL SEMUA USER
-// ==========================
-
-$menus[] = [
-
-    'icon'=>'user-round',
-    'name'=>'Profil',
-    'route'=>'profile'
-
-];
 
 
 
@@ -295,7 +280,17 @@ if($isAdmin){
 
 }
 
+// ==========================
+// PROFIL SEMUA USER
+// ==========================
 
+$menus[] = [
+
+    'icon'=>'user-round',
+    'name'=>'Profil',
+    'route'=>'profile'
+
+];
 @endphp
 
 

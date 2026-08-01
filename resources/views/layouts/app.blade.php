@@ -14,10 +14,10 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
- 
 
-    <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+
     rel="stylesheet">
 
     <link 
@@ -42,22 +42,24 @@
 </head>
 
 
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden bg-gray-100">
+
 
     <div class="flex">
 
         {{-- Sidebar --}}
         @include('partials.sidebar')
 
-        <div class="flex-1 flex flex-col min-h-screen">
+{{-- Wrapper Content --}}
+<div class="flex-1 ml-72 flex flex-col min-h-screen">
 
             {{-- Navbar --}}
             @include('partials.navbar')
 
             {{-- Content --}}
-           <main class="
+
+      <main class="
     flex-1
-    ml-72
     px-8
     pt-6
     pb-8
@@ -78,6 +80,44 @@
     {{-- Aktifkan semua icon Lucide --}}
     <script>
         lucide.createIcons();
+    </script>
+
+
+
+    {{-- Menyimpan posisi scroll sidebar --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const sidebar = document.querySelector("nav");
+
+            if (!sidebar) return;
+
+            const saved = sessionStorage.getItem("sidebarScroll");
+
+            if (saved !== null) {
+                sidebar.scrollTop = parseInt(saved);
+            }
+
+            sidebar.addEventListener("scroll", function() {
+                sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
+            });
+
+        });
+    </script>
+
+    {{-- Memastikan Chart melakukan resize setelah layout selesai dimuat --}}
+    <script>
+        window.addEventListener('load', function() {
+
+            if (window.Chart) {
+
+                Object.values(Chart.instances).forEach(function(chart) {
+                    chart.resize();
+                });
+
+            }
+
+        });
     </script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>

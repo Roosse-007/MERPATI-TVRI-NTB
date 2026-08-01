@@ -31,7 +31,8 @@ Rekapitulasi laporan surat MERPATI TVRI NTB
 onclick="exportExcel()"
 class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg shadow">
 
-📊 Export Excel
+<i class="bi bi-file-earmark-excel-fill me-2"></i>
+Export Excel
 
 </button>
 
@@ -42,7 +43,8 @@ class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg shadow">
 onclick="exportPDF()"
 class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg shadow">
 
-📄 Export PDF
+<i class="bi bi-file-earmark-pdf-fill me-2"></i>
+Export PDF
 
 </button>
 
@@ -158,13 +160,6 @@ Arsip
 </div>
 
 
-
-
-
-
-
-
-
 <!-- =========================
 FILTER
 ========================= -->
@@ -173,12 +168,13 @@ FILTER
 <div class="bg-white rounded-xl shadow p-6 mb-8">
 
 
-<h2 class="text-xl font-bold mb-5">
+<h2 class="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-5">
 
-Filter Laporan
+    <i class="bi bi-funnel-fill text-blue-600"></i>
+
+    Filter Laporan
 
 </h2>
-
 
 
 <form method="GET"
@@ -335,6 +331,7 @@ Ditolak
 
 class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg">
 
+<i class="bi bi-funnel-fill me-2"></i>
 Tampilkan
 
 </button>
@@ -353,12 +350,6 @@ Tampilkan
 </div>
 
 
-
-
-
-
-
-
 <!-- =========================
 TABLE REAL DATABASE
 ========================= -->
@@ -370,48 +361,37 @@ TABLE REAL DATABASE
 <table class="w-full">
 
 
-<thead class="bg-blue-800 text-white">
-
+<thead class="sticky top-0 bg-blue-800 text-white z-10">
 
 <tr>
-
 
 <th class="p-4 text-left">
 No
 </th>
 
-
 <th class="p-4 text-left">
 Nomor Surat
 </th>
-
 
 <th class="p-4 text-left">
 Jenis
 </th>
 
-
 <th class="p-4 text-left">
 Perihal
 </th>
-
 
 <th class="p-4 text-left">
 Tanggal
 </th>
 
-
 <th class="p-4 text-left">
 Status
 </th>
 
-
 </tr>
 
-
 </thead>
-
-
 
 <tbody>
 
@@ -419,7 +399,7 @@ Status
 @forelse($laporan as $index=>$item)
 
 
-<tr class="border-b hover:bg-gray-50">
+<tr class="border-b hover:bg-blue-50 transition">
 
 
 
@@ -484,7 +464,9 @@ Status
 @if($item->status == 'Disetujui')
 
 
-<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+<span class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full">
+
+<i class="bi bi-check-circle-fill"></i>
 
 Disetujui
 
@@ -588,6 +570,7 @@ Menampilkan data laporan surat
 class="border px-5 py-2 rounded-lg hover:bg-gray-100">
 
 
+<i class="bi bi-arrow-clockwise me-2"></i>
 Reset Filter
 
 

@@ -22,7 +22,9 @@ use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\GrafikController;
- use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\TerkirimController;
+
 
 
 
@@ -183,7 +185,6 @@ Route::get(
 )
 ->middleware('auth')
 ->name('admin.laporan');
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN
@@ -207,14 +208,25 @@ Route::prefix('admin')
 
 
 
-    Route::get('/users', [UserController::class, 'index'])
+    Route::get(
+        '/users',
+        [
+            UserController::class,
+            'index'
+        ]
+    )
     ->name('admin.users');
 
 
-Route::get(
-    '/admin/grafik',
-    [GrafikController::class,'index']
-)->name('admin.grafik');
+
+    Route::get(
+        '/grafik',
+        [
+            GrafikController::class,
+            'index'
+        ]
+    )
+    ->name('admin.grafik');
 
 
 
@@ -410,12 +422,12 @@ Route::resource(
 */
 
 
-Route::get('/profile',function(){
+// Route::get('/profile',function(){
 
-    return view('profile.index');
+//     return view('profile.index');
 
-})
-->middleware('auth');
+// })
+// ->middleware('auth');
 
 
 
@@ -660,115 +672,22 @@ Route::get('/surat/arsip',
 // ==========================
 // APPROVAL ACTION
 // ==========================
-
-
-// --------------------------
-// KPP
-// --------------------------
+Route::post(
+    '/approval/{surat}/approve',
+    [ApprovalController::class,'approve']
+)->name('approval.approve');
 
 Route::post(
-    '/approval/kpp/{id}',
-    [
-        ApprovalController::class,
-        'approveKpp'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kpp.approve');
-
-
-
-Route::post(
-    '/approval/kpp/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKpp'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kpp.reject');
-
-
-
-
-
-// --------------------------
-// KTU
-// --------------------------
-
-Route::post(
-    '/approval/ktu/{id}',
-    [
-        ApprovalController::class,
-        'approveKtu'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.ktu.approve');
-
-
-
-Route::post(
-    '/approval/ktu/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKtu'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.ktu.reject');
-
-
-
-
-
-
-
-// --------------------------
-// KEPALA STASIUN
-// --------------------------
-
-Route::post(
-    '/approval/kepala-stasiun/{id}',
-    [
-        ApprovalController::class,
-        'approveKepalaStasiun'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kepala.approve');
-
-
-
-Route::post(
-    '/approval/kepala-stasiun/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKepalaStasiun'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kepala.reject');
-
-
-
-
-
-
-
+    '/approval/{surat}/reject',
+    [ApprovalController::class,'reject']
+)->name('approval.reject');
 // ==========================
 // HALAMAN APPROVAL
 // ==========================
 
 Route::get('/surat/approval', [
-    ApprovalController::class,
-    'index'
+    SuratController::class,
+    'approval'
 ])
 ->middleware('auth')
 ->name('surat.approval');
@@ -1143,8 +1062,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
     ->middleware('otp.verified')
     ->name('password.reset');
 
-   
-
 Route::get('/change-password', [PasswordController::class, 'showChangePassword'])
     ->name('password.change');
 
@@ -1156,6 +1073,19 @@ Route::post('/change-password', [PasswordController::class, 'updatePassword'])
         })
         ->middleware('auth')
         ->name('profile');
+
+Route::prefix('surat')->group(function () {
+
+    Route::get('/terkirim', [TerkirimController::class, 'index'])
+        ->name('surat.terkirim');
+
+    Route::get('/terkirim/{surat}', [TerkirimController::class, 'show'])
+        ->name('surat.terkirim.show');
+
+    Route::get('/terkirim/{surat}/tracking', [TerkirimController::class, 'tracking'])
+        ->name('surat.terkirim.tracking');
+
+});
 // ==========================
 // SELESAI
 // ==========================

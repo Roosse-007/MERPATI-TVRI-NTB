@@ -2,7 +2,6 @@
     sticky
     top-0
     z-40
-    ml-72
     px-8
     pt-6
 ">
