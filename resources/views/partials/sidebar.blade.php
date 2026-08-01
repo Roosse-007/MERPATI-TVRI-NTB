@@ -147,15 +147,21 @@ $menus = [
     ],
 
     [
+        'icon'  => 'file-plus',
+        'name'  => 'Surat Baru',
+        'route' => 'surat.create',
+    ],
+
+    [
         'icon'  => 'file-pen-line',
         'name'  => 'Draft',
         'route' => 'surat.draft',
     ],
 
     [
-        'icon'  => 'file-plus',
-        'name'  => 'Surat Baru',
-        'route' => 'surat.create',
+        'icon'  => 'send',
+        'name'  => 'Surat Terkirim',
+        'route' => 'surat.terkirim',
     ],
 
     [
@@ -165,7 +171,7 @@ $menus = [
     ],
 
     [
-        'icon'  => 'send',
+        'icon'  => 'git-branch',
         'name'  => 'Disposisi',
         'route' => 'disposisi.index',
     ],
@@ -186,51 +192,65 @@ $menus = [
 
 if ($isAdmin) {
 
-    $menus = array_merge($menus, [
+$menus = [
 
-        [
-            'icon'=>'users',
-            'name'=>'Kelola User',
-            'route'=>'admin.users'
-        ],
+    [
+        'icon'  => 'layout-dashboard',
+        'name'  => 'Dashboard',
+        'route' => $isAdmin
+            ? 'admin.dashboard'
+            : 'dashboard',
+    ],
 
-        [
-            'icon'=>'file-text',
-            'name'=>'Template Surat',
-            'route'=>'admin.template'
-        ],
+    [
+        'icon'  => 'inbox',
+        'name'  => 'Kotak Masuk',
+        'route' => 'surat.inbox',
+    ],
 
-        [
-            'icon'=>'hash',
-            'name'=>'Nomor Surat',
-            'route'=>'admin.nomor'
-        ],
+    [
+        'icon'  => 'file-plus',
+        'name'  => 'Surat Baru',
+        'route' => 'surat.create',
+    ],
 
-        [
-            'icon'=>'monitor',
-            'name'=>'Monitoring',
-            'route'=>'admin.monitoring'
-        ],
+    [
+        'icon'  => 'file-pen-line',
+        'name'  => 'Draft',
+        'route' => 'surat.draft',
+    ],
 
-        [
-            'icon'=>'file-bar-chart',
-            'name'=>'Laporan',
-            'route'=>'admin.laporan'
-        ],
+    [
+        'icon'  => 'send',
+        'name'  => 'Surat Terkirim',
+        'route' => 'surat.terkirim',
+    ],
 
-        [
-            'icon'=>'chart-column',
-            'name'=>'Grafik',
-            'route'=>'admin.grafik'
-        ],
+    [
+        'icon'  => 'circle-check-big',
+        'name'  => 'Approval',
+        'route' => 'surat.approval',
+    ],
 
-        [
-            'icon'=>'settings',
-            'name'=>'Setting',
-            'route'=>'admin.setting'
-        ],
+    [
+        'icon'  => 'git-branch',
+        'name'  => 'Disposisi',
+        'route' => 'disposisi.index',
+    ],
 
-    ]);
+    [
+        'icon'  => 'archive',
+        'name'  => 'Arsip',
+        'route' => 'surat.arsip',
+    ],
+
+    [
+        'icon'  => 'user-round',
+        'name'  => 'Profil',
+        'route' => 'profile',
+    ],
+
+];
 
 }
 

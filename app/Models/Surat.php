@@ -27,7 +27,7 @@ class Surat extends Model
 
         'sifat_surat_id',
 
-        'prioritas_surat_id',
+        //'prioritas_surat_id',
 
         'template_surat_id',
 
@@ -144,19 +144,6 @@ class Surat extends Model
 
     }
 
-
-
-    public function prioritasSurat(): BelongsTo
-    {
-
-        return $this->belongsTo(
-            PrioritasSurat::class
-        );
-
-    }
-
-
-
     public function templateSurat(): BelongsTo
     {
 
@@ -198,26 +185,13 @@ class Surat extends Model
 | APPROVAL
 |--------------------------------------------------------------------------
 */
-
-public function approvals(): HasMany
-{
-    return $this->hasMany(
-        Approval::class,
-        'surat_id'
-    );
-}
-
 public function approval(): HasMany
 {
     return $this->hasMany(
         Approval::class,
         'surat_id'
-    );
+    )->orderBy('urutan');
 }
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | DISPOSISI

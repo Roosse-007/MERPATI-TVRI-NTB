@@ -13,8 +13,8 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,28 +26,30 @@
 
 </head>
 
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden bg-gray-100">
 
     <div class="flex">
 
         {{-- Sidebar --}}
         @include('partials.sidebar')
 
-        <div class="flex-1 flex flex-col min-h-screen">
+        {{-- Wrapper Content --}}
+        <div class="flex-1 ml-72 flex flex-col min-h-screen">
 
             {{-- Navbar --}}
             @include('partials.navbar')
 
             {{-- Content --}}
-           <main class="
-    flex-1
-    ml-72
-    px-8
-    pt-6
-    pb-8
-    relative
-    z-10
-">
+            <main
+                class="
+                flex-1
+                px-8
+                pt-6
+                pb-8
+                relative
+                z-10
+                overflow-x-hidden
+            ">
 
                 @yield('content')
 
@@ -65,27 +67,41 @@
         lucide.createIcons();
     </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+    {{-- Menyimpan posisi scroll sidebar --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
 
-    const sidebar = document.querySelector("nav");
+            const sidebar = document.querySelector("nav");
 
-    if (!sidebar) return;
+            if (!sidebar) return;
 
-    // Kembalikan posisi scroll
-    const saved = sessionStorage.getItem("sidebarScroll");
+            const saved = sessionStorage.getItem("sidebarScroll");
 
-    if (saved !== null) {
-        sidebar.scrollTop = parseInt(saved);
-    }
+            if (saved !== null) {
+                sidebar.scrollTop = parseInt(saved);
+            }
 
-    // Simpan posisi scroll setiap kali digeser
-    sidebar.addEventListener("scroll", function () {
-        sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
-    });
+            sidebar.addEventListener("scroll", function() {
+                sessionStorage.setItem("sidebarScroll", sidebar.scrollTop);
+            });
 
-});
-</script>
+        });
+    </script>
+
+    {{-- Memastikan Chart melakukan resize setelah layout selesai dimuat --}}
+    <script>
+        window.addEventListener('load', function() {
+
+            if (window.Chart) {
+
+                Object.values(Chart.instances).forEach(function(chart) {
+                    chart.resize();
+                });
+
+            }
+
+        });
+    </script>
 
 </body>
 
