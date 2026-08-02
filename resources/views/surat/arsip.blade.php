@@ -5,9 +5,26 @@
 @section('content')
 
 
-<h1 class="text-4xl font-black">
-Arsip Surat 🗄️
-</h1>
+<div class="flex items-center gap-3">
+
+    <i data-lucide="archive"
+    class="
+    w-10
+    h-10
+    text-blue-800
+    ">
+    </i>
+
+
+    <h1 class="
+    text-4xl
+    font-black
+    text-slate-800
+    ">
+        Arsip Surat
+    </h1>
+
+</div>
 
 
 <p class="text-slate-500 mt-2">

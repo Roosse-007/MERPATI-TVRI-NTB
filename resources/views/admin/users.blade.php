@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title','Kelola User')
 
@@ -740,60 +740,53 @@ outline-none
 
 </div>
 
-
-
-
-
 <!-- PASSWORD -->
-
 <div class="relative">
 
+    <i class="bi bi-lock absolute left-4 top-3.5 text-slate-400"></i>
 
-<i class="bi bi-lock absolute left-4 top-3.5 text-slate-400"></i>
+    <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Password (minimal 8 karakter)"
+        minlength="8"
+        required
+        autocomplete="new-password"
+        class="
+            w-full
+            pl-11
+            pr-12
+            py-3
+            rounded-xl
+            border
+            border-slate-200
+            focus:ring-4
+            focus:ring-blue-100
+            focus:border-blue-500
+            outline-none
+        "
+    >
 
-
-<input
-id="password"
-name="password"
-type="password"
-placeholder="Password"
-autocomplete="new-password"
-class="
-w-full
-pl-11
-pr-12
-py-3
-rounded-xl
-border
-border-slate-200
-focus:ring-4
-focus:ring-blue-100
-outline-none
-">
-
-
-<button
-type="button"
-onclick="togglePassword()"
-class="
-absolute
-right-4
-top-3.5
-text-slate-400
-">
-
-
-<i id="eyeIcon" class="bi bi-eye"></i>
-
-
-</button>
-
+    <button
+        type="button"
+        onclick="togglePassword()"
+        class="
+            absolute
+            right-4
+            top-3.5
+            text-slate-400
+            hover:text-slate-600
+        "
+    >
+        <i id="eyeIcon" class="bi bi-eye"></i>
+    </button>
 
 </div>
 
-
-
-
+<p class="text-xs text-gray-500 mt-1">
+    Password harus terdiri dari minimal <strong>8 karakter</strong>.
+</p>
 
 <!-- STATUS -->
 

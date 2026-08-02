@@ -477,15 +477,6 @@ Grafik
 
 
 
-<a href="/admin/monitoring">
-
-<i class="bi bi-activity fs-5"></i>
-
-Monitoring
-
-</a>
-
-
 
 
 

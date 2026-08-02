@@ -4,86 +4,73 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto">
+<div class="w-full">
 
 
 {{-- HEADER --}}
 
-<div class="flex justify-between items-center mb-5">
+<div class="flex justify-between items-start mb-8">
+
+    <div>
+
+        <div class="flex items-center gap-3">
+
+            <div class="
+            bg-blue-100
+            text-blue-600
+            p-3
+            rounded-xl
+            ">
+
+                <i class="fa-solid fa-file-pen text-2xl"></i>
+
+            </div>
 
 
-<div>
+            <h1 class="
+            text-4xl
+            font-black
+            text-slate-800
+            ">
+                Draft Surat
+            </h1>
 
-<div class="flex items-center gap-3">
-
-<div class="
-bg-blue-100
-text-blue-600
-p-3
-rounded-xl
-">
-
-<i class="fa-solid fa-file-pen text-2xl"></i>
-
-</div>
+        </div>
 
 
-<h1 class="
-text-3xl
-font-black
-text-slate-800
-">
-
-Draft Surat
-
-</h1>
+        <p class="
+        text-slate-500
+        mt-3
+        text-sm
+        ">
+            Surat yang masih dalam proses penyusunan
+        </p>
 
 
-</div>
+    </div>
 
 
-<p class="
-text-slate-500
-mt-2
-">
+    <a href="{{route('surat.create')}}"
 
-Surat yang masih dalam proses penyusunan
+    class="
+    bg-blue-600
+    hover:bg-blue-700
+    text-white
+    px-7
+    py-3
+    rounded-2xl
+    font-bold
+    shadow-md
+    transition
+    flex
+    items-center
+    gap-2
+    ">
 
-</p>
+    <i class="fa-solid fa-plus"></i>
+    Draft Baru
 
-
-</div>
-
-
-
-
-<a href="{{route('surat.create')}}"
-
-class="
-bg-gradient-to-r
-from-blue-600
-to-cyan-400
-
-text-white
-
-px-6
-py-3
-
-rounded-xl
-
-font-bold
-
-shadow-lg
-
-hover:scale-105
-
-transition
-">
-
-+ Draft Baru
-
-</a>
-
+    </a>
 
 
 </div>
@@ -96,9 +83,9 @@ transition
 
 <div class="
 bg-white
-rounded-[28px]
+rounded-2xl
 shadow-xl
-p-5
+p-4
 mb-6
 ">
 
@@ -118,7 +105,7 @@ items-center
 
 {{-- INPUT SEARCH --}}
 
-<div class="flex-1">
+<div class="flex-[2]">
 
 
 <input
@@ -156,7 +143,7 @@ outline-none
 
 {{-- STATUS --}}
 
-<div class="w-80">
+<div class="w-64">
 
 
 <select
@@ -305,9 +292,9 @@ Cari
 <div class="
 bg-white
 rounded-3xl
-shadow-sm
-border
-p-6
+shadow-md
+border border-slate-200
+p-5
 mb-5
 hover:shadow-lg
 transition
@@ -332,15 +319,15 @@ items-center
 
 <div class="
 col-span-12
-lg:col-span-7
+lg:col-span-6
 flex
 gap-5
 ">
 
 
 <div class="
-w-16
-h-16
+w-14
+h-14
 bg-blue-100
 rounded-2xl
 flex
@@ -354,7 +341,7 @@ shrink-0
 fa-solid
 fa-file-lines
 text-blue-600
-text-3xl
+text-2xl
 "></i>
 
 
@@ -502,7 +489,7 @@ text-blue-500
 
 <div class="
 col-span-12
-lg:col-span-4
+lg:col-span-5
 flex
 items-center
 justify-end
@@ -661,7 +648,7 @@ pl-2
 <span class="
 bg-yellow-100
 text-yellow-700
-px-4
+px-5
 py-2
 rounded-xl
 font-bold
@@ -713,8 +700,8 @@ top-8
 w-36
 bg-white
 border
-rounded-xl
-shadow-xl
+rounded-2xl
+shadow-2xl
 z-50
 ">
 
@@ -741,7 +728,6 @@ fa-pen
 text-green-600
 mr-2
 "></i>
-
 
 Edit
 
@@ -839,7 +825,13 @@ text-slate-400
 
 <div class="text-5xl mb-4">
 
-📭
+<i data-lucide="mail-open"
+class="
+w-10
+h-10
+text-blue-700
+">
+</i>
 
 </div>
 
