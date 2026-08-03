@@ -88,48 +88,48 @@ class ApprovalController extends Controller
             ->latest()
             ->get();
 
-/*
-|--------------------------------------------------------------------------
-| Statistik Approval User Login
-|--------------------------------------------------------------------------
-*/
+        /*
+        |--------------------------------------------------------------------------
+        | Statistik Approval User Login
+        |--------------------------------------------------------------------------
+        */
 
-$totalSurat = Approval::where(
-    'approver_id',
-    auth()->id()
-)
-->distinct('surat_id')
-->count('surat_id');
+        $totalSurat = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->distinct('surat_id')
+        ->count('surat_id');
 
-$menunggu = Approval::where(
-    'approver_id',
-    auth()->id()
-)
-->where(
-    'status',
-    'Menunggu'
-)
-->count();
+        $menunggu = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Menunggu'
+        )
+        ->count();
 
-$disetujui = Approval::where(
-    'approver_id',
-    auth()->id()
-)
-->where(
-    'status',
-    'Disetujui'
-)
-->count();
+        $disetujui = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Disetujui'
+        )
+        ->count();
 
-$ditolak = Approval::where(
-    'approver_id',
-    auth()->id()
-)
-->where(
-    'status',
-    'Ditolak'
-)
-->count();
+        $ditolak = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Ditolak'
+        )
+        ->count();
 
         return view(
             'surat.approval',

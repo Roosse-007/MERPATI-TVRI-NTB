@@ -1,3 +1,6 @@
+
+
+
 @extends('layouts.app')
 
 @section('title','Dashboard')
@@ -342,408 +345,67 @@ class="
 </div>
 
 
+{{-- ========================================================= --}}
 {{-- AKTIVITAS TERBARU --}}
+{{-- ========================================================= --}}
 
-<div class="
-bg-white
-rounded-[32px]
-p-8
-shadow-lg
-mt-10
-">
+<div class="bg-white rounded-[30px] shadow-lg mt-10 p-8">
 
+    <div class="flex items-center justify-between mb-8">
 
-    {{-- HEADER --}}
+        <div>
 
-    <div class="
-    flex
-    items-center
-    justify-between
-    mb-6
-    ">
+            <h2 class="text-2xl font-black text-slate-800">
 
+                Aktivitas Terbaru
 
-        <h2 class="
-        text-2xl
-        font-black
-        text-slate-800
-        ">
-            Aktivitas Terbaru
-        </h2>
+            </h2>
 
+            <p class="text-slate-500 mt-1">
 
+                Riwayat aktivitas terbaru pada sistem MERPATI.
+
+            </p>
+
+        </div>
 
         <div class="relative">
 
-
-            <i class="bi bi-search 
-            absolute 
-            left-4 
-            top-1/2 
-            -translate-y-1/2
-            text-slate-400">
-            </i>
-
-
+            <i class="bi bi-search
+                absolute
+                left-4
+                top-1/2
+                -translate-y-1/2
+                text-slate-400"></i>
 
             <input
-            id="searchAktivitas"
-            type="text"
-            placeholder="Cari aktivitas..."
-            class="
-            w-52
-            pl-11
-            pr-4
-            py-2
-            rounded-xl
-            bg-slate-100
-            text-sm
-            focus:outline-none
-            "
-            >
+                id="searchAktivitas"
+                type="text"
+                placeholder="Cari aktivitas..."
 
+                class="
+                w-64
+                pl-11
+                pr-4
+                py-3
 
-        </div>
+                rounded-xl
 
+                border
 
-    </div>
+                bg-slate-50
 
-<div id="aktivitas-container">
-
-    {{-- TABLE --}}
-
-    <div class="
-    overflow-hidden
-    rounded-2xl
-    border
-    ">
-
-
-        <table class="w-full">
-
-
-            <thead class="
-            bg-gradient-to-r
-            from-blue-600
-            to-cyan-500
-            text-white
-            ">
-
-                <tr>
-
-                    <th class="px-5 py-4 text-left">
-                        No
-                    </th>
-
-                    <th class="px-5 py-4 text-left">
-                        Aktivitas
-                    </th>
-
-                    <th class="px-5 py-4 text-left">
-                        Deskripsi
-                    </th>
-
-                    <th class="px-5 py-4 text-left">
-                        Waktu
-                    </th>
-
-                    <th class="px-5 py-4 text-left">
-                        Status
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-
-            <tbody>
-
-
-            @foreach($aktivitas as $index=>$item)
-
-
-            <tr class="
-            aktivitas-row
-            border-b
-            hover:bg-blue-50
-            transition
-            ">
-
-
-                <td class="px-5 py-5">
-
-
-<div class="
-w-9
-h-9
-rounded-full
-bg-blue-100
-text-blue-600
-flex
-items-center
-justify-center
-font-bold
-">
-
-
-{{ $index+1 }}
-
-
-</div>
-
-
-</td>
-
-
-
-                <td class="px-5 py-5">
-
-    <div class="flex items-center gap-4">
-
-
-        {{-- ICON AKTIVITAS --}}
-        <div class="
-            w-10
-            h-10
-            rounded-xl
-            bg-gradient-to-br
-            from-blue-500
-            to-cyan-400
-            flex
-            items-center
-            justify-center
-            shadow-md
-        ">
-
-            <i data-lucide="mail"
-            class="
-            w-5
-            h-5
-            text-white
-            ">
-            </i>
+                focus:ring-2
+                focus:ring-blue-500
+                focus:outline-none">
 
         </div>
 
-
-
-        {{-- JUDUL --}}
-        <span class="
-        font-bold
-        text-slate-800
-        ">
-
-            {{ $item['judul'] }}
-
-        </span>
-
-
     </div>
 
-</td>
-
-
-
-                <td class="px-5 py-5 text-slate-500">
-
-                    {{ $item['deskripsi'] }}
-
-                </td>
-
-
-
-                <td class="px-5 py-5 text-slate-500">
-
-                    {{ $item['waktu']->timezone('Asia/Makassar')->format('d M Y, H:i') }}
-
-                </td>
-
-
-
-                <td class="px-5 py-5">
-
-
-<span
-class="
-px-4
-py-2
-rounded-full
-text-xs
-font-bold
-
-@if($item['status'] == 'Baru')
-
-bg-blue-100 text-blue-600
-
-
-@elseif($item['status'] == 'Menunggu Approval KPP' 
-|| $item['status'] == 'Menunggu')
-
-bg-yellow-100 text-yellow-700
-
-
-@elseif($item['status'] == 'Disetujui')
-
-bg-green-100 text-green-700
-
-
-@elseif($item['status'] == 'Ditolak')
-
-bg-red-100 text-red-700
-
-
-@elseif($item['status'] == 'Disposisi')
-
-bg-purple-100 text-purple-700
-
-
-@elseif($item['status'] == 'Arsip')
-
-bg-orange-100 text-orange-700
-
-
-@else
-
-bg-gray-100 text-gray-700
-
-
-@endif
-">
-
-
-{{ $item['status'] }}
-
-
-</span>
-
-
-</td>
-
-
-            </tr>
-
-
-            @endforeach
-
-
-            </tbody>
-
-
-        </table>
-
-
-    </div>
-
+    @include('dashboard.aktivitas')
 
 </div>
-
-
-
-<div class="flex justify-center items-center gap-3 mt-8 mb-6">
-
-    {{-- Previous --}}
-    @if ($aktivitas->onFirstPage())
-
-        <span class="
-        w-11 h-11
-        rounded-xl
-        bg-slate-200
-        text-slate-400
-        flex
-        items-center
-        justify-center
-        ">
-            ←
-        </span>
-
-    @else
-
-        <a href="{{ $aktivitas->previousPageUrl() }}"
-        class="
-        w-11 h-11
-        rounded-xl
-        bg-white
-        shadow
-        hover:bg-blue-600
-        hover:text-white
-        flex
-        items-center
-        justify-center
-        transition
-        ">
-            ←
-        </a>
-
-    @endif
-
-
-
-    {{-- Nomor halaman --}}
-    @for ($i = 1; $i <= $aktivitas->lastPage(); $i++)
-
-        <a href="{{ $aktivitas->url($i) }}"
-        class="
-        w-11 h-11
-        rounded-xl
-        flex
-        items-center
-        justify-center
-        font-bold
-        transition
-
-        {{ $aktivitas->currentPage() == $i
-            ? 'bg-blue-600 text-white shadow-lg'
-            : 'bg-white text-slate-600 hover:bg-blue-100'
-        }}
-        ">
-
-            {{ $i }}
-
-        </a>
-
-    @endfor
-
-
-
-    {{-- Next --}}
-    @if ($aktivitas->hasMorePages())
-
-        <a href="{{ $aktivitas->nextPageUrl() }}"
-        class="
-        w-11 h-11
-        rounded-xl
-        bg-white
-        shadow
-        hover:bg-blue-600
-        hover:text-white
-        flex
-        items-center
-        justify-center
-        transition
-        ">
-            →
-        </a>
-
-    @else
-
-        <span class="
-        w-11 h-11
-        rounded-xl
-        bg-slate-200
-        text-slate-400
-        flex
-        items-center
-        justify-center
-        ">
-            →
-        </span>
-
-    @endif
-
-</div>
-
-</div> {{-- aktivitas-container --}}
 
 
 <style>
@@ -832,42 +494,156 @@ rotate(-8deg);
 </style>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-const searchInput = document.getElementById('searchAktivitas');
-
-searchInput.addEventListener('input', function () {
-
-    let keyword = this.value.toLowerCase();
-
-
-    let rows = document.querySelectorAll('.aktivitas-row');
-
-
-    rows.forEach(row => {
-
-
-        let data = row.innerText.toLowerCase();
-
-
-        if(data.includes(keyword)) {
-
-            row.style.display = '';
-
-        } else {
-
-            row.style.display = 'none';
-
-        }
-
-
-    });
-
+    initSearch();
+    initPagination();
 
 });
 
+/* ==========================================================
+| SEARCH
+========================================================== */
+
+function initSearch() {
+
+    const search = document.getElementById("searchAktivitas");
+
+    if (!search) return;
+
+    search.addEventListener("input", function () {
+
+        const keyword = this.value.toLowerCase().trim();
+
+        document.querySelectorAll(".aktivitas-row").forEach(row => {
+
+            row.style.display = row.innerText
+                .toLowerCase()
+                .includes(keyword)
+                ? ""
+                : "none";
+
+        });
+
+    });
+
+}
+
+/* ==========================================================
+| PAGINATION
+========================================================== */
+
+function initPagination() {
+
+    document.querySelectorAll(".pagination-link").forEach(link => {
+
+        link.removeEventListener("click", handlePagination);
+
+        link.addEventListener("click", handlePagination);
+
+    });
+
+}
+
+function handlePagination(e) {
+
+    e.preventDefault();
+
+    const url = this.getAttribute("href");
+
+    if (!url) return;
+
+    loadAktivitas(url);
+
+}
+
+/* ==========================================================
+| AJAX LOAD
+========================================================== */
+
+function loadAktivitas(url) {
+
+    const container = document.getElementById("aktivitas-container");
+
+    if (!container) return;
+
+    /* Loading */
+
+    container.style.pointerEvents = "none";
+    container.style.opacity = ".35";
+    container.style.transform = "translateX(20px)";
+    container.style.transition = "all .3s ease";
+
+    fetch(url, {
+
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+    })
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Gagal memuat data.");
+        }
+
+        return response.text();
+
+    })
+    .then(html => {
+
+        const parser = new DOMParser();
+
+        const doc = parser.parseFromString(html, "text/html");
+
+        const newContainer = doc.querySelector("#aktivitas-container");
+
+        if (!newContainer) {
+
+            throw new Error("Partial aktivitas tidak ditemukan.");
+
+        }
+
+        container.innerHTML = newContainer.innerHTML;
+
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+        container.style.transform = "translateX(0)";
+
+        history.pushState({}, "", url);
+
+        initSearch();
+        initPagination();
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+        container.style.transform = "translateX(0)";
+
+    });
+
+}
+
+/* ==========================================================
+| BACK / FORWARD
+========================================================== */
+
+window.addEventListener("popstate", function () {
+
+    loadAktivitas(location.href);
+
+});
 </script>
 
 
-
 @endsection
-
