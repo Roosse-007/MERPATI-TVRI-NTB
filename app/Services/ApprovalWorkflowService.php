@@ -3,125 +3,269 @@
 namespace App\Services;
 
 use App\Models\Approval;
+use App\Models\ApprovalWorkflow;
 use App\Models\Surat;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+
 
 class ApprovalWorkflowService
 {
     /**
-     * Status awal ketika surat dikirim.
+     * Mengambil seluruh workflow berdasarkan jenis surat.
      */
-    public function getInitialStatus(User $user): string
+    public function getWorkflow(
+    Surat $surat
+    ): Collection
     {
-        $jabatan = $user->jabatan->nama_jabatan ?? '';
-
-        return match ($jabatan) {
-
-            'Ketua Tim Perencana dan Pengendali Program'
-                => 'Menunggu Approval KTU',
-
-            'Kepala Sub Bagian Tata Usaha'
-                => 'Menunggu Approval Kepala Stasiun',
-
-            'Kepala TVRI Stasiun NTB'
-                => 'Disetujui',
-
-            default
-                => 'Menunggu Approval KPP',
-        };
+        return ApprovalWorkflow::with('jabatan')
+            ->where('jenis_surat_id', $surat->jenis_surat_id)
+            ->where('aktif', true)
+            ->orderBy('urutan')
+            ->get();
     }
 
     /**
-     * Status berikutnya.
+     * Langkah pertama approval.
      */
-    public function getNextStatus(Surat $surat): string
-    {
-        return match ($surat->status) {
+    /**
+/**
+ * Workflow pertama yang harus diproses.
+ * Akan melewati jabatan pengirim.
+ */
+public function getFirstAvailableStep(
+    Surat $surat
+): ?ApprovalWorkflow
+{
+    $pengirim = $surat->pengirim;
 
-            'Menunggu Approval KPP'
-                => 'Menunggu Approval KTU',
-
-            'Menunggu Approval KTU'
-                => 'Menunggu Approval Kepala Stasiun',
-
-            'Menunggu Approval Kepala Stasiun'
-                => 'Disetujui',
-
-            default
-                => $surat->status,
-        };
+    if (!$pengirim) {
+        throw new \Exception(
+            'Pengirim surat tidak ditemukan.'
+        );
     }
 
-    /**
-     * Cari approver sesuai status surat.
-     */
-    public function getCurrentApprover(Surat $surat): ?User
-    {
-        $jabatan = match ($surat->status) {
+    return $this->getWorkflow($surat)
+        ->first(function ($workflow) use ($pengirim) {
 
-            'Menunggu Approval KPP'
-                => 'Ketua Tim Perencana dan Pengendali Program',
+            return $workflow->jabatan_id !== $pengirim->jabatan_id;
 
-            'Menunggu Approval KTU'
-                => 'Kepala Sub Bagian Tata Usaha',
+        });
+}
+/**
+ * Workflow berikutnya.
+ * Akan melewati jabatan pengirim.
+ */
+public function getNextAvailableStep(
+    Surat $surat,
+    ApprovalWorkflow $currentWorkflow
+): ?ApprovalWorkflow
+{
+    $pengirim = $surat->pengirim;
 
-            'Menunggu Approval Kepala Stasiun'
-                => 'Kepala TVRI Stasiun NTB',
-
-            default
-                => null,
-        };
-
-        if (!$jabatan) {
-            return null;
-        }
-
-        return User::whereHas('jabatan', function ($q) use ($jabatan) {
-            $q->where('nama_jabatan', $jabatan);
-        })->first();
+    if (!$pengirim) {
+        throw new \Exception(
+            'Pengirim surat tidak ditemukan.'
+        );
     }
 
+    return $this->getWorkflow($surat)
+
+        ->where(
+            'urutan',
+            '>',
+            $currentWorkflow->urutan
+        )
+
+        ->first(function ($workflow) use ($pengirim) {
+
+            return $workflow->jabatan_id !== $pengirim->jabatan_id;
+
+        });
+}
     /**
-     * Proses approval.
+     * Cari user berdasarkan jabatan.
      */
-    public function approve(Surat $surat, User $user): void
+    public function getApproverByStep(ApprovalWorkflow $step): ?User
     {
-        $statusBaru = $this->getNextStatus($surat);
-
-        $surat->update([
-            'status' => $statusBaru,
-        ]);
-
-        if ($statusBaru === 'Disetujui') {
-            $surat->update([
-                'tanggal_selesai' => now(),
-            ]);
-            return;
-        }
-
-        $nextApprover = $this->getCurrentApprover($surat);
-
-        if ($nextApprover) {
-
-            Approval::create([
-                'surat_id'    => $surat->id,
-                'approver_id' => $nextApprover->id,
-                'urutan'      => Approval::where('surat_id', $surat->id)->count() + 1,
-                'status'      => 'Menunggu',
-                'catatan'     => null,
-            ]);
-
-        }
+        return User::where('jabatan_id', $step->jabatan_id)
+            ->where('is_active', true)
+            ->first();
     }
 
-    /**
-     * Proses penolakan.
+        /**
+     * Approval yang sedang aktif.
      */
-    public function reject(Surat $surat, string $catatan = null): void
+    public function getCurrentApproval(
+        Surat $surat,
+        User $user
+    ): ?Approval
+    {
+        return Approval::where('surat_id', $surat->id)
+            ->where('approver_id', $user->id)
+            ->where('status', 'Menunggu')
+            ->first();
+    }
+
+        /**
+     * Menyelesaikan workflow.
+     */
+    private function finishWorkflow(Surat $surat): void
     {
         $surat->update([
-            'status' => 'Ditolak',
-            'catatan' => $catatan,
+            'status'            => 'Disetujui',
+            'tanggal_selesai'   => now(),
         ]);
     }
+
+    /**
+ * Proses approval surat.
+ */
+/**
+ * Proses approval surat.
+ */
+public function approve(
+    Surat $surat,
+    User $user
+): void
+{
+    // Cari approval aktif milik user
+    $approval = $this->getCurrentApproval(
+        $surat,
+        $user
+    );
+
+    if (!$approval) {
+        throw new \Exception(
+            'Approval tidak ditemukan atau sudah diproses.'
+        );
+    }
+
+    // Update approval menjadi disetujui
+    $approval->update([
+        'status'      => 'Disetujui',
+        'approved_at' => now(),
+        'catatan'     => 'Disetujui',
+    ]);
+
+    // Ambil workflow yang sedang berjalan
+    $currentWorkflow = $approval->workflow;
+
+    if (!$currentWorkflow) {
+        throw new \Exception(
+            'Workflow approval tidak ditemukan.'
+        );
+    }
+
+    // Cari workflow berikutnya
+    $nextStep = $this->getNextAvailableStep(
+        $surat,
+        $currentWorkflow
+    );
+
+    // Jika tidak ada workflow berikutnya,
+    // maka surat selesai
+    if (!$nextStep) {
+
+        $this->finishWorkflow($surat);
+
+        return;
+    }
+
+    // Buat approval berikutnya
+    $this->createApproval(
+        $surat,
+        $nextStep
+    );
+
+    // Update status surat
+        $surat->update([
+        'status' => 'Menunggu Approval ' . $nextStep->jabatan->nama_jabatan,
+    ]);
+}
+/**
+ * Membuat satu record approval.
+ */
+private function createApproval(
+    Surat $surat,
+    ApprovalWorkflow $workflow
+): void
+{
+    $approver = $this->getApproverByStep($workflow);
+
+    if (!$approver) {
+        throw new \Exception(
+            'Approver untuk jabatan "' .
+            $workflow->jabatan->nama_jabatan .
+            '" tidak ditemukan.'
+        );
+    }
+
+    if ($approver->id === $surat->pengirim_id) {
+        throw new \Exception(
+            'Pengirim tidak boleh menjadi approver.'
+        );
+    }
+
+    Approval::create([
+        'surat_id'             => $surat->id,
+        'approval_workflow_id' => $workflow->id,
+        'approver_id'          => $approver->id,
+        'urutan'               => $workflow->urutan,
+        'status'               => 'Menunggu',
+        'catatan'              => null,
+        'approved_at'          => null,
+    ]);
+}
+
+/**
+ * Membuat approval pertama berdasarkan workflow.
+ */
+public function createFirstApproval(
+    Surat $surat
+): void
+{
+    // Cegah approval ganda
+    if (Approval::where('surat_id', $surat->id)->exists()) {
+        return;
+    }
+
+    // Pastikan workflow tersedia
+    $workflow = $this->getWorkflow($surat);
+
+    if ($workflow->isEmpty()) {
+        throw new \Exception(
+            'Workflow approval belum dikonfigurasi untuk jenis surat ini.'
+        );
+    }
+
+    // Cari approver pertama
+    $step = $this->getFirstAvailableStep($surat);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pengirim adalah approver terakhir
+    |--------------------------------------------------------------------------
+    */
+
+    if (!$step) {
+
+        $this->finishWorkflow($surat);
+
+        return;
+
+    }
+
+    // Buat approval pertama
+    $this->createApproval(
+        $surat,
+        $step
+    );
+
+    // Update status surat
+        $surat->update([
+        'status' => 'Menunggu Approval ' . $step->jabatan->nama_jabatan,
+        'tanggal_kirim' => now(),
+    ]);
+}
 }

@@ -9,14 +9,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('surat', function (Blueprint $table) {
-            $table->dropColumn('isi_surat');
+
+            if (Schema::hasColumn('surat', 'isi_surat')) {
+
+                $table->dropColumn('isi_surat');
+
+            }
+
         });
     }
+
 
     public function down(): void
     {
         Schema::table('surat', function (Blueprint $table) {
+
             $table->longText('isi_surat');
+
         });
     }
 };

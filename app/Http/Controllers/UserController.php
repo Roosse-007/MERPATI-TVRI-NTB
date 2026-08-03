@@ -205,21 +205,4 @@ public function update(Request $request, string $id)
         ->with('success','Data user berhasil diperbarui.');
 }
 
-    /**
-     * Menghapus user.
-     */
-    public function destroy(string $id)
-    {
-        $user = User::findOrFail($id);
-
-        // Hapus semua role yang dimiliki user
-        $user->syncRoles([]);
-
-        // Hapus user
-        $user->delete();
-
-        return redirect()
-            ->route('admin.users')
-            ->with('success', 'User berhasil dihapus.');
-    }
 }

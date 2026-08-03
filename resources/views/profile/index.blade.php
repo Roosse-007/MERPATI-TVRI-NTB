@@ -4,77 +4,96 @@
 
 @section('content')
 
+@if(session('success'))
 
-<div class="max-w-5xl mx-auto">
+<div
+class="
+mb-6
+rounded-2xl
+bg-green-100
+border
+border-green-300
+text-green-700
+px-6
+py-4
+font-semibold
+shadow
+flex
+items-center
+gap-3
+">
+
+<i data-lucide="check-circle"
+class="w-6 h-6">
+</i>
 
 
-{{-- Header Profile --}}
+{{ session('success') }}
 
+
+</div>
+
+@endif
+
+<div class="max-w-6xl mx-auto space-y-8">
+
+
+{{-- HEADER PROFILE --}}
 <div class="
 relative
 overflow-hidden
-rounded-[36px]
-bg-gradient-to-r
-from-blue-700
-via-blue-600
-to-cyan-400
-px-10
-py-8
+rounded-[35px]
+p-10
 text-white
 shadow-2xl
-border
-border-white/20
+bg-gradient-to-br
+from-blue-900
+via-blue-600
+to-cyan-400
 ">
 
-    {{-- Blur Background --}}
-    <div class="
-    absolute
-    right-0
-    top-0
-    w-80
-    h-80
-    bg-white/20
-    rounded-full
-    blur-3xl
-    ">
-    </div>
 
-    {{-- Lingkaran Dekoratif --}}
-    <div class="
-    absolute
-    -bottom-10
-    -right-10
-    w-72
-    h-72
-    border
-    border-white/10
-    rounded-full
-    ">
-    </div>
-
-    <div class="
-    absolute
-    -bottom-20
-    -right-20
-    w-96
-    h-96
-    border
-    border-white/5
-    rounded-full
-    ">
-    </div>
-
-    <div class="
-    relative
-    flex
-    items-center
-    gap-8
-    ">
+{{-- Background effect --}}
+<div class="
+absolute
+-right-20
+-top-20
+w-96
+h-96
+rounded-full
+bg-white/10
+blur-3xl
+">
+</div>
 
 
 <div class="
-w-36
-h-36
+absolute
+bottom-0
+right-0
+w-72
+h-72
+border
+border-white/20
+rounded-full
+">
+</div>
+
+
+
+<div class="
+relative
+flex
+items-center
+gap-10
+">
+
+
+{{-- Avatar --}}
+
+<div class="
+w-40
+h-40
 rounded-full
 bg-white/20
 backdrop-blur-xl
@@ -83,12 +102,14 @@ border-white/40
 flex
 items-center
 justify-center
-shadow-2xl
+shadow-xl
 ">
 
+
 <i data-lucide="user-round"
-class="w-16 h-16 text-white">
+class="w-20 h-20 text-white">
 </i>
+
 
 </div>
 
@@ -96,103 +117,194 @@ class="w-16 h-16 text-white">
 
 <div>
 
+
 <h1 class="
-text-4xl
+text-5xl
 font-black
+tracking-wide
 ">
 
-Admin TVRI NTB
+{{ $user->name }}
 
 </h1>
 
 
-<p class="text-blue-100 mt-2">
-    Administrator Sistem E-Surat
-</p>
 
-<div class="mt-4 flex items-center gap-3">
-
-    <span class="
-    px-4
-    py-2
-    rounded-full
-    bg-white/20
-    backdrop-blur
-    text-sm
-    font-semibold
-    ">
-        Administrator
-    </span>
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-{{-- Detail --}}
-
-<div class="
-mt-8
-grid
-md:grid-cols-2
-gap-6
+<p class="
+mt-3
+text-xl
+text-blue-100
 ">
 
+Sistem MERPATI TVRI NTB
+
+</p>
+
+
+
+<div class="mt-5">
+
+
+<span class="
+inline-flex
+items-center
+gap-2
+px-5
+py-2
+rounded-full
+bg-white/20
+backdrop-blur-md
+font-semibold
+">
+
+<i data-lucide="shield-check"
+class="w-5 h-5">
+</i>
+
+Pengguna Sistem
+
+</span>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+{{-- INFORMASI --}}
 
 <div class="
 bg-white
-rounded-[30px]
-p-8
+rounded-[35px]
 shadow-xl
 border
 border-slate-100
-hover:-translate-y-1
-hover:shadow-2xl
-transition-all
-duration-300
+p-10
 ">
 
 
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-3 mb-8">
 
-<i
-data-lucide="user-round"
-class="w-6 h-6 text-blue-600">
+<i data-lucide="user-round"
+class="text-blue-600 w-7 h-7">
 </i>
 
-<h2 class="text-2xl font-bold">
+
+<h2 class="
+text-3xl
+font-bold
+text-slate-800
+">
 
 Informasi Pribadi
 
 </h2>
 
+
 </div>
 
 
 
 
-<div class="space-y-5">
+
+<div class="space-y-6">
+
+
+
+{{-- Nama --}}
+
+<div class="
+flex
+items-center
+gap-5
+p-5
+rounded-2xl
+bg-blue-50
+">
+
+<div class="
+w-14
+h-14
+rounded-xl
+bg-blue-600
+flex
+items-center
+justify-center
+text-white
+">
+
+<i data-lucide="user"
+class="w-7 h-7">
+</i>
+
+</div>
 
 
 <div>
 
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="user" class="w-4 h-4"></i>
-    Nama
+<p class="text-slate-400 text-sm">
+Nama
 </p>
 
-<p class="font-bold">
-Admin TVRI
+
+<p class="
+font-bold
+text-lg
+text-slate-800
+">
+
+{{ $user->name }}
+
 </p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+{{-- Email --}}
+
+<div class="
+flex
+items-center
+gap-5
+p-5
+rounded-2xl
+bg-cyan-50
+">
+
+<div class="
+w-14
+h-14
+rounded-xl
+bg-cyan-500
+flex
+items-center
+justify-center
+text-white
+">
+
+<i data-lucide="mail"
+class="w-7 h-7">
+</i>
 
 </div>
 
@@ -200,30 +312,20 @@ Admin TVRI
 
 <div>
 
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="mail" class="w-4 h-4"></i>
-    Email
-</p>
-<p class="font-bold">
-admin@tvri.com
+<p class="text-slate-400 text-sm">
+Email
 </p>
 
-</div>
 
+<p class="
+font-bold
+text-lg
+text-slate-800
+">
 
+{{ $user->email }}
 
-<div>
-
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="phone" class="w-4 h-4"></i>
-    No Telepon
 </p>
-
-<p class="font-bold">
-0812xxxxxxx
-</p>
-
-</div>
 
 
 </div>
@@ -233,165 +335,124 @@ admin@tvri.com
 
 
 
+</div>
 
+
+</div>
+
+
+
+
+
+
+
+
+{{-- BUTTON ACTION --}}
 
 <div class="
 bg-white
-rounded-[30px]
-p-8
+rounded-[35px]
 shadow-xl
 border
 border-slate-100
-hover:-translate-y-1
-hover:shadow-2xl
-transition-all
-duration-300
+p-8
 ">
 
 
-<div class="flex items-center gap-3 mb-6">
+<h3 class="
+text-xl
+font-bold
+text-slate-800
+mb-5
+">
 
-<i
-data-lucide="briefcase-business"
-class="w-6 h-6 text-cyan-600">
+Aksi
+
+</h3>
+
+
+
+
+<div class="flex gap-5">
+
+
+<a href="{{ route('profile.edit') }}"
+class="
+px-8
+py-4
+rounded-2xl
+font-bold
+text-white
+shadow-lg
+bg-gradient-to-r
+from-blue-700
+to-cyan-400
+hover:scale-105
+transition
+flex
+items-center
+gap-3
+">
+
+
+<i data-lucide="edit"
+class="w-5 h-5">
 </i>
 
-<h2 class="text-2xl font-bold">
 
-Informasi Pekerjaan
+Edit Profil
 
-</h2>
-
-</div>
+</a>
 
 
 
 
-<div class="space-y-5">
 
 
-<div>
+<form action="{{ route('logout') }}"
+method="POST">
 
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="building-2" class="w-4 h-4"></i>
-    Unit Kerja
-</p>
-<p class="font-bold">
-TVRI NTB
-</p>
-
-</div>
+@csrf
 
 
-
-<div>
-
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="briefcase-business" class="w-4 h-4"></i>
-    Jabatan
-</p>
-
-<p class="font-bold">
-Administrator
-</p>
-
-</div>
-
-
-
-<div>
-
-<p class="flex items-center gap-2 text-slate-400 text-sm">
-    <i data-lucide="shield-check" class="w-4 h-4"></i>
-    Role
-</p>
-
-<p class="
-inline-block
-bg-blue-100
-text-blue-700
-px-4
-py-2
-rounded-xl
+<button
+class="
+px-8
+py-4
+rounded-2xl
 font-bold
+text-blue-700
+border-2
+border-blue-600
+hover:bg-blue-600
+hover:text-white
+transition
+flex
+items-center
+gap-3
 ">
 
-Admin
 
-</p>
+<i data-lucide="log-out"
+class="w-5 h-5">
+</i>
+
+
+Logout
+
+
+</button>
+
+
+</form>
+
+
 
 </div>
 
 
-
 </div>
 
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<div class="flex items-center gap-4 mt-8">
-
-    {{-- Tombol Edit Profil --}}
-    <button class="
-    bg-gradient-to-r
-    from-blue-600
-    to-cyan-400
-    text-white
-    px-8
-    py-4
-    rounded-2xl
-    font-bold
-    shadow-lg
-    hover:-translate-y-1
-    hover:shadow-xl
-    transition-all
-    duration-300
-    transition
-    ">
-        Edit Profil
-    </button>
-
-    {{-- Tombol Logout --}}
-    <form action="{{ route('logout') }}" method="POST">
-
-        @csrf
-
-        <button
-            type="submit"
-            class="
-            bg-gradient-to-r
-            from-red-500
-            to-red-700
-            text-white
-            px-8
-            py-4
-            rounded-2xl
-            font-bold
-            shadow-lg
-            hover:scale-105
-            transition
-            flex
-            items-center
-            gap-2
-            ">
-
-            <i data-lucide="log-out" class="w-5 h-5"></i>
-
-            Logout
-
-        </button>
-
-    </form>
-
-</div>
 
 
 

@@ -53,13 +53,16 @@ public function login(Request $request)
         }
 
     }
-
     RateLimiter::clear($key);
 
     $request->session()->regenerate();
 
     return redirect()->route('dashboard');
 }
+
+/**
+ * Logout
+ */
 
 public function logout(Request $request)
 {
@@ -68,7 +71,9 @@ public function logout(Request $request)
     $request->session()->invalidate();
 
     $request->session()->regenerateToken();
+    return redirect()
+        ->route('login')
+        ->with('success', 'Berhasil logout.');
 
-    return redirect()->route('login');
 }
 }

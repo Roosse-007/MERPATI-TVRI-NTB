@@ -168,10 +168,10 @@
 
         <form method="GET" action="{{ route('surat.approval') }}">
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2  ">
 
                 {{-- SEARCH --}}
-                <div class="lg:col-span-5">
+                <div class="lg:col-span-4">
 
                     <div class="relative">
 
@@ -190,43 +190,35 @@
                 </div>
 
                 {{-- STATUS --}}
-                <div class="lg:col-span-3">
+<div class="lg:col-span-3">
 
-                    <select
-                        name="status"
-                        class="w-full rounded-2xl border-slate-300 py-3">
+    <select
+        name="status"
+        class="w-full rounded-2xl border-slate-300 py-3">
 
-                        <option value="">Semua Status</option>
+        <option value="">Semua Status</option>
 
-                        <option value="Menunggu Approval KPP"
-                            {{ request('status')=='Menunggu Approval KPP'?'selected':'' }}>
-                            Menunggu Approval KPP
-                        </option>
+        <option
+            value="Menunggu Approval"
+            {{ request('status') == 'Menunggu Approval' ? 'selected' : '' }}>
+            Menunggu Approval
+        </option>
 
-                        <option value="Menunggu Approval KTU"
-                            {{ request('status')=='Menunggu Approval KTU'?'selected':'' }}>
-                            Menunggu Approval KTU
-                        </option>
+        <option
+            value="Disetujui"
+            {{ request('status') == 'Disetujui' ? 'selected' : '' }}>
+            Disetujui
+        </option>
 
-                        <option value="Menunggu Approval Kepala Stasiun"
-                            {{ request('status')=='Menunggu Approval Kepala Stasiun'?'selected':'' }}>
-                            Menunggu Approval Kepala Stasiun
-                        </option>
+        <option
+            value="Ditolak"
+            {{ request('status') == 'Ditolak' ? 'selected' : '' }}>
+            Ditolak
+        </option>
 
-                        <option value="Disetujui"
-                            {{ request('status')=='Disetujui'?'selected':'' }}>
-                            Disetujui
-                        </option>
+    </select>
 
-                        <option value="Ditolak"
-                            {{ request('status')=='Ditolak'?'selected':'' }}>
-                            Ditolak
-                        </option>
-
-                    </select>
-
-                </div>
-
+</div>
                 {{-- BUTTON --}}
                 <div class="lg:col-span-4 flex gap-3">
 
@@ -263,39 +255,40 @@
 
         @php
 
-            $status = $item->status;
-
-            $badgeColor='bg-gray-100 text-gray-700';
-
-            $badgeIcon='clock-3';
-
-            if(str_contains($status,'KPP')){
-                $badgeColor='bg-yellow-100 text-yellow-700';
-                $badgeIcon='clock-3';
-            }
-
-            elseif(str_contains($status,'KTU')){
-                $badgeColor='bg-blue-100 text-blue-700';
-                $badgeIcon='file-pen-line';
-            }
-
-            elseif(str_contains($status,'Kepala')){
-                $badgeColor='bg-purple-100 text-purple-700';
-                $badgeIcon='badge-check';
-            }
-
-            elseif($status=='Disetujui'){
-                $badgeColor='bg-green-100 text-green-700';
-                $badgeIcon='circle-check-big';
-            }
-
-            elseif($status=='Ditolak'){
-                $badgeColor='bg-red-100 text-red-700';
-                $badgeIcon='circle-x';
-            }
+        $currentApproval = $item->approval
+            ->where('approver_id', auth()->id())
+            ->where('status','Menunggu')
+            ->first();
 
         @endphp
 
+@php
+
+$status = $item->status;
+
+$badgeColor = 'bg-yellow-100 text-yellow-700';
+$badgeIcon  = 'clock-3';
+
+switch ($status) {
+
+    case 'Disetujui':
+        $badgeColor = 'bg-green-100 text-green-700';
+        $badgeIcon  = 'circle-check-big';
+        break;
+
+    case 'Ditolak':
+        $badgeColor = 'bg-red-100 text-red-700';
+        $badgeIcon  = 'circle-x';
+        break;
+
+    case 'Menunggu Approval':
+        $badgeColor = 'bg-yellow-100 text-yellow-700';
+        $badgeIcon  = 'clock-3';
+        break;
+
+}
+
+@endphp
         <div
             class="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
 
@@ -352,236 +345,239 @@
                             <div>
 
                                 <p class="text-slate-400 text-sm">
-                                    Status
-                                </p>
+                                        Status
+                                    </p>
 
-                                <span
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold {{ $badgeColor }}">
+                                    @php
 
-                                    <i data-lucide="{{ $badgeIcon }}" class="w-4 h-4"></i>
+                                    $currentApproval = $item->approval
+                                        ->where('status', 'Menunggu')
+                                        ->sortBy('urutan')
+                                        ->first();
 
-                                    {{ $status }}
+                                    $statusLabel = $status;
 
-                                </span>
+                                    if ($currentApproval) {
+
+                                        $statusLabel = 'Menunggu ' .
+                                        (
+                                            $currentApproval->workflow?->jabatan?->nama_jabatan
+                                            ?? '-'
+                                        );
+                                    }
+
+                                    @endphp
+
+                                    <span
+                                        class="inline-flex items-center
+                                            gap-2
+                                            px-3 py-2
+                                            rounded-full
+                                            text-sm
+                                            font-semibold
+                                            max-w-[240px]
+                                            truncate
+                                            {{ $badgeColor }}">
+
+                                        <i
+                                            data-lucide="{{ $badgeIcon }}"
+                                            class="w-4 h-4 shrink-0">
+                                        </i>
+
+                                        <span class="truncate">
+                                            {{ $statusLabel }}
+                                        </span>
+
+                                    </span>
 
                             </div>
 
                         </div>
 
                     </div>
-
-                                        {{-- PROGRESS APPROVAL --}}
-                    @php
-
-                        $step = 0;
-
-                        if ($status == 'Menunggu Approval KPP') {
-                            $step = 1;
-                        } elseif ($status == 'Menunggu Approval KTU') {
-                            $step = 2;
-                        } elseif ($status == 'Menunggu Approval Kepala Stasiun') {
-                            $step = 3;
-                        } elseif ($status == 'Disetujui') {
-                            $step = 4;
-                        }
-
-                    @endphp
 
                     <div class="mt-10 pt-8 border-t border-slate-200">
 
-                        <h4 class="font-bold text-slate-700 mb-4">
-                            Progress Approval
-                        </h4>
+    <h4 class="font-bold text-slate-700 mb-6">
+        Progress Approval
+    </h4>
+    
+<div class="flex items-center">
 
-                        <div class="grid grid-cols-4 gap-3">
+@php
 
-                            {{-- KPP --}}
-                            <div class="text-center">
+$workflows = $item->jenisSurat?->approvalWorkflows ?? collect();
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 1 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+@endphp
 
-                                    <i data-lucide="check"></i>
+@foreach($workflows as $workflow)
 
-                                </div>
+    @php
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    KPP
-                                </p>
+$approval = $item->approval->firstWhere(
+    'approval_workflow_id',
+    $workflow->id
+);
 
-                            </div>
+$iconBg = 'bg-slate-200 text-slate-500';
+$icon   = 'circle';
 
-                            {{-- KTU --}}
-                            <div class="text-center">
+/*
+|--------------------------------------------------------------------------
+| Jabatan pengirim dianggap otomatis selesai
+|--------------------------------------------------------------------------
+*/
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 2 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+if (
+    $workflow->jabatan_id == $item->pengirim->jabatan_id
+) {
 
-                                    <i data-lucide="file-pen-line"></i>
+    $iconBg = 'bg-green-500 text-white';
+    $icon   = 'check';
 
-                                </div>
+}
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    KTU
-                                </p>
+/*
+|--------------------------------------------------------------------------
+| Approval yang benar-benar ada
+|--------------------------------------------------------------------------
+*/
 
-                            </div>
+elseif ($approval) {
 
-                            {{-- Kepala --}}
-                            <div class="text-center">
+    if ($approval->status == 'Disetujui') {
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 3 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+        $iconBg = 'bg-green-500 text-white';
+        $icon = 'check';
 
-                                    <i data-lucide="badge-check"></i>
+    } elseif ($approval->status == 'Ditolak') {
 
-                                </div>
+        $iconBg = 'bg-red-500 text-white';
+        $icon = 'x';
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    Kepala
-                                </p>
+    } elseif ($approval->status == 'Menunggu') {
 
-                            </div>
+        $iconBg = 'bg-amber-400 text-white';
+        $icon = 'hourglass';
 
-                            {{-- Final --}}
-                            <div class="text-center">
+    }
 
-                                <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                                    {{ $step >= 4 ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-500' }}">
+}   
 
-                                    <i data-lucide="circle-check-big"></i>
+    @endphp
 
-                                </div>
+    <div class="flex flex-col items-center">
 
-                                <p class="text-sm mt-2 font-semibold">
-                                    Final
-                                </p>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center {{ $iconBg }}">
+            <i data-lucide="{{ $icon }}" class="w-4 h-4"></i>
+        </div>
 
-                            </div>
+        <span class="mt-2 text-[10px] font-medium text-slate-600 text-center max-w-[70px] leading-tight">
 
-                        </div>
+            {{ Str::words($workflow->jabatan?->nama_jabatan ?? '-', 2, '') }}
 
-                    </div>
+        </span>
 
+    </div>
 
-                    {{-- ACTION --}}
-                    <div class="mt-10 pt-8 border-t border-slate-200 flex flex-wrap items-center gap-4">
+    @if(!$loop->last)
+        <div class="w-6 h-0.5 bg-slate-300 mx-2"></div>
+    @endif
 
-                      <a
-                            href="{{ route('surat.detail', $item->id) }}"
-                            title="Detail"
-                            class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+@endforeach
 
-                            <i data-lucide="eye" class="w-5 h-5"></i>
+@if($workflows->isNotEmpty())
 
-                        </a>
+    <div class="w-6 h-0.5 bg-slate-300 mx-2"></div>
 
-                        {{-- KPP --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Ketua Tim Perencana dan Pengendali Program' &&
-                            $status=='Menunggu Approval KPP')
+@endif
+<div class="flex flex-col items-center">
 
-                            <form method="POST" action="{{ route('approval.kpp.approve',$item->id) }}">
-                                @csrf
+    <div
+        class="w-9 h-9 rounded-full
+               flex items-center justify-center
 
-                                <button
-                                    title="Setujui"
-                                    class="w-11 h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition">
+               {{ $item->status=='Disetujui'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-slate-200 text-slate-500' }}">
 
-                                    <i data-lucide="check" class="w-5 h-5"></i>
+        <i
+            data-lucide="badge-check"
+            class="w-4 h-4">
+        </i>
 
-                                </button>
+    </div>
 
-                            </form>
+    <span
+        class="mt-2
+               text-[10px]
+               font-medium
+               text-slate-600">
 
-                            <form method="POST" action="{{ route('approval.kpp.reject',$item->id) }}">
-                                @csrf
+        Final
 
-                                <button
-                                    title="Tolak"
-                                    class="w-11 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition">
+    </span>
 
-                                    <i data-lucide="x" class="w-5 h-5"></i>
+</div>
 
-                                </button>
+</div>
 
-                            </form>
+</div>
 
-                        @endif
+{{-- ACTION --}}
+<div class="mt-10 pt-8 border-t border-slate-200 flex flex-wrap items-center gap-3">
 
+    {{-- Detail --}}
+    <a
+        href="{{ route('surat.detail', $item->id) }}"
+        title="Lihat Detail"
+        class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
 
-                        {{-- KTU --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Kepala Sub Bagian Tata Usaha' &&
-                            $status=='Menunggu Approval KTU')
+        <i data-lucide="eye" class="w-5 h-5"></i>
 
-                            <form method="POST" action="{{ route('approval.ktu.approve',$item->id) }}">
-                                @csrf
+    </a>
 
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold">
+    @if($currentApproval)
 
-                                    <i data-lucide="check"></i>
+        {{-- Setujui --}}
+        <form
+            method="POST"
+            action="{{ route('approval.approve', $item->id) }}">
 
-                                    Setujui
+            @csrf
 
-                                </button>
+            <button
+                type="submit"
+                title="Setujui Surat"
+                class="w-11 h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition">
 
-                            </form>
+                <i data-lucide="check" class="w-5 h-5"></i>
 
-                            <form method="POST" action="{{ route('approval.ktu.reject',$item->id) }}">
-                                @csrf
+            </button>
 
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold">
+        </form>
 
-                                    <i data-lucide="x"></i>
+        {{-- Tolak --}}
+        <form
+            method="POST"
+            action="{{ route('approval.reject', $item->id) }}">
 
-                                    Tolak
+            @csrf
 
-                                </button>
+            <button
+                type="submit"
+                title="Tolak Surat"
+                class="w-11 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition">
 
-                            </form>
+                <i data-lucide="x" class="w-5 h-5"></i>
 
-                        @endif
+            </button>
 
+        </form>
 
-                        {{-- Kepala --}}
-                        @if(auth()->user()->jabatan &&
-                            auth()->user()->jabatan->nama_jabatan=='Kepala TVRI Stasiun NTB' &&
-                            $status=='Menunggu Approval Kepala Stasiun')
+    @endif
 
-                            <form method="POST" action="{{ route('approval.kepala.approve',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold">
-
-                                    <i data-lucide="check"></i>
-
-                                    Setujui
-
-                                </button>
-
-                            </form>
-
-                            <form method="POST" action="{{ route('approval.kepala.reject',$item->id) }}">
-                                @csrf
-
-                                <button
-                                    class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold">
-
-                                    <i data-lucide="x"></i>
-
-                                    Tolak
-
-                                </button>
-
-                            </form>
-
-                        @endif
-
-                </div>
+</div>
 
             </div>
         

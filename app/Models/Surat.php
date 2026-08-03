@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Lampiran;
 
 
 class Surat extends Model
@@ -27,7 +28,7 @@ class Surat extends Model
 
         'sifat_surat_id',
 
-        'prioritas_surat_id',
+        //'prioritas_surat_id',
 
         'template_surat_id',
 
@@ -144,19 +145,6 @@ class Surat extends Model
 
     }
 
-
-
-    public function prioritasSurat(): BelongsTo
-    {
-
-        return $this->belongsTo(
-            PrioritasSurat::class
-        );
-
-    }
-
-
-
     public function templateSurat(): BelongsTo
     {
 
@@ -198,26 +186,13 @@ class Surat extends Model
 | APPROVAL
 |--------------------------------------------------------------------------
 */
-
-public function approvals(): HasMany
-{
-    return $this->hasMany(
-        Approval::class,
-        'surat_id'
-    );
-}
-
 public function approval(): HasMany
 {
     return $this->hasMany(
         Approval::class,
         'surat_id'
-    );
+    )->orderBy('urutan');
 }
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | DISPOSISI
@@ -288,14 +263,14 @@ public function suratInduk(): BelongsTo
 }
 
 
-
 public function balasan(): HasMany
 {
     return $this->hasMany(
         Surat::class,
         'parent_surat_id'
-    );
+    )->latest();
 }
+
 
     /*
     |--------------------------------------------------------------------------

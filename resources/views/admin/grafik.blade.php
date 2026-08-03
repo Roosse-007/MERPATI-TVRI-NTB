@@ -283,26 +283,22 @@ Dokumen tersimpan
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
-
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 <h2 class="text-xl font-bold mb-5">
 Trend Surat Bulanan
 </h2>
 
+<div class="relative w-full h-[350px]">
 
 <canvas id="trendSurat"></canvas>
 
+</div>
 
 </div>
 
 
-
-
-
-
-
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -310,7 +306,11 @@ Perbandingan Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="compareSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -328,7 +328,7 @@ Perbandingan Surat
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -336,7 +336,11 @@ Status Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="statusSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -345,7 +349,7 @@ Status Surat
 
 
 
-<div class="bg-white rounded-2xl shadow p-6">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -353,7 +357,11 @@ Kategori Surat
 </h2>
 
 
+<div class="relative w-full h-[350px]">
+
 <canvas id="kategoriSurat"></canvas>
+
+</div>
 
 
 </div>
@@ -371,7 +379,7 @@ Kategori Surat
 
 <!-- INSIGHT -->
 
-<div class="bg-white rounded-2xl shadow p-6 mt-8">
+<div class="bg-white rounded-3xl shadow-lg p-6">
 
 
 <h2 class="text-xl font-bold mb-5">
@@ -499,9 +507,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
             },
 
-
             options:{
-                responsive:true
+                responsive:true,
+                maintainAspectRatio:false
             }
 
         }
@@ -540,7 +548,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
             options:{
-                responsive:true
+                responsive:true,
+                maintainAspectRatio:false
             }
 
         }
@@ -577,7 +586,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
             options:{
-                responsive:true
+                responsive:true,
+                maintainAspectRatio:false
             }
 
         }
@@ -617,9 +627,10 @@ document.addEventListener('DOMContentLoaded', function(){
             },
 
 
-            options:{
-                responsive:true
-            }
+          options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
 
         }
 

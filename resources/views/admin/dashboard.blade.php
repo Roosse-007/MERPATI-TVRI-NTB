@@ -240,78 +240,99 @@ Dokumen tersimpan
 
 
 
-
-
-
-
-
 <!-- QUICK MENU -->
 
+<div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
 
-<div class="mt-8 bg-white rounded-2xl shadow p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        Menu Cepat
+    </h2>
 
+    <div class="quick-menu grid grid-cols-2 md:grid-cols-4 gap-6">
 
-<h2 class="text-xl font-bold mb-5">
+        <!-- Kelola User -->
+        <a href="/admin/users"
+            class="block bg-blue-100 hover:bg-blue-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-Menu Cepat
+            <div class="w-16 h-16 mx-auto rounded-full bg-blue-600 flex items-center justify-center mb-4">
 
-</h2>
+                <i class="bi bi-person-gear text-white text-3xl"></i>
 
+            </div>
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <h3 class="text-gray-800 font-medium text-lg">
+                Kelola User
+            </h3>
 
+            <p class="text-gray-600 text-sm mt-2">
+                Manajemen akun pengguna
+            </p>
 
-<a href="/admin/users"
-class="p-5 rounded-xl bg-blue-50 hover:bg-blue-100 text-center">
+        </a>
 
+        <!-- Template Surat -->
+        <a href="/admin/template-surat"
+            class="block bg-green-100 hover:bg-green-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-<div class="text-3xl text-blue-600">
-    <i class="bi bi-person-gear"></i>
+<div class="w-16 h-16 mx-auto rounded-full bg-green-600 flex items-center justify-center mb-4">
+
+    <i class="bi bi-file-earmark-richtext-fill text-white text-3xl"></i>
+
 </div>
 
+                <i class="bi bi-file-earmark-richtext-fill text-white text-3xl"></i>
 
-<p class="mt-2 font-semibold">
-Kelola User
-</p>
+            </div>
 
+           <h3 class="text-gray-800 font-normal text-lg">
+                Template Surat
+            </h3>
 
-</a>
+            <p class="text-gray-600 text-sm mt-2">
+                Kelola template surat
+            </p>
 
+        </a>
 
+        <!-- Laporan -->
+        <a href="/admin/laporan"
+            class="block bg-yellow-100 hover:bg-yellow-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-<a href="/admin/template-surat"
-class="p-5 rounded-xl bg-green-50 hover:bg-green-100 text-center">
+            <div class="w-16 h-16 mx-auto rounded-full bg-yellow-600 flex items-center justify-center mb-4">
 
-
-<div class="text-3xl text-green-600">
-    <i class="bi bi-file-earmark-richtext"></i>
-</div>
-
-<p class="mt-2 font-semibold">
-Template Surat
-</p>
-
-
-</a>
+                <i class="bi bi-bar-chart-fill text-white text-3xl"></i>
 
 
+            </div>
+
+            <h3 class="text-gray-800 font-normal text-lg">
+                Laporan
+            </h3>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Statistik dan laporan
+            </p>
 
 
-<a href="/admin/laporan"
-class="p-5 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-center">
+        </a>
 
+        <!-- Arsip -->
+        <a href="/surat/arsip"
+            class="block bg-purple-100 hover:bg-purple-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-<div class="text-3xl text-yellow-600">
-    <i class="bi bi-bar-chart-fill"></i>
-</div>
+            <div class="w-16 h-16 mx-auto rounded-full bg-purple-600 flex items-center justify-center mb-4">
 
+                <i class="bi bi-folder-fill text-white text-3xl"></i>
 
-<p class="mt-2 font-semibold">
-Laporan
-</p>
+            </div>
 
+            <h3 class="text-gray-800 font-normal text-lg">
+                Arsip
+            </h3>
 
-</a>
+            <p class="text-gray-600 text-sm mt-2">
+                Dokumen yang diarsipkan
+            </p>
 
 
 
@@ -333,19 +354,9 @@ Arsip
 </a>
 
 
+    </div>
+
 </div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
 
 <!-- CHART -->
 
@@ -436,11 +447,6 @@ $total = $totalSurat > 0
 
 </div>
 
-    <div 
-        class="bg-blue-600 h-3 rounded-full progress-bar"
-        data-width="{{ $total }}">
-    </div>
-
 </div>
 
 
@@ -496,7 +502,7 @@ Aktivitas Terbaru
         {{ $item['deskripsi'] }}
     </p>
 
-    <span class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+    <span class="inline-block mt-2 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
         {{ $item['status'] }}
     </span>
 
@@ -510,8 +516,6 @@ Aktivitas Terbaru
 
 @endforeach
 
-
-
 </div>
 
 
@@ -519,7 +523,6 @@ Aktivitas Terbaru
 
 
 
-<!-- SURAT TERBARU -->
 
 
 <div class="bg-white rounded-2xl shadow mt-8 overflow-hidden">

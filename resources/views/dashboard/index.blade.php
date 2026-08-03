@@ -1,9 +1,11 @@
+
+
+
 @extends('layouts.app')
 
 @section('title','Dashboard')
 
 @section('content')
-
 
 {{-- HERO SECTION --}}
 <section class="
@@ -14,66 +16,24 @@ bg-gradient-to-br
 from-blue-700
 via-blue-600
 to-cyan-400
-p-10
-text-white
+h-72
+px-10
+flex
+items-center
 shadow-2xl
 ">
 
 
-<div class="
-absolute
--top-20
--right-20
-w-72
-h-72
-bg-white/20
-rounded-full
-blur-3xl
-">
-</div>
-
-
-
-<div class="
-absolute
-bottom-0
-left-0
-w-60
-h-60
-bg-cyan-200/20
-rounded-full
-blur-3xl
-">
-</div>
-
-
-
-
-
-<div class="
-relative
-flex
-justify-between
-items-center
-">
-
-
-<div>
-
-
-
-
-
-
+{{-- TEXT --}}
+<div class="relative z-10">
 
 <h1 class="
 text-5xl
 font-black
-mt-3
+text-white
+tracking-wide
 ">
-
 MERPATI TVRI NTB
-
 </h1>
 
 
@@ -83,9 +43,7 @@ text-xl
 font-semibold
 text-blue-100
 ">
-
 Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
-
 </p>
 
 
@@ -93,32 +51,18 @@ Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
 
 
 
-
-
-
-{{-- BURUNG TERBANG --}}
-
-<div class="
-hidden
-lg:flex
-text-[140px]
-flying-bird
-">
-
-
-<div class="bird">
-
-🕊️
-
-</div>
-
-
-</div>
-
-
-
-
-</div>
+{{-- BURUNG --}}
+<img
+src="{{ asset('image/merpati-surat.png') }}"
+class="
+absolute
+right-16
+bottom-6
+w-100
+drop-shadow-2xl
+dove-animation
+"
+/>
 
 
 </section>
@@ -401,252 +345,71 @@ class="
 </div>
 
 
+{{-- ========================================================= --}}
 {{-- AKTIVITAS TERBARU --}}
+{{-- ========================================================= --}}
 
-<div class="
-mt-10
-w-full
-bg-white
-rounded-[32px]
-p-10
-shadow-lg
-">
+<div class="bg-white rounded-[30px] shadow-lg mt-10 p-8">
 
+    <div class="flex items-center justify-between mb-8">
 
-{{-- HEADER --}}
+        <div>
 
-<div class="
-flex
-items-center
-gap-4
-mb-8
-">
+            <h2 class="text-2xl font-black text-slate-800">
 
+                Aktivitas Terbaru
 
-<div class="flex items-center gap-4">
+            </h2>
 
-    <div class="
-    w-12
-    h-12
-    rounded-2xl
-    bg-blue-100
-    flex
-    items-center
-    justify-center
-    ">
+            <p class="text-slate-500 mt-1">
 
-        <i data-lucide="activity"
-        class="
-        w-6
-        h-6
-        text-blue-600
-        ">
-        </i>
+                Riwayat aktivitas terbaru pada sistem MERPATI.
+
+            </p>
+
+        </div>
+
+        <div class="relative">
+
+            <i class="bi bi-search
+                absolute
+                left-4
+                top-1/2
+                -translate-y-1/2
+                text-slate-400"></i>
+
+            <input
+                id="searchAktivitas"
+                type="text"
+                placeholder="Cari aktivitas..."
+
+                class="
+                w-64
+                pl-11
+                pr-4
+                py-3
+
+                rounded-xl
+
+                border
+
+                bg-slate-50
+
+                focus:ring-2
+                focus:ring-blue-500
+                focus:outline-none">
+
+        </div>
 
     </div>
 
-
-    <h2 class="
-    text-3xl
-    font-black
-    text-slate-800
-    ">
-        Aktivitas Terbaru
-    </h2>
-
+    @include('dashboard.aktivitas')
 
 </div>
-
-
-</div>
-
-
-
-
-
-<div class="
-space-y-4
-">
-
-
-@forelse($aktivitas as $item)
-
-
-
-<div class="
-flex
-items-center
-justify-between
-bg-slate-50
-hover:bg-blue-50
-transition
-p-5
-rounded-2xl
-">
-
-
-
-<div>
-
-
-<p class="
-font-bold
-text-slate-800
-">
-
-{{ $item['judul'] }}
-
-</p>
-
-
-
-<p class="
-text-sm
-text-slate-500
-mt-1
-">
-
-{{ $item['deskripsi'] }}
-
-</p>
-
-
-
-<p class="
-text-xs
-text-slate-400
-mt-2
-">
-
-{{ $item['waktu']->diffForHumans() }}
-
-</p>
-
-
-
-</div>
-
-
-
-
-
-<span
-class="
-px-4
-py-2
-rounded-xl
-font-bold
-text-sm
-
-
-@if($item['status'] == 'Baru')
-bg-blue-100 text-blue-600
-
-@elseif($item['status'] == 'Menunggu')
-bg-yellow-100 text-yellow-700
-
-@elseif($item['status'] == 'Disetujui')
-bg-green-100 text-green-700
-
-@elseif($item['status'] == 'Ditolak')
-bg-red-100 text-red-700
-
-@elseif($item['status'] == 'Disposisi')
-bg-purple-100 text-purple-700
-
-@elseif($item['status'] == 'Arsip')
-bg-orange-100 text-orange-700
-
-@else
-bg-gray-100 text-gray-700
-@endif
-">
-
-{{ $item['status'] }}
-
-</span>
-
-
-</div>
-
-
-
-@empty
-
-
-
-<div class="
-text-center
-py-12
-">
-
-
-<div class="
-w-16
-h-16
-mx-auto
-mb-4
-rounded-2xl
-bg-blue-100
-flex
-items-center
-justify-center
-">
-
-
-<i data-lucide="inbox"
-class="
-w-8
-h-8
-text-blue-700
-">
-</i>
-
-
-</div>
-
-
-
-<p class="
-font-bold
-text-slate-700
-text-lg
-">
-
-Belum ada aktivitas terbaru.
-
-</p>
-
-
-
-<p class="
-text-sm
-text-slate-400
-mt-2
-">
-
-Aktivitas surat akan muncul di sini.
-
-</p>
-
-
-</div>
-
-
-@endforelse
-
-
-</div>
-
-
-</div>
-
-
-
-
 
 
 <style>
+    
 
 .flying-bird{
 
@@ -730,6 +493,157 @@ rotate(-8deg);
 
 </style>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    initSearch();
+    initPagination();
+
+});
+
+/* ==========================================================
+| SEARCH
+========================================================== */
+
+function initSearch() {
+
+    const search = document.getElementById("searchAktivitas");
+
+    if (!search) return;
+
+    search.addEventListener("input", function () {
+
+        const keyword = this.value.toLowerCase().trim();
+
+        document.querySelectorAll(".aktivitas-row").forEach(row => {
+
+            row.style.display = row.innerText
+                .toLowerCase()
+                .includes(keyword)
+                ? ""
+                : "none";
+
+        });
+
+    });
+
+}
+
+/* ==========================================================
+| PAGINATION
+========================================================== */
+
+function initPagination() {
+
+    document.querySelectorAll(".pagination-link").forEach(link => {
+
+        link.removeEventListener("click", handlePagination);
+
+        link.addEventListener("click", handlePagination);
+
+    });
+
+}
+
+function handlePagination(e) {
+
+    e.preventDefault();
+
+    const url = this.getAttribute("href");
+
+    if (!url) return;
+
+    loadAktivitas(url);
+
+}
+
+/* ==========================================================
+| AJAX LOAD
+========================================================== */
+
+function loadAktivitas(url) {
+
+    const container = document.getElementById("aktivitas-container");
+
+    if (!container) return;
+
+    /* Loading */
+
+    container.style.pointerEvents = "none";
+    container.style.opacity = ".35";
+    container.style.transform = "translateX(20px)";
+    container.style.transition = "all .3s ease";
+
+    fetch(url, {
+
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+    })
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Gagal memuat data.");
+        }
+
+        return response.text();
+
+    })
+    .then(html => {
+
+        const parser = new DOMParser();
+
+        const doc = parser.parseFromString(html, "text/html");
+
+        const newContainer = doc.querySelector("#aktivitas-container");
+
+        if (!newContainer) {
+
+            throw new Error("Partial aktivitas tidak ditemukan.");
+
+        }
+
+        container.innerHTML = newContainer.innerHTML;
+
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+        container.style.transform = "translateX(0)";
+
+        history.pushState({}, "", url);
+
+        initSearch();
+        initPagination();
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+        container.style.transform = "translateX(0)";
+
+    });
+
+}
+
+/* ==========================================================
+| BACK / FORWARD
+========================================================== */
+
+window.addEventListener("popstate", function () {
+
+    loadAktivitas(location.href);
+
+});
+</script>
 
 
 @endsection

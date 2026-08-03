@@ -17,4 +17,11 @@ class JenisSurat extends Model
     {
         return $this->hasMany(Surat::class);
     }
+    public function approvalWorkflows(): HasMany
+    {
+        return $this->hasMany(
+            ApprovalWorkflow::class,
+            'jenis_surat_id'
+        )->orderBy('urutan');
+    }
 }

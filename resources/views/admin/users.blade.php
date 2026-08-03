@@ -89,11 +89,11 @@
             items-center
             gap-2
             bg-gradient-to-br
-from-slate-950
-via-blue-900
-to-blue-700
-hover:from-blue-900
-hover:to-blue-600
+            from-slate-950
+            via-blue-900
+            to-blue-700
+            hover:from-blue-900
+            hover:to-blue-600
             text-white
             px-6
             py-3
@@ -207,12 +207,12 @@ hover:to-blue-600
     ">
 
 
-<div class="
-    flex
-    items-center
-    justify-between
-    h-full
-">
+    <div class="
+        flex
+        items-center
+        justify-between
+        h-full
+    ">
 
 
             <div class="text-left">
@@ -516,27 +516,7 @@ hover:to-blue-600
 
         </a>
 
-        <form action="{{ route('users.destroy', $user->id) }}"
-              method="POST"
-              class="delete-form inline">
-
-            @csrf
-            @method('DELETE')
-
-            <button
-                type="button"
-                class="delete-btn inline-flex items-center gap-1
-                       bg-red-600 hover:bg-red-700
-                       text-white text-sm font-medium
-                       px-4 py-2 rounded-lg
-                       transition">
-
-                <i class="bi bi-trash"></i>
-                Hapus
-
-            </button>
-
-        </form>
+        
 
     </div>
 

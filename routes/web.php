@@ -21,7 +21,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GrafikController;
+
+use App\Http\Controllers\Auth\PasswordController; 
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\TerkirimController;
+
+
+
 
 
 
@@ -39,13 +47,6 @@ Route::get('/', function(){
     return redirect()->route('login');
 
 });
-
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -164,9 +165,6 @@ Route::get('/dashboard',
 ->name('dashboard');
 
 
-
-
-
 /*
 |--------------------------------------------------------------------------
 | LAPORAN
@@ -182,13 +180,11 @@ Route::get(
 )
 ->middleware('auth')
 ->name('admin.laporan');
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN
 |--------------------------------------------------------------------------
 */
-
 
 Route::prefix('admin')
 ->middleware('auth')
@@ -206,17 +202,28 @@ Route::prefix('admin')
 
 
 
-    Route::get('/users', [UserController::class, 'index'])
+    Route::get(
+        '/users',
+        [
+            UserController::class,
+            'index'
+        ]
+    )
     ->name('admin.users');
 
 
 
-    Route::get('/grafik',
-    [
-        GrafikController::class,
-        'index'
-    ])
+    Route::get(
+        '/grafik',
+        [
+            GrafikController::class,
+            'index'
+        ]
+    )
     ->name('admin.grafik');
+
+
+
 
 
 
@@ -289,9 +296,6 @@ Route::post(
 ->name('template.store');
 
 
-
-
-
 // FORM EDIT TEMPLATE
 
 Route::get(
@@ -299,9 +303,6 @@ Route::get(
     [TemplateSuratController::class,'edit']
 )
 ->name('template.edit');
-
-
-
 
 
 // UPDATE TEMPLATE
@@ -312,10 +313,6 @@ Route::put(
 )
 ->name('template.update');
 
-
-
-
-
 // HAPUS TEMPLATE
 
 Route::delete(
@@ -323,9 +320,6 @@ Route::delete(
     [TemplateSuratController::class,'destroy']
 )
 ->name('template.destroy');
-
-
-
 
 
 // AKTIF / NONAKTIF TEMPLATE
@@ -347,15 +341,8 @@ Route::resource(
     'users',
     UserController::class
 )
+->except(['destroy'])
 ->middleware('auth');
-
-
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -398,34 +385,37 @@ Route::resource(
 ->middleware('auth');
 
 
-
-
-
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | PROFILE
 |--------------------------------------------------------------------------
 */
 
-
-Route::get('/profile',function(){
-
-    return view('profile.index');
-
-})
-->middleware('auth');
+Route::middleware('auth')->group(function(){
 
 
 
+    // tampil profile
+    Route::get('/profile',
+        [ProfileController::class,'index']
+    )->name('profile');
 
 
 
+    // halaman edit profile
+    Route::get('/profile/edit',
+        [ProfileController::class,'edit']
+    )->name('profile.edit');
 
 
+
+    // update profile + password
+    Route::put('/profile/update',
+        [ProfileController::class,'update']
+    )->name('profile.update');
+
+
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -446,9 +436,6 @@ Route::get('/surat/baru',
 ->name('surat.create');
 
 
-
-
-
 // Simpan surat
 
 Route::post('/surat',
@@ -459,9 +446,6 @@ Route::post('/surat',
 ])
 ->middleware('auth')
 ->name('surat.store');
-
-
-
 
 
 // Draft surat
@@ -477,6 +461,7 @@ Route::get('/surat/draft',
 
 // PREVIEW FILE SURAT
 
+
 Route::get('/surat/{id}/preview',
 [
     SuratController::class,
@@ -487,6 +472,8 @@ Route::get('/surat/{id}/preview',
 ->whereNumber('id')
 ->name('surat.preview');
 
+
+
 // Detail surat
 
 Route::get('/surat/{id}',
@@ -496,10 +483,8 @@ Route::get('/surat/{id}',
 
 ])
 ->middleware('auth')
+->whereNumber('id')
 ->name('surat.show');
-
-
-
 // Edit draft
 
 Route::get('/surat/{id}/edit',
@@ -511,10 +496,6 @@ Route::get('/surat/{id}/edit',
 ->middleware('auth')
 ->whereNumber('id')
 ->name('surat.edit');
-
-
-
-
 
 // Update draft
 
@@ -528,10 +509,6 @@ Route::put('/surat/{id}',
 ->whereNumber('id')
 ->name('surat.update');
 
-
-
-
-
 // Hapus draft
 
 Route::delete('/surat/{id}',
@@ -543,10 +520,6 @@ Route::delete('/surat/{id}',
 ->middleware('auth')
 ->whereNumber('id')
 ->name('surat.destroy');
-
-
-
-
 
 // Kirim surat approval
 
@@ -560,10 +533,6 @@ Route::post('/surat/{id}/submit',
 ->whereNumber('id')
 ->name('surat.submit');
 
-
-
-
-
 // Detail surat web
 
 Route::get('/surat/{id}/detail',
@@ -575,10 +544,6 @@ Route::get('/surat/{id}/detail',
 ->middleware('auth')
 ->whereNumber('id')
 ->name('surat.detail');
-
-
-
-
 
 // Detail API
 
@@ -603,12 +568,6 @@ Route::get('/inbox',
 ->middleware('auth')
 ->name('surat.inbox');
 
-
-
-
-
-
-
 // ==========================
 // SURAT TERKIRIM
 // ==========================
@@ -622,11 +581,6 @@ Route::get('/sent',
 ])
 ->middleware('auth')
 ->name('surat.sent');
-
-
-
-
-
 
 
 // ==========================
@@ -646,10 +600,6 @@ Route::put('/surat/{id}/archive',
 ->whereNumber('id')
 ->name('surat.archive');
 
-
-
-
-
 // list arsip API
 
 Route::get('/archive',
@@ -660,10 +610,6 @@ Route::get('/archive',
 ])
 ->middleware('auth')
 ->name('surat.archive.list');
-
-
-
-
 
 // halaman arsip
 
@@ -676,115 +622,6 @@ Route::get('/surat/arsip',
 ->middleware('auth')
 ->name('surat.arsip');
 
-
-
-
-
-// ==========================
-// APPROVAL ACTION
-// ==========================
-
-
-// --------------------------
-// KPP
-// --------------------------
-
-Route::post(
-    '/approval/kpp/{id}',
-    [
-        ApprovalController::class,
-        'approveKpp'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kpp.approve');
-
-
-
-Route::post(
-    '/approval/kpp/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKpp'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kpp.reject');
-
-
-
-
-
-// --------------------------
-// KTU
-// --------------------------
-
-Route::post(
-    '/approval/ktu/{id}',
-    [
-        ApprovalController::class,
-        'approveKtu'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.ktu.approve');
-
-
-
-Route::post(
-    '/approval/ktu/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKtu'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.ktu.reject');
-
-
-
-
-
-
-
-// --------------------------
-// KEPALA STASIUN
-// --------------------------
-
-Route::post(
-    '/approval/kepala-stasiun/{id}',
-    [
-        ApprovalController::class,
-        'approveKepalaStasiun'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kepala.approve');
-
-
-
-Route::post(
-    '/approval/kepala-stasiun/{id}/reject',
-    [
-        ApprovalController::class,
-        'rejectKepalaStasiun'
-    ]
-)
-->middleware('auth')
-->whereNumber('id')
-->name('approval.kepala.reject');
-
-
-
-
-
-
-
 // ==========================
 // HALAMAN APPROVAL
 // ==========================
@@ -795,6 +632,18 @@ Route::get('/surat/approval', [
 ])
 ->middleware('auth')
 ->name('surat.approval');
+
+Route::post('/surat/{surat}/approve', [
+    ApprovalController::class,
+    'approve'
+])->middleware('auth')
+->name('approval.approve');
+
+Route::post('/surat/{surat}/reject', [
+    ApprovalController::class,
+    'reject'
+])->middleware('auth')
+->name('approval.reject');
 
 // Route::post('/surat/draft', [SuratController::class, 'storeDraft'])
 //     ->middleware('auth')
@@ -825,10 +674,6 @@ Route::get('/surat/{id}/disposisi',
 ->whereNumber('id')
 ->name('surat.disposisi');
 
-
-
-
-
 // ==========================
 // SIMPAN DISPOSISI WEB
 // ==========================
@@ -842,6 +687,19 @@ Route::post('/surat/disposisi',
 ->middleware('auth')
 ->name('disposisi.store');
 
+
+// ==========================
+// INBOX DISPOSISI USER
+// ==========================
+
+Route::get('/surat/disposisi/inbox/{userId}',
+[
+    DisposisiController::class,
+    'inbox'
+
+])
+->middleware('auth')
+->whereNumber('userId');
 
 
 
@@ -862,10 +720,6 @@ Route::get('/surat/disposisi/{id}',
 ->name('disposisi.show');
 
 
-
-
-
-
 // ==========================
 // LIST SEMUA DISPOSISI
 // ==========================
@@ -882,27 +736,6 @@ Route::get('/surat/disposisi',
 
 
 
-
-
-// ==========================
-// INBOX DISPOSISI USER
-// ==========================
-
-Route::get('/surat/disposisi/inbox/{userId}',
-[
-    DisposisiController::class,
-    'inbox'
-
-])
-->middleware('auth')
-->whereNumber('userId');
-
-
-
-
-
-
-
 // ==========================
 // TANDAI DISPOSISI DIBACA
 // ==========================
@@ -915,11 +748,6 @@ Route::put('/surat/disposisi/{id}/read',
 ])
 ->middleware('auth')
 ->whereNumber('id');
-
-
-
-
-
 
 // ==========================
 // SELESAIKAN DISPOSISI
@@ -963,6 +791,17 @@ Route::delete(
 )
 ->middleware('auth')
 ->name('lampiran.destroy');
+
+Route::get(
+    '/lampiran/{id}/download',
+    [LampiranController::class,'download']
+)
+->name('lampiran.download');
+
+Route::get(
+    '/lampiran/{id}/lihat',
+    [LampiranController::class,'view']
+)->name('lampiran.view');
 // ==========================
 // PENGESAHAN SURAT
 // ==========================
@@ -1109,14 +948,13 @@ Route::post(
 Route::get('/surat/{surat}/download', [SuratController::class, 'download'])
     ->name('surat.download');
 
-    use App\Http\Controllers\Auth\ForgotPasswordController;
+   
 
 /*
 |--------------------------------------------------------------------------
 | FORGOT PASSWORD
 |--------------------------------------------------------------------------
 */
-
 
 
 // Halaman lupa password
@@ -1161,19 +999,26 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
     ->middleware('otp.verified')
     ->name('password.reset');
 
-    use App\Http\Controllers\Auth\PasswordController;
-
 Route::get('/change-password', [PasswordController::class, 'showChangePassword'])
     ->name('password.change');
 
 Route::post('/change-password', [PasswordController::class, 'updatePassword'])
     ->name('password.change.update');
 
-    Route::get('/profile', function () {
-    return view('profile.index');
-        })
-        ->middleware('auth')
-        ->name('profile');
+
+Route::prefix('surat')->group(function () {
+
+    Route::get('/terkirim', [TerkirimController::class, 'index'])
+        ->name('surat.terkirim');
+
+    Route::get('/terkirim/{surat}', [TerkirimController::class, 'show'])
+        ->name('surat.terkirim.show');
+
+    Route::get('/terkirim/{surat}/tracking', [TerkirimController::class, 'tracking'])
+        ->name('surat.terkirim.tracking');
+
+});
+
 // ==========================
 // SELESAI
 // ==========================
