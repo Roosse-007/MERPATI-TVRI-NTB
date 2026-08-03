@@ -5,6 +5,7 @@
 
 <meta charset="UTF-8">
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -12,7 +13,7 @@
     @yield('title') | MERPATI TVRI NTB
 </title>
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {{-- Font Awesome --}}
 <link rel="stylesheet"
@@ -258,7 +259,41 @@ body{
 
 }
 
+/* ===========================
+   QUICK MENU
+=========================== */
 
+.quick-menu a{
+
+    display:block;
+
+    text-decoration:none !important;
+
+    color:#1f2937 !important;
+
+}
+
+.quick-menu a:hover{
+
+    text-decoration:none !important;
+
+    color:#111827 !important;
+
+}
+
+.quick-menu h3{
+
+    color:#111827 !important;
+
+    font-weight:700;
+
+}
+
+.quick-menu p{
+
+    color:#6b7280 !important;
+
+}
 
 </style>
 
@@ -702,7 +737,7 @@ confirmButtonColor:'#dc2626'
 
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 
 </html>

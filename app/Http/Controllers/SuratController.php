@@ -13,7 +13,7 @@ use App\Models\JenisSurat;
 use App\Models\SifatSurat;
 use App\Services\ApprovalWorkflowService;
 use App\Models\TemplateSurat;
-
+use App\Models\Lampiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +25,95 @@ class SuratController extends Controller
 {
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL SURAT RIWAYAT BALASAN
+    |--------------------------------------------------------------------------
+    */
+public function detail($id)
+{
+
+    $surat = Surat::with([
+
+        'pengirim',
+
+        'tujuan.user',
+
+        'suratInduk',
+
+
+        'balasan' => function($query){
+
+            $query->with([
+
+                'pengirim',
+
+                'tujuan.user',
+
+                'lampiran'
+
+            ])
+            ->orderBy('created_at','desc');
+
+        }
+
+
+    ])->findOrFail($id);
+
+
+
+
+
+    // Ambil surat induk utama
+
+    $rootId = $surat->parent_surat_id ?? $surat->id;
+
+
+
+
+
+    // Ambil semua riwayat balasan
+    // terbaru tampil paling atas
+
+    $riwayatBalasan = Surat::where(
+        'parent_surat_id',
+        $rootId
+    )
+    ->with([
+
+        'pengirim',
+
+        'tujuan.user',
+
+        'lampiran'
+
+    ])
+    ->orderBy(
+        'created_at',
+        'desc'
+    )
+    ->get();
+
+
+
+
+
+    return view(
+
+        'surat.detail',
+
+        compact(
+
+            'surat',
+
+            'riwayatBalasan'
+
+        )
+
+    );
+
+}
     /*
     |--------------------------------------------------------------------------
     | DAFTAR SURAT API
@@ -44,7 +133,7 @@ class SuratController extends Controller
 
             'sifatSurat',
 
-            'prioritasSurat'
+            //'prioritasSurat'
 
         ])
 
@@ -185,7 +274,7 @@ public function store(Request $request)
     $tanggalKirim = null;
 
     if ($request->action === 'kirim') {
-        $status = $workflow->getInitialStatus(Auth::user());
+        $status = 'Menunggu Approval';
         $tanggalKirim = now();
     }
 
@@ -220,22 +309,40 @@ public function store(Request $request)
             'dibaca'   => false,
         ]);
 
+            if($request->hasFile('lampiran')) {
+
+
+    $file = $request->file('lampiran');
+
+
+    $path = $file->store(
+        'lampiran',
+        'public'
+    );
+
+
+    Lampiran::create([
+
+        'surat_id'=>$surat->id,
+
+        'nama_file'=>$file->getClientOriginalName(),
+
+        'path_file'=>$path,
+
+        'mime_type'=>$file->getMimeType(),
+
+        'ukuran_file'=>$file->getSize(),
+
+        'uploaded_by'=>auth()->id()
+
+    ]);
+
+
+}
+
         // Jika langsung dikirim, buat approval pertama
         if ($status !== 'Draft') {
-
-            $approver = $workflow->getCurrentApprover($surat);
-
-            if ($approver) {
-
-                Approval::create([
-                    'surat_id'    => $surat->id,
-                    'approver_id' => $approver->id,
-                    'urutan'      => 1,
-                    'status'      => 'Menunggu',
-                    'catatan'     => null,
-                ]);
-
-            }
+            $workflow->createFirstApproval($surat);
 
         }
 
@@ -248,8 +355,8 @@ public function store(Request $request)
     }
 
     return redirect()
-        ->route('surat.approval')
-        ->with('success', 'Surat berhasil dikirim.');
+    ->route('surat.terkirim')
+    ->with('success','Surat berhasil dikirim.');
 }
     /*
     |--------------------------------------------------------------------------
@@ -261,7 +368,6 @@ public function draft()
     $draft = Surat::with([
         'jenisSurat',
         'sifatSurat',
-        'prioritasSurat',
         'tujuan.user',
     ])
     ->where('pengirim_id', Auth::id())
@@ -510,32 +616,58 @@ public function destroy($id)
         ->route('surat.draft')
         ->with('success', 'Draft berhasil dihapus.');
 }
+/*
+|--------------------------------------------------------------------------
+| KIRIM SURAT KE APPROVAL
+|--------------------------------------------------------------------------
+*/
 
-    /*
-    |--------------------------------------------------------------------------
-    | KIRIM SURAT KE APPROVAL
-    |--------------------------------------------------------------------------
-    */
 public function inboxWeb(Request $request)
 {
     $user = Auth::user();
+
     $jabatan = $user->jabatan->nama_jabatan ?? '';
 
     $query = Surat::with([
         'pengirim.jabatan',
         'jenisSurat',
         'sifatSurat',
-        'prioritasSurat',
         'tujuan.user',
         'approval',
+        'approval.approver',
     ])
+
     ->whereHas('tujuan', function ($q) use ($user) {
+
         $q->where('user_id', $user->id);
+
+    })
+
+    ->where(function($q){
+
+        // surat asli
+        $q->whereNull('parent_surat_id')
+
+
+        // atau hanya balasan terbaru dari setiap thread
+        ->orWhereIn('id', function($sub){
+
+            $sub->selectRaw('MAX(id)')
+                ->from('surat')
+                ->whereNotNull('parent_surat_id')
+                ->groupBy('parent_surat_id');
+
+        });
+
     });
 
-    // ==========================
-    // SEARCH
-    // ==========================
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
     if ($request->filled('search')) {
 
         $keyword = $request->search;
@@ -543,62 +675,78 @@ public function inboxWeb(Request $request)
         $query->where(function ($q) use ($keyword) {
 
             $q->where('nomor_surat', 'like', "%{$keyword}%")
+
               ->orWhere('perihal', 'like', "%{$keyword}%")
+
               ->orWhereHas('pengirim', function ($pengirim) use ($keyword) {
+
                     $pengirim->where('name', 'like', "%{$keyword}%");
+
               });
 
         });
-    }
 
-    // ==========================
-    // FILTER STATUS
-    // ==========================
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER STATUS
+    |--------------------------------------------------------------------------
+    */
+
     if ($request->filled('status')) {
-        $query->where('status', $request->status);
+
+        switch ($request->status) {
+
+            case 'Menunggu':
+                $query->whereHas('approval', function ($q) {
+
+                    $q->where('approver_id', Auth::id())
+                      ->where('status', 'Menunggu');
+
+                });
+                break;
+
+            case 'Disetujui':
+                $query->where('status', 'Disetujui');
+                break;
+
+            case 'Ditolak':
+                $query->where('status', 'Ditolak');
+                break;
+
+            default:
+                break;
+        }
+
     }
 
-    // ==========================
-    // DATA SURAT
-    // ==========================
+    /*
+    |--------------------------------------------------------------------------
+    | DATA SURAT
+    |--------------------------------------------------------------------------
+    */
+
     $surat = (clone $query)
         ->latest()
         ->paginate(10)
         ->withQueryString();
 
-    // ==========================
-    // CARD
-    // ==========================
+    /*
+    |--------------------------------------------------------------------------
+    | CARD
+    |--------------------------------------------------------------------------
+    */
+
     $totalSurat = (clone $query)->count();
 
-    if ($jabatan == 'Ketua Tim Perencana dan Pengendali Program') {
+    $menungguApproval = (clone $query)
+        ->whereHas('approval', function ($q) {
 
-        $menungguApproval = (clone $query)
-            ->where('status', 'Menunggu Approval KPP')
-            ->count();
+            $q->where('approver_id', Auth::id())
+              ->where('status', 'Menunggu');
 
-    } elseif ($jabatan == 'Kepala Sub Bagian Tata Usaha') {
-
-        $menungguApproval = (clone $query)
-            ->where('status', 'Menunggu Approval KTU')
-            ->count();
-
-    } elseif ($jabatan == 'Kepala TVRI Stasiun NTB') {
-
-        $menungguApproval = (clone $query)
-            ->where('status', 'Menunggu Approval Kepala Stasiun')
-            ->count();
-
-    } else {
-
-        $menungguApproval = (clone $query)
-            ->where(function ($q) {
-                $q->where('status', 'Menunggu Approval KPP')
-                  ->orWhere('status', 'Menunggu Approval KTU')
-                  ->orWhere('status', 'Menunggu Approval Kepala Stasiun');
-            })
-            ->count();
-    }
+        })
+        ->count();
 
     $diterima = (clone $query)
         ->where('status', 'Disetujui')
@@ -629,24 +777,12 @@ public function submit($id)
 
     $workflow = new ApprovalWorkflowService();
 
-    $statusAwal = $workflow->getInitialStatus(Auth::user());
-
     $surat->update([
-        'status'         => $statusAwal,
-        'tanggal_kirim'  => now(),
+        'status' => 'Menunggu Approval',
+        'tanggal_kirim' => now(),
     ]);
 
-    $approver = $workflow->getCurrentApprover($surat);
-
-    if ($approver) {
-        Approval::create([
-            'surat_id'    => $surat->id,
-            'approver_id' => $approver->id,
-            'urutan'      => 1,
-            'status'      => 'Menunggu',
-            'catatan'     => null,
-        ]);
-    }
+    $workflow->createFirstApproval($surat);
 
     return redirect()
         ->route('surat.approval')
@@ -899,30 +1035,43 @@ public function archive($id)
 
 
 
+/*
+|--------------------------------------------------------------------------
+| DETAIL WEB
+|--------------------------------------------------------------------------
+*/
 
-    /*
-    |--------------------------------------------------------------------------
-    | DETAIL WEB
-    |--------------------------------------------------------------------------
-    */
 public function showWeb($id)
 {
-            $surat = Surat::with([
-            'pengirim.jabatan',
-            'tujuan.user.jabatan',
-            'jenisSurat',
-            'sifatSurat',
-            'prioritasSurat',
-            'lampiran',
-            'disposisi.keUser.jabatan',
-            'approval.approver'
-        ])->findOrFail($id);
+
+    $surat = Surat::with([
+
+        'pengirim.jabatan',
+
+        'tujuan.user.jabatan',
+
+        'jenisSurat',
+
+        'sifatSurat',
+
+        'lampiran',
+
+        'disposisi.keUser.jabatan',
+
+        'approval.approver',
+
+        'suratInduk.balasan',
+
+        'balasan'
+
+    ])->findOrFail($id);
+
+
 
     $users = User::with('jabatan')
         ->where('is_active', 1)
         ->where('id', '!=', Auth::id())
         ->get();
-
     $aktivitas = collect();
 
     /*
@@ -954,15 +1103,31 @@ public function showWeb($id)
     }
 
     $aktivitas = $aktivitas->sortByDesc('waktu');
+    $riwayatBalasan = collect();
 
-    return view(
-        'surat.detail',
-        compact(
-            'surat',
-            'users',
-            'aktivitas'
-        )
-    );
+
+if($surat->parent_surat_id){
+
+    $suratInduk = $surat->suratInduk;
+
+    $riwayatBalasan = $suratInduk->balasan()
+        ->orderBy('created_at','desc')
+        ->get();
+
+}else{
+
+    $riwayatBalasan = $surat->balasan()
+        ->orderBy('created_at','desc')
+        ->get();
+
+}
+
+    return view('surat.detail', compact(
+    'surat',
+    'users',
+    'aktivitas',
+    'riwayatBalasan'
+));
 }
     /*
     |--------------------------------------------------------------------------
@@ -978,39 +1143,26 @@ public function approval(Request $request)
         'approval.approver',
         'jenisSurat',
         'sifatSurat',
-        'prioritasSurat',
     ]);
-
-    $user = Auth::user();
-    $jabatan = $user->jabatan->nama_jabatan ?? '';
 
     /*
     |--------------------------------------------------------------------------
-    | FILTER BERDASARKAN ROLE
+    | SURAT YANG MENUNGGU APPROVAL USER LOGIN
     |--------------------------------------------------------------------------
     */
 
-    if ($jabatan == 'Ketua Tim Perencana dan Pengendali Program') {
+    if (!Auth::user()->hasRole('Admin')) {
 
-        $query->where('status', 'Menunggu Approval KPP');
-
-    } elseif ($jabatan == 'Kepala Sub Bagian Tata Usaha') {
-
-        $query->where('status', 'Menunggu Approval KTU');
-
-    } elseif ($jabatan == 'Kepala TVRI Stasiun NTB') {
-
-        $query->where('status', 'Menunggu Approval Kepala Stasiun');
-
-    } elseif ($jabatan != 'Admin') {
-
-        $query->where('pengirim_id', Auth::id());
+        $query->whereHas('approval', function ($q) {
+            $q->where('approver_id', auth()->id())
+            ->where('status', 'Menunggu');
+        });
 
     }
 
     /*
     |--------------------------------------------------------------------------
-    | SEARCH
+    | PENCARIAN
     |--------------------------------------------------------------------------
     */
 
@@ -1032,18 +1184,78 @@ public function approval(Request $request)
 
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER STATUS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('status')) {
+
+        $query->where('status', $request->status);
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER JENIS SURAT
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('jenis_surat')) {
+
+        $query->where('jenis_surat_id', $request->jenis_surat);
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER TANGGAL
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('tanggal_awal')) {
+
+        $query->whereDate(
+            'tanggal_surat',
+            '>=',
+            $request->tanggal_awal
+        );
+
+    }
+
+    if ($request->filled('tanggal_akhir')) {
+
+        $query->whereDate(
+            'tanggal_surat',
+            '<=',
+            $request->tanggal_akhir
+        );
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATA
+    |--------------------------------------------------------------------------
+    */
+
     $surat = $query
         ->latest()
         ->paginate(10)
         ->withQueryString();
 
+    /*
+    |--------------------------------------------------------------------------
+    | STATISTIK
+    |--------------------------------------------------------------------------
+    */
+
     $totalSurat = Surat::count();
 
-    $menunggu = Surat::whereIn('status', [
-        'Menunggu Approval KPP',
-        'Menunggu Approval KTU',
-        'Menunggu Approval Kepala Stasiun',
-    ])->count();
+    $menunggu = Approval::where('approver_id', Auth::id())
+    ->where('status', 'Menunggu')
+    ->count();
 
     $disetujui = Surat::where('status', 'Disetujui')->count();
 
@@ -1057,65 +1269,11 @@ public function approval(Request $request)
         'ditolak'
     ));
 }
-
         /*
     |--------------------------------------------------------------------------
     | INBOX KPP
     |--------------------------------------------------------------------------
     */
-
-
-    public function inboxKpp()
-    {
-
-
-        $surat = Surat::with([
-
-
-            'pengirim',
-
-            'tujuan.user',
-
-            'approval'
-
-
-        ])
-
-        ->where(
-
-            'status',
-
-            'Menunggu Approval KPP'
-
-        )
-
-        ->latest()
-
-        ->paginate(10);
-
-
-
-
-
-
-
-        return view(
-
-            'surat.inbox-kpp',
-
-            compact('surat')
-
-        );
-
-
-    }
-
-
-
-
-
-
-
 
 
     /*
@@ -1125,59 +1283,6 @@ public function approval(Request $request)
     */
 
 
-    public function inboxKtu()
-    {
-
-
-        $surat = Surat::with([
-
-
-            'pengirim',
-
-            'tujuan.user',
-
-            'approval'
-
-
-        ])
-
-        ->where(
-
-            'status',
-
-            'Menunggu Approval KTU'
-
-        )
-
-        ->latest()
-
-        ->paginate(10);
-
-
-
-
-
-
-
-        return view(
-
-            'surat.inbox-ktu',
-
-            compact('surat')
-
-        );
-
-
-    }
-
-
-
-
-
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | INBOX KEPALA STASIUN
@@ -1185,90 +1290,84 @@ public function approval(Request $request)
     */
 
 
-    public function inboxKepalaStasiun()
-    {
-
-
-        $surat = Surat::with([
-
-
-            'pengirim',
-
-            'tujuan.user',
-
-            'approval'
-
-
-        ])
-
-        ->where(
-
-            'status',
-
-            'Menunggu Approval Kepala Stasiun'
-
-        )
-
-        ->latest()
-
-        ->paginate(10);
-
-
-
-
-
-
-
-        return view(
-
-            'surat.inbox-kepala',
-
-            compact('surat')
-
-        );
-
-}
 
 public function filterInbox(Request $request)
 {
     $query = Surat::with([
         'pengirim',
-        'jenisSurat'
+        'jenisSurat',
+        'approval.approver',
     ]);
 
     switch ($request->status) {
 
+        /*
+        |--------------------------------------------------------------------------
+        | Menunggu Approval
+        |--------------------------------------------------------------------------
+        */
         case 'approval':
-            $query->whereIn('status', [
-                'Menunggu Approval KPP',
-                'Menunggu Approval KTU',
-                'Menunggu Approval Kepala Stasiun',
-            ]);
+
+            $query->whereHas('approval', function ($q) {
+
+                $q->where('approver_id', Auth::id())
+                  ->where('status', 'Menunggu');
+
+            });
+
             break;
 
+        /*
+        |--------------------------------------------------------------------------
+        | Disetujui
+        |--------------------------------------------------------------------------
+        */
         case 'diterima':
+
             $query->where('status', 'Disetujui');
+
             break;
 
+        /*
+        |--------------------------------------------------------------------------
+        | Ditolak
+        |--------------------------------------------------------------------------
+        */
         case 'ditolak':
+
             $query->where('status', 'Ditolak');
+
             break;
 
+        /*
+        |--------------------------------------------------------------------------
+        | Sudah Didisposisi
+        |--------------------------------------------------------------------------
+        */
         case 'disposisi':
-            $query->has('disposisi');
+
+            $query->whereHas('disposisi');
+
             break;
 
+        /*
+        |--------------------------------------------------------------------------
+        | Semua Surat Selain Draft
+        |--------------------------------------------------------------------------
+        */
         default:
+
             $query->where('status', '!=', 'Draft');
+
+            break;
     }
 
     return response()->json(
+
         $query->latest()->get()
+
     );
 }
-
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1281,34 +1380,27 @@ public function approve($id)
 
     $workflow = new ApprovalWorkflowService();
 
-    $approval = Approval::where('surat_id', $surat->id)
-        ->where('approver_id', Auth::id())
-        ->where('status', 'Menunggu')
-        ->latest()
-        ->first();
+    try {
 
-    if (!$approval) {
+        DB::transaction(function () use ($workflow, $surat) {
+
+            $workflow->approve($surat, Auth::user());
+
+        });
+
+        return back()->with(
+            'success',
+            'Surat berhasil disetujui.'
+        );
+
+    } catch (\Exception $e) {
+
         return back()->with(
             'error',
-            'Anda tidak memiliki hak untuk menyetujui surat ini.'
+            $e->getMessage()
         );
+
     }
-
-    DB::transaction(function () use ($workflow, $surat, $approval) {
-
-        $approval->update([
-            'status'      => 'Disetujui',
-            'approved_at' => now(),
-        ]);
-
-        $workflow->approve($surat, Auth::user());
-
-    });
-
-    return back()->with(
-        'success',
-        'Surat berhasil disetujui.'
-    );
 }
 
 public function reject(Request $request, $id)
@@ -1319,38 +1411,33 @@ public function reject(Request $request, $id)
 
     $surat = Surat::findOrFail($id);
 
-    $approval = Approval::where('surat_id', $surat->id)
-        ->where('approver_id', Auth::id())
-        ->where('status', 'Menunggu')
-        ->latest()
-        ->first();
+    $workflow = new ApprovalWorkflowService();
 
-    if (!$approval) {
+    try {
+
+        DB::transaction(function () use ($workflow, $surat, $request) {
+
+            $workflow->reject(
+                $surat,
+                Auth::user(),
+                $request->catatan
+            );
+
+        });
+
+        return back()->with(
+            'success',
+            'Surat berhasil ditolak.'
+        );
+
+    } catch (\Exception $e) {
+
         return back()->with(
             'error',
-            'Anda tidak memiliki hak untuk menolak surat ini.'
+            $e->getMessage()
         );
+
     }
-
-    DB::transaction(function () use ($approval, $surat, $request) {
-
-        $approval->update([
-            'status'      => 'Ditolak',
-            'catatan'     => $request->catatan,
-            'approved_at' => now(),
-        ]);
-
-        $surat->update([
-            'status'   => 'Ditolak',
-            'catatan'  => $request->catatan,
-        ]);
-
-    });
-
-    return back()->with(
-        'success',
-        'Surat berhasil ditolak.'
-    );
 }
 public function download(Surat $surat)
 {

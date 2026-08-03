@@ -25,4 +25,11 @@ class Jabatan extends Model
     {
         return $this->hasMany(User::class);
     }
+    public function workflows(): HasMany
+    {
+        return $this->hasMany(
+            ApprovalWorkflow::class,
+            'jabatan_id'
+        );
+    }
 }

@@ -501,12 +501,6 @@ Aktivitas Terbaru
 
 
 
-
-
-
-<!-- SURAT TERBARU -->
-
-
 <div class="bg-white rounded-2xl shadow mt-8 overflow-hidden">
 
 

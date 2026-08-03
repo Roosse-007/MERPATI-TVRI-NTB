@@ -1,5 +1,7 @@
 <header class="
-    relative
+    sticky
+    top-0
+    z-40
     px-8
     pt-6
 ">

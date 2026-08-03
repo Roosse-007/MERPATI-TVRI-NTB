@@ -60,6 +60,10 @@ public function login(Request $request)
     return redirect()->route('dashboard');
 }
 
+/**
+ * Logout
+ */
+
 public function logout(Request $request)
 {
     Auth::logout();
@@ -67,7 +71,9 @@ public function logout(Request $request)
     $request->session()->invalidate();
 
     $request->session()->regenerateToken();
+    return redirect()
+        ->route('login')
+        ->with('success', 'Berhasil logout.');
 
-    return redirect()->route('login');
 }
 }
