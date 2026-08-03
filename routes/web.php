@@ -23,6 +23,7 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\TerkirimController;
+use App\Http\Controllers\PasswordController;
 
 
 
@@ -653,10 +654,6 @@ Route::get('/surat/arsip',
 ])
 ->middleware('auth')
 ->name('surat.arsip');
-
-
-
-
 
 // ==========================
 // APPROVAL ACTION

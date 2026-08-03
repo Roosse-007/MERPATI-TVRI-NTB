@@ -1074,21 +1074,28 @@ public function approval(Request $request)
         ->paginate(10)
         ->withQueryString();
 
-    /*
-    |--------------------------------------------------------------------------
-    | STATISTIK
-    |--------------------------------------------------------------------------
-    */
+/*
+|--------------------------------------------------------------------------
+| STATISTIK
+|--------------------------------------------------------------------------
+*/
 
-    $totalSurat = Surat::count();
+$approvalQuery = Approval::where('approver_id', Auth::id());
 
-    $menunggu = Approval::where('approver_id', Auth::id())
+$totalSurat = (clone $approvalQuery)->count();
+
+$menunggu = (clone $approvalQuery)
     ->where('status', 'Menunggu')
     ->count();
 
-    $disetujui = Surat::where('status', 'Disetujui')->count();
+$disetujui = (clone $approvalQuery)
+    ->where('status', 'Disetujui')
+    ->count();
 
-    $ditolak = Surat::where('status', 'Ditolak')->count();
+$ditolak = (clone $approvalQuery)
+    ->where('status', 'Ditolak')
+    ->count();
+    
 
     return view('surat.approval', compact(
         'surat',
