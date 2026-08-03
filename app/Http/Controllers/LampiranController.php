@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Lampiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Response;
 
 
 class LampiranController extends Controller
@@ -32,20 +31,16 @@ class LampiranController extends Controller
             ],
 
 
-
             'file' => [
 
                 'required',
 
                 'file',
 
-                'max:51200', // maksimal 50 MB
-
-                'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png'
+                // maksimal 100 MB
+                'max:102400'
 
             ]
-
-
 
         ]);
 
@@ -65,53 +60,62 @@ class LampiranController extends Controller
 
 
 
+
         /*
         |--------------------------------------------------------------------------
-        | SIMPAN FILE KE STORAGE
+        | SIMPAN KE STORAGE
         |--------------------------------------------------------------------------
         */
 
 
         $path = $file->store(
-
             'lampiran',
-
             'public'
-
         );
 
 
 
 
 
+
         /*
         |--------------------------------------------------------------------------
-        | SIMPAN DATA DATABASE
+        | SIMPAN DATABASE
         |--------------------------------------------------------------------------
         */
-Lampiran::create([
 
 
-    'surat_id' => $request->surat_id,
+        Lampiran::create([
 
 
-    'nama_file' => $file->getClientOriginalName(),
+            'surat_id' => $request->surat_id,
 
 
-    'path_file' => $path,
+            'nama_file' => 
+                $file->getClientOriginalName(),
 
 
-    'mime_type' => $file->getMimeType(),
+
+            'path_file' =>
+                $path,
 
 
-    // simpan byte asli
-    'ukuran_file' => $file->getSize(),
+
+            'mime_type' =>
+                $file->getMimeType(),
 
 
-    'uploaded_by' => auth()->id()
+
+            'ukuran_file' =>
+                $file->getSize(),
 
 
-]);
+
+            'uploaded_by' =>
+                auth()->id(),
+
+
+        ]);
 
 
 
@@ -127,8 +131,153 @@ Lampiran::create([
         );
 
 
+    }
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LIHAT / PREVIEW LAMPIRAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function view($id)
+    {
+
+
+        $lampiran = Lampiran::findOrFail($id);
+
+
+
+        $path = storage_path(
+            'app/public/'.$lampiran->path_file
+        );
+
+
+
+        if(!file_exists($path)){
+
+
+            abort(
+                404,
+                'File tidak ditemukan'
+            );
+
+
+        }
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILE YANG BISA PREVIEW
+        |--------------------------------------------------------------------------
+        */
+
+
+        if(
+
+            str_starts_with(
+                $lampiran->mime_type,
+                'image/'
+            )
+
+            ||
+
+            $lampiran->mime_type 
+            == 
+            'application/pdf'
+
+        ){
+
+
+            return response()->file($path);
+
+
+        }
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SELAIN ITU DOWNLOAD
+        |--------------------------------------------------------------------------
+        */
+
+
+        return $this->download($id);
+
+
 
     }
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOWNLOAD LAMPIRAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function download($id)
+    {
+
+
+        $lampiran = Lampiran::findOrFail($id);
+
+
+
+
+        $path = storage_path(
+            'app/public/'.$lampiran->path_file
+        );
+
+
+
+
+        if(!file_exists($path)){
+
+
+            abort(
+                404,
+                'File tidak ditemukan'
+            );
+
+
+        }
+
+
+
+
+        return Response::download(
+
+            $path,
+
+            $lampiran->nama_file
+
+        );
+
+
+    }
+
+
 
 
 
@@ -151,6 +300,8 @@ Lampiran::create([
 
 
 
+
+
         /*
         |--------------------------------------------------------------------------
         | HAPUS FILE FISIK
@@ -158,13 +309,23 @@ Lampiran::create([
         */
 
 
-        if(Storage::disk('public')->exists($lampiran->path_file))
+        if(
+            Storage::disk('public')
+            ->exists($lampiran->path_file)
+        )
+
         {
 
+
             Storage::disk('public')
-                ->delete($lampiran->path_file);
+            ->delete(
+                $lampiran->path_file
+            );
+
 
         }
+
+
 
 
 
@@ -183,6 +344,8 @@ Lampiran::create([
 
 
 
+
+
         return back()->with(
 
             'success',
@@ -193,7 +356,6 @@ Lampiran::create([
 
 
     }
-
 
 
 

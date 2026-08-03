@@ -18,8 +18,7 @@ w-64 h-64
 rounded-full
 bg-blue-400/20
 blur-3xl
-">
-</div>
+"></div>
 
 
 <div class="
@@ -28,9 +27,7 @@ w-72 h-72
 rounded-full
 bg-cyan-400/10
 blur-3xl
-">
-</div>
-
+"></div>
 
 
 
@@ -68,19 +65,14 @@ class="w-7 h-7 text-white">
 </div>
 
 
-
-
 <div>
-
 
 <h1 class="
 text-3xl
 font-black
 tracking-widest
 ">
-
 MERPATI
-
 </h1>
 
 
@@ -88,9 +80,7 @@ MERPATI
 text-sm
 text-blue-200
 ">
-
 TVRI NTB
-
 </p>
 
 
@@ -101,8 +91,6 @@ TVRI NTB
 
 
 </div>
-
-
 
 
 
@@ -121,147 +109,193 @@ scrollbar-thin
 scrollbar-thumb-blue-400/40
 ">
 
-
 @php
-
-$current = request()->route()->getName();
 
 $user = auth()->user();
 
 $isAdmin = $user && $user->hasRole('Admin');
 
-$menus = [
-
-    [
-        'icon'  => 'layout-dashboard',
-        'name'  => 'Dashboard',
-        'route' => $isAdmin
-            ? 'admin.dashboard'
-            : 'dashboard',
-    ],
-
-    [
-        'icon'  => 'inbox',
-        'name'  => 'Kotak Masuk',
-        'route' => 'surat.inbox',
-    ],
-
-    [
-        'icon'  => 'file-plus',
-        'name'  => 'Surat Baru',
-        'route' => 'surat.create',
-    ],
-
-    [
-        'icon'  => 'file-pen-line',
-        'name'  => 'Draft',
-        'route' => 'surat.draft',
-    ],
-
-    [
-        'icon'  => 'send',
-        'name'  => 'Surat Terkirim',
-        'route' => 'surat.terkirim',
-    ],
-
-    [
-        'icon'  => 'circle-check-big',
-        'name'  => 'Approval',
-        'route' => 'surat.approval',
-    ],
-
-    [
-        'icon'  => 'git-branch',
-        'name'  => 'Disposisi',
-        'route' => 'disposisi.index',
-    ],
-
-    [
-        'icon'  => 'archive',
-        'name'  => 'Arsip',
-        'route' => 'surat.arsip',
-    ],
-
-    [
-        'icon'  => 'file-text',
-        'name'  => 'Template Surat',
-        'route' => 'template.user',
-    ],
-
-
-    [
-        'icon'  => 'user-round',
-        'name'  => 'Profil',
-        'route' => 'profile',
-    ],
-
-];
-
-if ($isAdmin) {
 
 $menus = [
 
     [
-        'icon'  => 'layout-dashboard',
-        'name'  => 'Dashboard',
-        'route' => $isAdmin
+        'icon'=>'layout-dashboard',
+        'name'=>'Dashboard',
+        'route'=>$isAdmin
             ? 'admin.dashboard'
             : 'dashboard',
     ],
 
-    [
-        'icon'  => 'inbox',
-        'name'  => 'Kotak Masuk',
-        'route' => 'surat.inbox',
-    ],
 
     [
-        'icon'  => 'file-plus',
-        'name'  => 'Surat Baru',
-        'route' => 'surat.create',
+        'icon'=>'inbox',
+        'name'=>'Kotak Masuk',
+        'route'=>'surat.inbox',
     ],
 
-    [
-        'icon'  => 'file-pen-line',
-        'name'  => 'Draft',
-        'route' => 'surat.draft',
-    ],
 
     [
-        'icon'  => 'send',
-        'name'  => 'Surat Terkirim',
-        'route' => 'surat.terkirim',
+        'icon'=>'file-plus',
+        'name'=>'Surat Baru',
+        'route'=>'surat.create',
     ],
 
-    [
-        'icon'  => 'circle-check-big',
-        'name'  => 'Approval',
-        'route' => 'surat.approval',
-    ],
 
     [
-        'icon'  => 'git-branch',
-        'name'  => 'Disposisi',
-        'route' => 'disposisi.index',
+        'icon'=>'file-pen-line',
+        'name'=>'Draft',
+        'route'=>'surat.draft',
     ],
 
-    [
-        'icon'  => 'archive',
-        'name'  => 'Arsip',
-        'route' => 'surat.arsip',
-    ],
 
     [
-        'icon'  => 'user-round',
-        'name'  => 'Profil',
-        'route' => 'profile',
+        'icon'=>'send',
+        'name'=>'Surat Terkirim',
+        'route'=>'surat.terkirim',
     ],
+
+
+    [
+        'icon'=>'circle-check-big',
+        'name'=>'Approval',
+        'route'=>'surat.approval',
+    ],
+
+
+    [
+        'icon'=>'git-branch',
+        'name'=>'Disposisi',
+        'route'=>'disposisi.index',
+    ],
+
+
+    [
+        'icon'=>'archive',
+        'name'=>'Arsip',
+        'route'=>'surat.arsip',
+    ],
+
 
 ];
+
+
+
+// ==========================
+// TEMPLATE USER
+// hanya non admin
+// ==========================
+
+if(!$isAdmin){
+
+    $menus[] = [
+
+        'icon'=>'file-text',
+        'name'=>'Template Surat',
+        'route'=>'template.user'
+
+    ];
 
 }
 
+
+
+
+
+
+// ==========================
+// MENU ADMIN
+// ==========================
+
+if($isAdmin){
+
+
+    $menus = array_merge($menus,[
+
+
+        [
+
+            'icon'=>'users',
+            'name'=>'Kelola User',
+            'route'=>'admin.users'
+
+        ],
+
+
+        [
+
+            'icon'=>'file-text',
+            'name'=>'Template Surat',
+            'route'=>'admin.template'
+
+        ],
+
+
+        [
+
+            'icon'=>'hash',
+            'name'=>'Nomor Surat',
+            'route'=>'admin.nomor'
+
+        ],
+
+
+        [
+
+            'icon'=>'monitor',
+            'name'=>'Monitoring',
+            'route'=>'admin.monitoring'
+
+        ],
+
+
+        [
+
+            'icon'=>'file-bar-chart',
+            'name'=>'Laporan',
+            'route'=>'admin.laporan'
+
+        ],
+
+
+        [
+
+            'icon'=>'chart-column',
+            'name'=>'Grafik',
+            'route'=>'admin.grafik'
+
+        ],
+
+
+        [
+
+            'icon'=>'settings',
+            'name'=>'Setting',
+            'route'=>'admin.setting'
+
+        ],
+
+
+    ]);
+
+
+}
+
+// ==========================
+// PROFIL SEMUA USER
+// ==========================
+
+$menus[] = [
+
+    'icon'=>'user-round',
+    'name'=>'Profil',
+    'route'=>'profile'
+
+];
 @endphp
+
+
+
+
 
 
 @foreach($menus as $menu)
@@ -272,6 +306,7 @@ $menus = [
 $active = request()->routeIs($menu['route']);
 
 @endphp
+
 
 
 <a href="{{ route($menu['route']) }}"
@@ -287,23 +322,22 @@ transition-all
 duration-300
 
 {{ $active
-    ? 'bg-white/20 text-white shadow-lg translate-x-2'
-    : 'text-blue-100 hover:bg-white/10 hover:text-white hover:translate-x-2'
+?
+'bg-white/20 text-white shadow-lg translate-x-2'
+:
+'text-blue-100 hover:bg-white/10 hover:text-white hover:translate-x-2'
 }}
 ">
 
 
 <i data-lucide="{{ $menu['icon'] }}"
-
 class="
 w-5
 h-5
 transition
 group-hover:scale-110
 ">
-
 </i>
-
 
 
 
@@ -312,8 +346,6 @@ group-hover:scale-110
 {{ $menu['name'] }}
 
 </span>
-
-
 
 
 </a>
@@ -325,7 +357,6 @@ group-hover:scale-110
 
 
 </nav>
-
 
 
 
@@ -351,21 +382,13 @@ backdrop-blur-xl
 text-sm
 text-blue-100
 ">
-
 Sistem E-Surat
-
 </p>
 
 
-
-<p class="
-font-bold
-">
-
+<p class="font-bold">
 TVRI NTB
-
 </p>
-
 
 
 </div>

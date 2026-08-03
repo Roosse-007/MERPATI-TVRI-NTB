@@ -5,6 +5,7 @@
 
 <meta charset="UTF-8">
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -12,7 +13,7 @@
     @yield('title') | MERPATI TVRI NTB
 </title>
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {{-- Font Awesome --}}
 <link rel="stylesheet"
@@ -229,6 +230,10 @@ body{
 .content{
 
     margin-left:280px;
+    min-height:100vh;
+    width:calc(100% - 280px);
+    display:flex;
+    flex-direction:column;
 
 }
 
@@ -245,13 +250,12 @@ body{
 
 
 
-footer{
-
+.app-footer{
+    width:100%;
     text-align:center;
-
     padding:20px;
-
     color:#666;
+    margin-top:auto;
 
 }
 
@@ -633,7 +637,7 @@ class="rounded-circle"
 
 
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 flex-grow-1">
 
 
 @yield('content')
@@ -647,15 +651,12 @@ class="rounded-circle"
 
 
 
-<footer>
+<div style="margin-top: auto; width: 100%; text-align: center; padding: 20px 0; position: relative; clear: both;" class="text-slate-500 text-sm">
+            &copy; {{ date('Y') }} MERPATI TVRI NTB
+        </div>
 
-© {{ date('Y') }} MERPATI TVRI NTB
-
-</footer>
-
-
-
-</div>
+    </div> <!-- Tutup area kanan -->
+</div> <!-- Tutup flex min-h-screen -->
 
 
 
@@ -736,7 +737,7 @@ confirmButtonColor:'#dc2626'
 
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 
 </html>

@@ -4,7 +4,6 @@
 
 @section('content')
 
-
 {{-- HERO SECTION --}}
 <section class="
 relative
@@ -14,66 +13,24 @@ bg-gradient-to-br
 from-blue-700
 via-blue-600
 to-cyan-400
-p-10
-text-white
+h-72
+px-10
+flex
+items-center
 shadow-2xl
 ">
 
 
-<div class="
-absolute
--top-20
--right-20
-w-72
-h-72
-bg-white/20
-rounded-full
-blur-3xl
-">
-</div>
-
-
-
-<div class="
-absolute
-bottom-0
-left-0
-w-60
-h-60
-bg-cyan-200/20
-rounded-full
-blur-3xl
-">
-</div>
-
-
-
-
-
-<div class="
-relative
-flex
-justify-between
-items-center
-">
-
-
-<div>
-
-
-
-
-
-
+{{-- TEXT --}}
+<div class="relative z-10">
 
 <h1 class="
 text-5xl
 font-black
-mt-3
+text-white
+tracking-wide
 ">
-
 MERPATI TVRI NTB
-
 </h1>
 
 
@@ -83,9 +40,7 @@ text-xl
 font-semibold
 text-blue-100
 ">
-
 Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
-
 </p>
 
 
@@ -93,32 +48,18 @@ Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
 
 
 
-
-
-
-{{-- BURUNG TERBANG --}}
-
-<div class="
-hidden
-lg:flex
-text-[140px]
-flying-bird
-">
-
-
-<div class="bird">
-
-🕊️
-
-</div>
-
-
-</div>
-
-
-
-
-</div>
+{{-- BURUNG --}}
+<img
+src="{{ asset('image/merpati-surat.png') }}"
+class="
+absolute
+right-16
+bottom-6
+w-100
+drop-shadow-2xl
+dove-animation
+"
+/>
 
 
 </section>
@@ -404,249 +345,409 @@ class="
 {{-- AKTIVITAS TERBARU --}}
 
 <div class="
-mt-10
-w-full
 bg-white
 rounded-[32px]
-p-10
+p-8
 shadow-lg
+mt-10
 ">
 
 
-{{-- HEADER --}}
-
-<div class="
-flex
-items-center
-gap-4
-mb-8
-">
-
-
-<div class="flex items-center gap-4">
+    {{-- HEADER --}}
 
     <div class="
-    w-12
-    h-12
-    rounded-2xl
-    bg-blue-100
     flex
     items-center
-    justify-center
+    justify-between
+    mb-6
     ">
 
-        <i data-lucide="activity"
-        class="
-        w-6
-        h-6
-        text-blue-600
+
+        <h2 class="
+        text-2xl
+        font-black
+        text-slate-800
         ">
-        </i>
+            Aktivitas Terbaru
+        </h2>
+
+
+
+        <div class="relative">
+
+
+            <i class="bi bi-search 
+            absolute 
+            left-4 
+            top-1/2 
+            -translate-y-1/2
+            text-slate-400">
+            </i>
+
+
+
+            <input
+            id="searchAktivitas"
+            type="text"
+            placeholder="Cari aktivitas..."
+            class="
+            w-52
+            pl-11
+            pr-4
+            py-2
+            rounded-xl
+            bg-slate-100
+            text-sm
+            focus:outline-none
+            "
+            >
+
+
+        </div>
+
 
     </div>
 
+<div id="aktivitas-container">
 
-    <h2 class="
-    text-3xl
-    font-black
-    text-slate-800
+    {{-- TABLE --}}
+
+    <div class="
+    overflow-hidden
+    rounded-2xl
+    border
     ">
-        Aktivitas Terbaru
-    </h2>
 
 
-</div>
+        <table class="w-full">
 
 
-</div>
+            <thead class="
+            bg-gradient-to-r
+            from-blue-600
+            to-cyan-500
+            text-white
+            ">
+
+                <tr>
+
+                    <th class="px-5 py-4 text-left">
+                        No
+                    </th>
+
+                    <th class="px-5 py-4 text-left">
+                        Aktivitas
+                    </th>
+
+                    <th class="px-5 py-4 text-left">
+                        Deskripsi
+                    </th>
+
+                    <th class="px-5 py-4 text-left">
+                        Waktu
+                    </th>
+
+                    <th class="px-5 py-4 text-left">
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
 
 
 
+            <tbody>
+
+
+            @foreach($aktivitas as $index=>$item)
+
+
+            <tr class="
+            aktivitas-row
+            border-b
+            hover:bg-blue-50
+            transition
+            ">
+
+
+                <td class="px-5 py-5">
 
 
 <div class="
-space-y-4
-">
-
-
-@forelse($aktivitas as $item)
-
-
-
-<div class="
+w-9
+h-9
+rounded-full
+bg-blue-100
+text-blue-600
 flex
 items-center
-justify-between
-bg-slate-50
-hover:bg-blue-50
-transition
-p-5
-rounded-2xl
-">
-
-
-
-<div>
-
-
-<p class="
+justify-center
 font-bold
-text-slate-800
 ">
 
-{{ $item['judul'] }}
 
-</p>
-
-
-
-<p class="
-text-sm
-text-slate-500
-mt-1
-">
-
-{{ $item['deskripsi'] }}
-
-</p>
-
-
-
-<p class="
-text-xs
-text-slate-400
-mt-2
-">
-
-{{ $item['waktu']->diffForHumans() }}
-
-</p>
-
+{{ $index+1 }}
 
 
 </div>
 
 
+</td>
 
+
+
+                <td class="px-5 py-5">
+
+    <div class="flex items-center gap-4">
+
+
+        {{-- ICON AKTIVITAS --}}
+        <div class="
+            w-10
+            h-10
+            rounded-xl
+            bg-gradient-to-br
+            from-blue-500
+            to-cyan-400
+            flex
+            items-center
+            justify-center
+            shadow-md
+        ">
+
+            <i data-lucide="mail"
+            class="
+            w-5
+            h-5
+            text-white
+            ">
+            </i>
+
+        </div>
+
+
+
+        {{-- JUDUL --}}
+        <span class="
+        font-bold
+        text-slate-800
+        ">
+
+            {{ $item['judul'] }}
+
+        </span>
+
+
+    </div>
+
+</td>
+
+
+
+                <td class="px-5 py-5 text-slate-500">
+
+                    {{ $item['deskripsi'] }}
+
+                </td>
+
+
+
+                <td class="px-5 py-5 text-slate-500">
+
+                    {{ $item['waktu']->timezone('Asia/Makassar')->format('d M Y, H:i') }}
+
+                </td>
+
+
+
+                <td class="px-5 py-5">
 
 
 <span
 class="
 px-4
 py-2
-rounded-xl
+rounded-full
+text-xs
 font-bold
-text-sm
-
 
 @if($item['status'] == 'Baru')
+
 bg-blue-100 text-blue-600
 
-@elseif($item['status'] == 'Menunggu')
+
+@elseif($item['status'] == 'Menunggu Approval KPP' 
+|| $item['status'] == 'Menunggu')
+
 bg-yellow-100 text-yellow-700
 
+
 @elseif($item['status'] == 'Disetujui')
+
 bg-green-100 text-green-700
 
+
 @elseif($item['status'] == 'Ditolak')
+
 bg-red-100 text-red-700
 
+
 @elseif($item['status'] == 'Disposisi')
+
 bg-purple-100 text-purple-700
 
+
 @elseif($item['status'] == 'Arsip')
+
 bg-orange-100 text-orange-700
 
+
 @else
+
 bg-gray-100 text-gray-700
+
+
 @endif
 ">
 
+
 {{ $item['status'] }}
+
 
 </span>
 
 
-</div>
+</td>
 
 
-
-@empty
-
+            </tr>
 
 
-<div class="
-text-center
-py-12
-">
+            @endforeach
 
 
-<div class="
-w-16
-h-16
-mx-auto
-mb-4
-rounded-2xl
-bg-blue-100
-flex
-items-center
-justify-center
-">
+            </tbody>
 
 
-<i data-lucide="inbox"
-class="
-w-8
-h-8
-text-blue-700
-">
-</i>
+        </table>
+
+
+    </div>
 
 
 </div>
 
 
 
-<p class="
-font-bold
-text-slate-700
-text-lg
-">
+<div class="flex justify-center items-center gap-3 mt-8 mb-6">
 
-Belum ada aktivitas terbaru.
+    {{-- Previous --}}
+    @if ($aktivitas->onFirstPage())
 
-</p>
+        <span class="
+        w-11 h-11
+        rounded-xl
+        bg-slate-200
+        text-slate-400
+        flex
+        items-center
+        justify-center
+        ">
+            ←
+        </span>
+
+    @else
+
+        <a href="{{ $aktivitas->previousPageUrl() }}"
+        class="
+        w-11 h-11
+        rounded-xl
+        bg-white
+        shadow
+        hover:bg-blue-600
+        hover:text-white
+        flex
+        items-center
+        justify-center
+        transition
+        ">
+            ←
+        </a>
+
+    @endif
 
 
 
-<p class="
-text-sm
-text-slate-400
-mt-2
-">
+    {{-- Nomor halaman --}}
+    @for ($i = 1; $i <= $aktivitas->lastPage(); $i++)
 
-Aktivitas surat akan muncul di sini.
+        <a href="{{ $aktivitas->url($i) }}"
+        class="
+        w-11 h-11
+        rounded-xl
+        flex
+        items-center
+        justify-center
+        font-bold
+        transition
 
-</p>
+        {{ $aktivitas->currentPage() == $i
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'bg-white text-slate-600 hover:bg-blue-100'
+        }}
+        ">
 
+            {{ $i }}
+
+        </a>
+
+    @endfor
+
+
+
+    {{-- Next --}}
+    @if ($aktivitas->hasMorePages())
+
+        <a href="{{ $aktivitas->nextPageUrl() }}"
+        class="
+        w-11 h-11
+        rounded-xl
+        bg-white
+        shadow
+        hover:bg-blue-600
+        hover:text-white
+        flex
+        items-center
+        justify-center
+        transition
+        ">
+            →
+        </a>
+
+    @else
+
+        <span class="
+        w-11 h-11
+        rounded-xl
+        bg-slate-200
+        text-slate-400
+        flex
+        items-center
+        justify-center
+        ">
+            →
+        </span>
+
+    @endif
 
 </div>
 
-
-@endforelse
-
-
-</div>
-
-
-</div>
-
-
-
-
+</div> {{-- aktivitas-container --}}
 
 
 <style>
+    
 
 .flying-bird{
 
@@ -730,6 +831,43 @@ rotate(-8deg);
 
 </style>
 
+<script>
+
+const searchInput = document.getElementById('searchAktivitas');
+
+searchInput.addEventListener('input', function () {
+
+    let keyword = this.value.toLowerCase();
+
+
+    let rows = document.querySelectorAll('.aktivitas-row');
+
+
+    rows.forEach(row => {
+
+
+        let data = row.innerText.toLowerCase();
+
+
+        if(data.includes(keyword)) {
+
+            row.style.display = '';
+
+        } else {
+
+            row.style.display = 'none';
+
+        }
+
+
+    });
+
+
+});
+
+</script>
+
 
 
 @endsection
+

@@ -1,112 +1,174 @@
 <header class="
-sticky
-top-0
-z-40
-px-8
-pt-6
+    sticky
+    top-0
+    z-40
+    px-8
+    pt-6
 ">
 
 
 <div class="
-bg-white/80
-backdrop-blur-xl
-border border-white
-shadow-lg
-rounded-3xl
-px-8
-py-5
+    bg-gradient-to-r
+    from-white
+    via-blue-100
+    to-blue-700
+
+    rounded-3xl
+    shadow-2xl
+
+    px-8
+    py-5
+">
+
+
+<div class="
+    flex
+    items-center
+    justify-between
 ">
 
 
 
-<div class="flex items-center justify-between">
+{{-- ================= LOGO + BRAND ================= --}}
+
+<div class="
+    flex
+    items-center
+    gap-6
+">
 
 
 
-{{-- LEFT LOGO --}}
-<div class="flex items-center gap-3">
+{{-- LOGO TVRI --}}
+<div class="
+    w-28
+    h-28
+    flex
+    items-center
+    justify-center
+">
 
-<!-- GANTI BAGIAN INI DENGAN FILE GAMBAR LOGO ANDA -->
-<div class="w-35 h-35 flex items-center justify-center shrink-0">
-    <img src="{{ asset('image/tvri.png') }}"
-         alt="Logo TVRI NTB"
-         class="w-full h-full object-contain">
+
+<img
+    src="{{ asset('image/tvri.png') }}"
+    alt="Logo TVRI NTB"
+    class="
+        w-24
+        h-24
+        object-contain
+        drop-shadow-xl
+    "
+>
+
+
 </div>
+
+
+
+
+
+
+{{-- TEXT --}}
+<div>
+
+
+<h1 class="
+    text-4xl
+    font-black
+    tracking-wide
+    text-blue-900
+">
+
+MERPATI
+
+</h1>
+
+
+
+<p class="
+    text-blue-900
+    font-bold
+    text-lg
+">
+
+Sistem Informasi Surat Digital
+
+</p>
+
+
+
+<p class="
+    text-blue-900
+    text-sm
+    font-bold
+">
+    TVRI Nusa Tenggara Barat
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+{{-- ================= PROFILE ================= --}}
 
 <div>
 
 
-</div>
+<div class="
+    flex
+    items-center
+    gap-4
 
-</div>
+    bg-blue-900/80
 
+    backdrop-blur-xl
 
+    px-5
+    py-3
 
+    rounded-2xl
 
+    shadow-xl
 
+    border
+    border-white/20
 
-
-{{-- RIGHT MENU --}}
-<div class="flex items-center gap-5">
-
-{{-- PROFILE --}}
-
-<div
-
-class="
-flex
-items-center
-gap-3
-
-bg-gradient-to-r
-from-blue-600
-to-cyan-400
-
-px-4
-py-2
-
-rounded-2xl
-
-text-white
-
-shadow-lg
-
-"
-
->
-
-
-
-<div
-
-class="
-w-10
-h-10
-
-rounded-xl
-
-bg-white/20
-
-flex
-items-center
-justify-center
-
-font-bold
-
-"
-
-
->
-
-
-<i data-lucide="user-round"
-
-class="
-w-5
-h-5
 ">
 
-</i>
+
+
+<div class="
+    w-12
+    h-12
+
+    rounded-xl
+
+    bg-white/20
+
+    flex
+    items-center
+    justify-center
+">
+
+
+<i
+data-lucide="user-round"
+
+class="
+w-6
+h-6
+text-white
+"
+></i>
 
 
 </div>
@@ -120,6 +182,7 @@ h-5
 
 <p class="
 font-bold
+text-white
 text-sm
 ">
 
@@ -128,9 +191,10 @@ text-sm
 </p>
 
 
+
 <p class="
-text-xs
 text-blue-100
+text-xs
 ">
 
 {{ auth()->user()->jabatan->nama_jabatan ?? 'TVRI NTB' }}
@@ -138,17 +202,17 @@ text-blue-100
 </p>
 
 
-
-</div>
-
-
 </div>
 
 
 
+</div>
+
 
 
 </div>
+
+
 
 
 </div>
@@ -162,7 +226,5 @@ text-blue-100
 
 
 <script>
-
 lucide.createIcons();
-
 </script>

@@ -53,7 +53,6 @@ public function login(Request $request)
         }
 
     }
-
     RateLimiter::clear($key);
 
     $request->session()->regenerate();

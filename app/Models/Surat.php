@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Lampiran;
 
 
 class Surat extends Model
@@ -262,14 +263,14 @@ public function suratInduk(): BelongsTo
 }
 
 
-
 public function balasan(): HasMany
 {
     return $this->hasMany(
         Surat::class,
         'parent_surat_id'
-    );
+    )->latest();
 }
+
 
     /*
     |--------------------------------------------------------------------------

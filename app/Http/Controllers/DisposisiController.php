@@ -295,60 +295,29 @@ public function showWeb($id)
 
 
     }
+/*
+|--------------------------------------------------------------------------
+| BACA DISPOSISI
+|--------------------------------------------------------------------------
+*/
 
-    /*
-    |--------------------------------------------------------------------------
-    | BACA DISPOSISI
-    |--------------------------------------------------------------------------
-    */
-
-    public function read($id)
-    {
+public function read($id)
+{
 
 
-        $disposisi = Disposisi::find($id);
-
+    $disposisi = Disposisi::find($id);
 
 
 
-        if(!$disposisi){
-
-
-            return response()->json([
-
-                'success'=>false,
-
-                'message'=>'Disposisi tidak ditemukan'
-
-            ],404);
-
-
-        }
-
-
-
-
-
-        $disposisi->update([
-
-            'dibaca'=>true,
-
-            'dibaca_at'=>now()
-
-        ]);
-
-
-
-
+    if(!$disposisi){
 
         return response()->json([
 
-            'success'=>true,
+            'success'=>false,
 
-            'message'=>'Disposisi dibaca'
+            'message'=>'Disposisi tidak ditemukan'
 
-        ]);
-
+        ],404);
 
     }
 
@@ -356,73 +325,100 @@ public function showWeb($id)
 
 
 
+    $disposisi->update([
 
 
+        'status'=>'Telah Dibaca',
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SELESAIKAN DISPOSISI
-    |--------------------------------------------------------------------------
-    */
-
-    public function finish($id)
-    {
+        'dibaca'=>true,
 
 
-        $disposisi = Disposisi::find($id);
+        'dibaca_at'=>now()
 
 
-
-
-        if(!$disposisi){
-
-
-            return response()->json([
-
-                'success'=>false,
-
-                'message'=>'Disposisi tidak ditemukan'
-
-            ],404);
-
-
-        }
+    ]);
 
 
 
 
 
-        $disposisi->update([
+    return response()->json([
 
-            'status'=>'Selesai'
+        'success'=>true,
 
-        ]);
+        'message'=>'Disposisi telah dibaca',
+
+        'data'=>$disposisi
+
+    ]);
+
+
+}
 
 
 
 
+
+/*
+|--------------------------------------------------------------------------
+| SELESAIKAN DISPOSISI
+|--------------------------------------------------------------------------
+*/
+
+public function finish($id)
+{
+
+
+    $disposisi = Disposisi::find($id);
+
+
+
+    if(!$disposisi){
 
         return response()->json([
 
-            'success'=>true,
+            'success'=>false,
 
-            'message'=>'Disposisi selesai',
+            'message'=>'Disposisi tidak ditemukan'
 
-            'data'=>$disposisi
-
-        ]);
-
+        ],404);
 
     }
 
 
 
 
+    $disposisi->update([
+
+
+        'status'=>'Selesai',
+
+
+        'dibaca'=>true,
+
+
+        'dibaca_at'=>$disposisi->dibaca_at ?? now()
+
+
+    ]);
 
 
 
 
+
+    return response()->json([
+
+        'success'=>true,
+
+        'message'=>'Disposisi selesai',
+
+        'data'=>$disposisi
+
+    ]);
+
+
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -555,37 +551,45 @@ public function showWeb($id)
     */
 
     public function indexWeb()
-    {
+{
+
+    $userId = Auth::id();
 
 
-        $disposisi = Disposisi::with([
+    $disposisi = Disposisi::with([
 
-            'surat',
+        'surat',
 
-            'dariUser.jabatan',
+        'dariUser.jabatan',
 
-            'keUser.jabatan'
-
-
-        ])
-
-        ->latest()
-
-        ->paginate(10);
+        'keUser.jabatan'
 
 
+    ])
+
+    ->where(function($query) use ($userId){
+
+        $query->where('dari_user_id',$userId)
+
+              ->orWhere('ke_user_id',$userId);
+
+    })
+
+    ->latest()
+
+    ->paginate(10);
 
 
-        return view(
 
-            'surat.disposisi-index',
+    return view(
 
-            compact('disposisi')
+        'surat.disposisi-index',
 
-        );
+        compact('disposisi')
 
+    );
 
-    }
+}
 
 
 

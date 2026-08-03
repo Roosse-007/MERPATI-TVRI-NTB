@@ -11,43 +11,45 @@ class Lampiran extends Model
 
 
     protected $fillable = [
-
         'surat_id',
-
         'nama_file',
-
         'path_file',
-
         'mime_type',
-
         'ukuran_file',
-
-        'uploaded_by'
-
+        'uploaded_by',
     ];
 
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE SURAT
+    |--------------------------------------------------------------------------
+    */
+
     public function surat()
     {
-
         return $this->belongsTo(
             Surat::class,
             'surat_id'
         );
-
     }
 
 
 
-    public function uploader()
-    {
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI USER PENGUPLOAD
+    |--------------------------------------------------------------------------
+    */
+
+    public function uploadedBy()
+    {
         return $this->belongsTo(
             User::class,
             'uploaded_by'
         );
-
     }
 
 

@@ -9,11 +9,11 @@ use App\Models\Jabatan;
 
 class ApprovalWorkflowSeeder extends Seeder
 {
-    public function run(): void
-    {
-        ApprovalWorkflow::truncate();
+   public function run(): void
+{
+    ApprovalWorkflow::query()->delete();
 
-        $jenisSurat = JenisSurat::all();
+    $jenisSurat = JenisSurat::all();
 
         foreach ($jenisSurat as $jenis) {
 

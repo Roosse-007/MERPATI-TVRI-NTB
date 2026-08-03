@@ -1,4 +1,11 @@
-<footer class="border-t bg-white py-5 text-center text-slate-500">
+<footer class="
+    w-full
+    text-center
+    py-5
+    text-slate-500
+    text-sm
+    bg-transparent
+">
 
 © {{ date('Y') }} MERPATI TVRI NTB
 
