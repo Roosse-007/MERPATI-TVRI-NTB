@@ -52,6 +52,7 @@ Manajemen Elektronik Registrasi Surat dan Pengiriman Antar Tim
 <img
 src="{{ asset('image/merpati-surat.png') }}"
 class="
+//bird-flight
 absolute
 right-16
 bottom-6

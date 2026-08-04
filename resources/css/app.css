@@ -142,31 +142,34 @@ button:hover{
 .card{
 
     border-radius:15px;
-/* MERPATI TERBANG */
+
 }
+/* CONTAINER BURUNG */
 .bird-flight {
 
     position: absolute;
 
-    right: 80px;
-    top: 60px;
+    right: -150px;
+    top: 80px;
 
-    animation: flyPath 6s infinite ease-in-out;
+    animation: flyPath 14s infinite ease-in-out;
 
 }
 
 
+/* GAMBAR BURUNG */
 .bird {
 
-    font-size:140px;
+    width: 140px;
 
-    animation: wingMove 1s infinite alternate;
+    display: block;
+
+    animation: birdMove 0.8s infinite ease-in-out alternate;
 
 }
 
 
-
-/* jalur terbang */
+/* JALUR TERBANG JAUH */
 
 @keyframes flyPath {
 
@@ -174,31 +177,44 @@ button:hover{
 0% {
 
     transform:
-    translate(0,0);
+    translate(0,0)
+    rotate(0deg);
 
 }
 
 
-25% {
+20% {
 
     transform:
-    translate(-40px,-50px);
+    translate(-250px,-120px)
+    rotate(-8deg);
 
 }
 
 
-50% {
+40% {
 
     transform:
-    translate(-90px,10px);
+    translate(-500px,-40px)
+    rotate(-3deg);
 
 }
 
 
-75% {
+60% {
 
     transform:
-    translate(-40px,-30px);
+    translate(-800px,-160px)
+    rotate(8deg);
+
+}
+
+
+80% {
+
+    transform:
+    translate(-1100px,-60px)
+    rotate(3deg);
 
 }
 
@@ -206,7 +222,8 @@ button:hover{
 100% {
 
     transform:
-    translate(0,0);
+    translate(-1400px,-120px)
+    rotate(0deg);
 
 }
 
@@ -215,25 +232,37 @@ button:hover{
 
 
 
-/* efek mengepak */
+/* EFEK MELAYANG */
 
-@keyframes wingMove {
+@keyframes birdMove {
 
 
-from {
+0% {
 
     transform:
-    translateY(0);
+    translateY(0px)
+    rotate(-5deg);
 
 }
 
 
-to {
+50% {
 
     transform:
-    translateY(-15px);
+    translateY(-25px)
+    rotate(5deg);
 
 }
+
+
+100% {
+
+    transform:
+    translateY(0px)
+    rotate(-5deg);
+
+}
+
 
 }
 
