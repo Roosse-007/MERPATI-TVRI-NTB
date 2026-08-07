@@ -563,88 +563,51 @@ public function edit($id)
     */
 
 
-    public function update(
-        Request $request,
-        $id
-    )
+    public function update(Request $request, $id)
+{
+
+    $surat = Surat::findOrFail($id);
+
+
+
+    $request->validate([
+
+        'perihal' => 'required',
+
+        'lampiran' => 'nullable|file|max:10240'
+
+    ]);
+
+
+
+    $surat->update([
+
+        'perihal' => $request->perihal
+
+    ]);
+
+
+
+
+
+    // Jika upload lampiran baru
+
+    if($request->hasFile('lampiran'))
     {
 
 
-        $surat = Surat::findOrFail($id);
+        // hapus lampiran lama
 
-
-
-
-
-        $request->validate([
-
-
-            'perihal'
-
-                =>
-
-            'required',
-
-
-
-            'isi_surat'
-
-                =>
-
-            'required',
-
-
-
-            'file_surat'
-
-                =>
-
-            'nullable|file|max:10240'
-
-
-        ]);
-
-
-
-
-
-
-
-
-        $file = $surat->file_surat;
-
-
-
-
-
-        if($request->hasFile('file_surat'))
+        foreach($surat->lampiran as $lama)
         {
 
 
-            if($file)
-            {
-
-                Storage::disk('public')
-
-                    ->delete($file);
-
-            }
+            Storage::disk('public')
+                ->delete($lama->path_file);
 
 
 
-
-
-            $file = $request
-
-                ->file('file_surat')
-
-                ->store(
-
-                    'surat',
-
-                    'public'
-
-                );
+            $lama->delete();
 
 
         }
@@ -653,58 +616,68 @@ public function edit($id)
 
 
 
+        // simpan lampiran baru
+
+        $file = $request->file('lampiran');
 
 
-        $surat->update([
+        $path = $file->store(
 
+            'lampiran',
 
+            'public'
 
-            'perihal'
-
-                =>
-
-            $request->perihal,
-
-
-
-            'isi_surat'
-
-                =>
-
-            $request->isi_surat,
+        );
 
 
 
-            'file_surat'
 
-                =>
 
-            $file
+        Lampiran::create([
 
+
+            'surat_id'=>$surat->id,
+
+
+            'nama_file'=>$file->getClientOriginalName(),
+
+
+            'path_file'=>$path,
+
+
+            'mime_type'=>$file->getMimeType(),
+
+
+            'ukuran_file'=>$file->getSize(),
+
+
+            'uploaded_by'=>auth()->id()
 
 
         ]);
 
 
 
-
-
-
-
-        return redirect()
-
-            ->route('surat.draft')
-
-            ->with(
-
-                'success',
-
-                'Draft berhasil diperbarui.'
-
-            );
-
-
     }
+
+
+
+
+
+    return redirect()
+
+        ->route('surat.draft')
+
+        ->with(
+
+            'success',
+
+            'Draft berhasil diperbarui.'
+
+        );
+
+
+}
 
 
     /*

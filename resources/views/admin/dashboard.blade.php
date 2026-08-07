@@ -274,11 +274,7 @@ Dokumen tersimpan
         <a href="/admin/template-surat"
             class="block bg-green-100 hover:bg-green-200 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 no-underline">
 
-<div class="w-16 h-16 mx-auto rounded-full bg-green-600 flex items-center justify-center mb-4">
-
-    <i class="bi bi-file-earmark-richtext-fill text-white text-3xl"></i>
-
-</div>
+            <div class="w-16 h-16 mx-auto rounded-full bg-green-600 flex items-center justify-center mb-4">
 
                 <i class="bi bi-file-earmark-richtext-fill text-white text-3xl"></i>
 
@@ -302,7 +298,6 @@ Dokumen tersimpan
 
                 <i class="bi bi-bar-chart-fill text-white text-3xl"></i>
 
-
             </div>
 
             <h3 class="text-gray-800 font-normal text-lg">
@@ -312,7 +307,6 @@ Dokumen tersimpan
             <p class="text-gray-600 text-sm mt-2">
                 Statistik dan laporan
             </p>
-
 
         </a>
 
@@ -334,25 +328,7 @@ Dokumen tersimpan
                 Dokumen yang diarsipkan
             </p>
 
-
-
-
-<a href="/surat/arsip"
-class="p-5 rounded-xl bg-purple-50 hover:bg-purple-100 text-center">
-
-
-<div class="text-3xl text-purple-600">
-    <i class="bi bi-folder-fill"></i>
-</div>
-
-
-<p class="mt-2 font-semibold">
-Arsip
-</p>
-
-
-</a>
-
+        </a>
 
     </div>
 

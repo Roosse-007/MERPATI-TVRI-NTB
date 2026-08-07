@@ -329,65 +329,6 @@ p-4
 
 
 
-<label class="font-bold block mt-6">
-
-Ringkasan
-
-</label>
-
-
-<textarea
-
-name="ringkasan"
-
-rows="3"
-
-class="
-w-full
-mt-2
-bg-slate-100
-rounded-xl
-p-4
-"
-
->{{$draft->ringkasan}}</textarea>
-
-
-
-
-
-
-<label class="font-bold block mt-6">
-
-Isi Surat
-
-</label>
-
-
-
-<textarea
-
-name="isi_surat"
-
-rows="10"
-
-class="
-w-full
-mt-2
-bg-slate-100
-rounded-xl
-p-4
-"
-
->{{$draft->isi_surat}}</textarea>
-
-
-
-
-
-
-
-
 
 {{-- LAMPIRAN DOKUMEN --}}
 
@@ -459,9 +400,18 @@ PDF maksimal 10MB
 
 type="file"
 
-name="file_surat"
+name="lampiran"
 
-accept=".pdf"
+accept="
+.pdf,
+.doc,
+.docx,
+.xls,
+.xlsx,
+jpg,
+jpeg,
+png
+"
 
 class="
 mt-5
@@ -475,7 +425,13 @@ block
 
 
 
-@if($draft->file_surat)
+@if($draft->lampiran->count())
+
+@php
+
+$file = $draft->lampiran->first();
+
+@endphp
 
 
 <div class="
@@ -497,11 +453,9 @@ File Saat Ini:
 </p>
 
 
-
-
 <a
 
-href="{{asset('storage/'.$draft->file_surat)}}"
+href="{{asset('storage/'.$file->path_file)}}"
 
 target="_blank"
 
@@ -513,14 +467,12 @@ hover:underline
 
 >
 
-📄 Lihat File Lama
+📄 {{$file->nama_file}}
 
 </a>
 
 
-
 </div>
-
 
 
 @endif

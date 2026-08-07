@@ -483,9 +483,7 @@ text-blue-500
 
 
 
-
-
-{{-- FILE DOKUMEN --}}
+{{-- FILE LAMPIRAN --}}
 
 <div class="
 col-span-12
@@ -499,13 +497,16 @@ pl-4
 ">
 
 
-@if($item->file_surat)
+@if($item->lampiran->count())
 
 
 @php
+$file = $item->lampiran->first();
 
-$ext = pathinfo($item->file_surat, PATHINFO_EXTENSION);
-
+$ext = pathinfo(
+    $file->nama_file,
+    PATHINFO_EXTENSION
+);
 @endphp
 
 
@@ -523,7 +524,8 @@ gap-3
 ">
 
 
-@if($ext == 'pdf')
+@if(strtolower($ext) == 'pdf')
+
 
 <i class="
 fa-solid
@@ -548,6 +550,7 @@ text-3xl
 
 
 
+
 <div>
 
 
@@ -558,10 +561,7 @@ text-slate-700
 ">
 
 
-{{Str::limit(
-basename($item->file_surat),
-18
-)}}
+{{Str::limit($file->nama_file,18)}}
 
 
 </p>
@@ -583,6 +583,7 @@ uppercase
 </div>
 
 
+
 </div>
 
 
@@ -594,8 +595,7 @@ uppercase
 
 <a
 
-href="{{route('surat.preview',$item->id)}}"
-
+href="{{route('lampiran.download',$file->id)}}"
 target="_blank"
 
 class="
@@ -606,7 +606,7 @@ hover:bg-blue-50
 transition
 "
 
-title="Preview Dokumen"
+title="Preview Lampiran"
 
 >
 
@@ -621,11 +621,12 @@ text-blue-600
 </a>
 
 
+
+
 @endif
 
 
 </div>
-
 
 
 
