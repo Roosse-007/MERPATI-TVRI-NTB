@@ -61,6 +61,7 @@ class Surat extends Model
         'file_pdf_path',
 
         'is_archived',
+        'nama_file_asli',
 
     ];
 

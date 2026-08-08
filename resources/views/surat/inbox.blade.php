@@ -4,572 +4,613 @@
 
 @section('content')
 
+<style>
 
-{{-- HEADER --}}
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+.page-slide-out{
+    opacity:0;
+    transform:translateX(-30px);
+    transition:all .35s ease;
+}
 
+.page-slide-in{
+    opacity:0;
+    transform:translateX(30px);
+    animation:slideIn .35s ease forwards;
+}
 
-<div>
+@keyframes slideIn{
 
-<h1 class="text-4xl font-black text-slate-800">
-    Kotak Masuk
-</h1>
+    to{
 
-<p class="text-slate-500 mt-2">
-    Daftar surat masuk yang diterima oleh unit kerja
-</p>
+        opacity:1;
 
-</div>
+        transform:translateX(0);
 
+    }
 
+}
 
-<a href="{{ route('surat.create') }}"
-class="
-inline-flex
-items-center
-justify-center
-bg-gradient-to-r
-from-blue-600
-to-cyan-400
-text-white
-px-7
-py-3
-rounded-2xl
-font-bold
-shadow-lg
-hover:scale-105
-transition">
+</style>
 
-+ Surat Baru
+<!-- ==========================================================
+HEADER
+========================================================== -->
 
-</a>
+<div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-sky-700 to-cyan-600 shadow-xl">
 
+    <div class="absolute -top-28 -right-28 w-96 h-96 rounded-full bg-white/10 blur-3xl"></div>
 
-</div>
+    <div class="absolute -bottom-32 -left-24 w-80 h-80 rounded-full bg-cyan-300/10 blur-3xl"></div>
 
+    <div class="relative z-10 p-10">
 
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-8">
 
-{{-- STAT CARD CONTAINER --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+            <div>
 
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white backdrop-blur">
 
-    {{-- 1. TOTAL SURAT --}}
-    <a href="{{ route('surat.inbox') }}" class="block group">
-        <div class="
-            relative
-            overflow-hidden
-            rounded-3xl
-            p-8
-            h-full
-            text-white
-            shadow-xl
-            bg-gradient-to-br
-            from-blue-600
-            to-cyan-400
-            group-hover:-translate-y-1
-            group-hover:shadow-2xl
-            transition
-            duration-300
-            flex
-            flex-col
-            justify-between
-        ">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+                    <i class="bi bi-inbox-fill"></i>
 
-            <div class="flex items-center justify-between relative z-10">
-                <div class="space-y-2">
-                    <p class="text-white/80 font-medium text-base">Total Surat</p>
-                    <h2 class="text-5xl font-black tracking-tight">{{ $totalSurat }}</h2>
-                </div>
+                    Kotak Masuk
 
-                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shadow-inner shrink-0">
-                    <i class="bi bi-envelope-paper-fill"></i>
-                </div>
+                </span>
+
+                <h1 class="text-5xl font-black text-white mt-6">
+
+                    Surat Masuk
+
+                </h1>
+
+                <p class="mt-4 text-blue-100 text-lg">
+
+                    Seluruh surat yang diterima oleh unit kerja.
+
+                </p>
+
             </div>
 
-            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
-                <p class="text-sm text-white/80 font-medium">Jumlah seluruh surat masuk</p>
+            <div>
+
+                <a href="{{ route('surat.create') }}"
+                   class="inline-flex items-center gap-3 bg-white text-blue-700 px-7 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition">
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                    Surat Baru
+
+                </a>
+
             </div>
+
         </div>
-    </a>
 
+    </div>
 
-    {{-- 2. MENUNGGU APPROVAL --}}
-    @php
-    $statusApproval = match(auth()->user()->jabatan->nama_jabatan ?? '') {
-        'Ketua Tim Perencana dan Pengendali Program' => 'Menunggu Approval KPP',
-        'Kepala Sub Bagian Tata Usaha' => 'Menunggu Approval KTU',
-        'Kepala TVRI Stasiun NTB' => 'Menunggu Approval Kepala Stasiun',
-        default => '',
-    };
-    @endphp
-    <a href="{{ route('surat.inbox', ['status' => $statusApproval]) }}" class="block group">
-        <div class="
-            relative
-            overflow-hidden
-            rounded-3xl
-            p-8
-            h-full
-            text-white
-            shadow-xl
-            bg-gradient-to-br
-            from-amber-500
-            to-orange-400
-            group-hover:-translate-y-1
-            group-hover:shadow-2xl
-            transition
-            duration-300
-            flex
-            flex-col
-            justify-between
-        ">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+</div>
 
-            <div class="flex items-center justify-between relative z-10">
-                <div class="space-y-2">
-                    <p class="text-white/80 font-medium text-base">Menunggu Approval</p>
-                    <h2 class="text-5xl font-black tracking-tight">{{ $menungguApproval }}</h2>
+<!-- ==========================================================
+STATISTIK
+========================================================== -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+
+    {{-- TOTAL SURAT --}}
+    <div class="bg-gradient-to-br from-blue-600 to-cyan-500 rounded-3xl text-white shadow-xl p-8">
+
+        <div class="flex justify-between">
+
+            <div>
+
+                <div class="text-blue-100">
+
+                    Total Surat
+
                 </div>
 
-                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
-                    <i class="bi bi-clock-history"></i>
+                <div class="counter text-5xl font-black mt-4"
+                     data-target="{{ $totalSurat }}">
+
+                    0
+
                 </div>
+
             </div>
 
-            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
-                <p class="text-sm text-white/80 font-medium">Surat menunggu persetujuan</p>
+            <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+
+                <i class="bi bi-envelope-paper-fill text-3xl"></i>
+
             </div>
+
         </div>
-    </a>
 
+    </div>
 
-    {{-- 3. DITERIMA --}}
-    <a href="{{ route('surat.inbox', ['status' => 'Disetujui']) }}" class="block group">
-        <div class="
-            relative
-            overflow-hidden
-            rounded-3xl
-            p-8
-            h-full
-            text-white
-            shadow-xl
-            bg-gradient-to-br
-            from-teal-600
-            to-emerald-500
-            group-hover:-translate-y-1
-            group-hover:shadow-2xl
-            transition
-            duration-300
-            flex
-            flex-col
-            justify-between
-        ">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+    {{-- MENUNGGU --}}
+    <div class="bg-gradient-to-br from-amber-500 to-orange-400 rounded-3xl text-white shadow-xl p-8">
 
-            <div class="flex items-center justify-between relative z-10">
-                <div class="space-y-2">
-                    <p class="text-white/80 font-medium text-base">Diterima</p>
-                    <h2 class="text-5xl font-black tracking-tight">{{ $diterima ?? 0 }}</h2>
+        <div class="flex justify-between">
+
+            <div>
+
+                <div class="text-amber-100">
+
+                    Menunggu
+
                 </div>
 
-                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center shrink-0">
-                    <i data-lucide="inbox" class="w-8 h-8"></i>
+                <div class="counter text-5xl font-black mt-4"
+                     data-target="{{ $menungguApproval }}">
+
+                    0
+
                 </div>
+
             </div>
 
-            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
-                <p class="text-sm text-white/80 font-medium">Surat telah disetujui</p>
+            <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+
+                <i class="bi bi-hourglass-split text-3xl"></i>
+
             </div>
+
         </div>
-    </a>
 
+    </div>
 
-    {{-- 4. DITOLAK --}}
-    <a href="{{ route('surat.inbox', ['status' => 'Ditolak']) }}" class="block group">
-        <div class="
-            relative
-            overflow-hidden
-            rounded-3xl
-            p-8
-            h-full
-            text-white
-            shadow-xl
-            bg-gradient-to-br
-            from-red-500
-            to-rose-600
-            group-hover:-translate-y-1
-            group-hover:shadow-2xl
-            transition
-            duration-300
-            flex
-            flex-col
-            justify-between
-        ">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+    {{-- DISETUJUI --}}
+    <div class="bg-gradient-to-br from-green-600 to-emerald-500 rounded-3xl text-white shadow-xl p-8">
 
-            <div class="flex items-center justify-between relative z-10">
-                <div class="space-y-2">
-                    <p class="text-white/80 font-medium text-base">Ditolak</p>
-                    <h2 class="text-5xl font-black tracking-tight">{{ $ditolak }}</h2>
+        <div class="flex justify-between">
+
+            <div>
+
+                <div class="text-green-100">
+
+                    Disetujui
+
                 </div>
 
-                <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl shrink-0">
-                    <i class="bi bi-file-earmark-x-fill"></i>
+                <div class="counter text-5xl font-black mt-4"
+                     data-target="{{ $diterima }}">
+
+                    0
+
                 </div>
+
             </div>
 
-            <div class="mt-6 pt-4 border-t border-white/10 relative z-10">
-                <p class="text-sm text-white/80 font-medium">Surat yang ditolak</p>
+            <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+
+                <i class="bi bi-check-circle-fill text-3xl"></i>
+
             </div>
+
         </div>
-    </a>
+
+    </div>
+
+    {{-- DITOLAK --}}
+    <div class="bg-gradient-to-br from-red-500 to-rose-600 rounded-3xl text-white shadow-xl p-8">
+
+        <div class="flex justify-between">
+
+            <div>
+
+                <div class="text-red-100">
+
+                    Ditolak
+
+                </div>
+
+                <div class="counter text-5xl font-black mt-4"
+                     data-target="{{ $ditolak }}">
+
+                    0
+
+                </div>
+
+            </div>
+
+            <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+
+                <i class="bi bi-file-earmark-x-fill text-3xl"></i>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 
-{{-- SEARCH FILTER --}}
+<!-- ==========================================================
+FILTER
+========================================================== -->
 
-<form
-id="searchForm"
-method="GET"
-action="{{ route('surat.inbox') }}"
-class="mt-10 bg-white rounded-[28px] p-6 shadow-lg">
+<div class="bg-white rounded-3xl shadow-sm border border-slate-200 mt-8 p-8">
 
-<div class="flex flex-col md:flex-row gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-<input
-id="searchInput"
-type="text"
-name="search"
-value="{{ request('search') }}"
-placeholder="Cari nomor surat, perihal, atau pengirim..."
-class="flex-1 bg-slate-100 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-blue-500">
+        {{-- SEARCH --}}
+        <div class="lg:col-span-5">
 
-<select
-id="statusFilter"
-name="status"
-class="bg-slate-100 rounded-2xl px-5 py-4 outline-none">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
 
-    <option value="">Semua Status</option>
+                Pencarian Surat
 
-    <option value="Draft"
-        @selected(request('status')=='Draft')>
-        Draft
-    </option>
+            </label>
 
-    <option value="Menunggu Approval KPP"
-        @selected(request('status')=='Menunggu Approval KPP')>
-        Menunggu Approval KPP
-    </option>
+            <div class="relative">
 
-    <option value="Menunggu Approval KTU"
-        @selected(request('status')=='Menunggu Approval KTU')>
-        Menunggu Approval KTU
-    </option>
+                <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-    <option value="Menunggu Approval Kepala Stasiun"
-        @selected(request('status')=='Menunggu Approval Kepala Stasiun')>
-        Menunggu Approval Kepala Stasiun
-    </option>
+                <input
+                    id="searchInput"
+                    name="search"
+                    value="{{ request('search') }}"
+                    type="text"
+                    placeholder="Nomor surat, perihal, pengirim..."
+                    class="w-full rounded-2xl border border-slate-200 pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 outline-none">
 
-    <option value="Disetujui"
-        @selected(request('status')=='Disetujui')>
-        Disetujui
-    </option>
+            </div>
 
-    <option value="Ditolak"
-        @selected(request('status')=='Ditolak')>
-        Ditolak
-    </option>
+        </div>
 
-</select>
+        {{-- STATUS --}}
+        <div class="lg:col-span-3">
 
-<button
-type="submit"
-class="bg-blue-600 text-white px-6 rounded-2xl hover:bg-blue-700 transition">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
 
-Cari
+                Status
 
-</button>
+            </label>
+
+            <select
+                id="statusFilter"
+                name="status"
+                class="w-full rounded-2xl border border-slate-200 px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none">
+
+                <option value="">Semua Status</option>
+
+                <option value="Draft"
+                    @selected(request('status')=='Draft')>
+
+                    Draft
+
+                </option>
+
+                <option value="Menunggu Approval KPP"
+                    @selected(request('status')=='Menunggu Approval KPP')>
+
+                    Menunggu Approval KPP
+
+                </option>
+
+                <option value="Menunggu Approval KTU"
+                    @selected(request('status')=='Menunggu Approval KTU')>
+
+                    Menunggu Approval KTU
+
+                </option>
+
+                <option value="Menunggu Approval Kepala Stasiun"
+                    @selected(request('status')=='Menunggu Approval Kepala Stasiun')>
+
+                    Menunggu Approval Kepala Stasiun
+
+                </option>
+
+                <option value="Disetujui"
+                    @selected(request('status')=='Disetujui')>
+
+                    Disetujui
+
+                </option>
+
+                <option value="Ditolak"
+                    @selected(request('status')=='Ditolak')>
+
+                    Ditolak
+
+                </option>
+
+            </select>
+
+        </div>
+
+        {{-- SORT --}}
+        <div class="lg:col-span-2">
+
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
+
+                Urutkan
+
+            </label>
+
+           <select
+                id="sortFilter"
+                name="sort"
+                class="w-full rounded-2xl border border-slate-200 px-5 py-4">
+
+                <option value="desc"
+                @selected(request('sort')=='desc')
+>
+
+                    Terbaru
+
+                </option>
+
+                <option value="asc"
+                @selected(request('sort')=='asc')
+>
+
+                    Terlama
+
+                </option>
+
+            </select>
+
+        </div>
+
+        {{-- BUTTON --}}
+        <div class="lg:col-span-2 flex items-end">
+
+            <button
+                id="btnFilter"
+                class="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 font-bold hover:shadow-xl transition">
+
+                <i class="bi bi-funnel-fill me-2"></i>
+
+                Terapkan
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
-</form>
+<!-- ==========================================================
+INFO BAR
+========================================================== -->
 
 
+<!-- ==========================================================
+TABEL SURAT
+========================================================== -->
+<div id="tableContainer">
 
-
-
-
-{{-- LIST SURAT --}}
-
-<div class="
-mt-8
-space-y-5
-">
-
-
-@forelse($surat as $item)
-
-
-
-<div class="
-bg-white
-rounded-[28px]
-p-6
-shadow-lg
-hover:-translate-y-1
-transition
-">
-
-
-<div class="
-flex
-items-center
-justify-between
-">
-
-
-<div class="flex gap-5 items-center">
-
-
-<div class="
-w-14
-h-14
-rounded-2xl
-bg-blue-100
-flex
-items-center
-justify-center
-text-2xl
-">
-
-@if($item->parent_surat_id)
-
-↩️
-
-@else
-
-📩
-
-@endif
-
-</div>
-
-
-<div>
-
-
-<h3 class="font-black text-xl text-slate-800">
-
-@if($item->parent_surat_id)
-
-    <span class="text-blue-600">
-        ↩ Balasan:
-    </span>
-
-@endif
-
-{{ $item->perihal }}
-
-</h3>
-
-@if($item->parent_surat_id)
-
-<p class="text-sm text-purple-600 mt-1">
-
-    <span class="font-semibold">
-        Bagian dari surat:
-    </span>
-
-    {{ $item->suratInduk->nomor_surat ?? '-' }}
-
-</p>
-
-@endif
-
-<p class="text-sm text-slate-500">
-    Jenis Surat :
-    <span class="font-medium text-slate-700">
-        {{ $item->jenisSurat->nama ?? '-' }}
-    </span>
-</p>
-
-<p class="text-slate-500 mt-2">
-    <span class="font-medium">Pengirim :</span>
-    {{ $item->pengirim->name ?? '-' }}
-</p>
-
-<p class="text-sm text-slate-400 mt-1">
-    <span class="font-medium">Tanggal :</span>
-    {{ $item->tanggal_surat
-        ? \Carbon\Carbon::parse($item->tanggal_surat)->translatedFormat('d F Y')
-        : '-' }}
-</p>
-
+    @include('surat.partials.inbox-table')
 
 </div>
 
 
-</div>
-
-
-
-
-
-<span class="
-px-4
-py-2
-rounded-xl
-font-bold
-text-sm
-
-@if($item->status=='Draft')
-
-bg-gray-100 text-gray-700
-
-@elseif($item->status=='Menunggu Approval KPP')
-
-bg-yellow-100 text-yellow-700
-
-@elseif($item->status=='Menunggu Approval KTU')
-
-bg-orange-100 text-orange-700
-
-@elseif($item->status=='Menunggu Approval Kepala Stasiun')
-
-bg-indigo-100 text-indigo-700
-
-@elseif($item->status=='Disetujui')
-
-bg-green-100 text-green-700
-
-@elseif($item->status=='Ditolak')
-
-bg-red-100 text-red-700
-
-@else
-
-bg-slate-100 text-slate-700
-
-@endif
-
-">
-
-
-{{ $item->status }}
-
-
-</span>
-
-
-
-</div>
-
-
-
-
-<div class="mt-5 flex gap-3">
-<a href="{{ route(
-    'surat.detail',
-    $item->parent_surat_id ?? $item->id
-) }}"
-class="px-5 py-2 bg-blue-600 text-white rounded-xl">
-
-    Lihat
-
-</a>
-
-    @if($item->file_surat)
-
-        <a
-        href="{{ asset('storage/'.$item->file_surat) }}"
-        download
-        class="px-5 py-2 rounded-xl bg-slate-100 font-bold hover:bg-slate-200 transition">
-            Download
-        </a>
-
-    @else
-
-        <button
-        disabled
-        class="px-5 py-2 rounded-xl bg-slate-200 text-slate-400 cursor-not-allowed">
-            Tidak Ada File
-        </button>
-
-    @endif
-
-</div>
-
-
-</div>
-
-
-@empty
-
-<div class="bg-white rounded-3xl p-10 text-center shadow-lg">
-
-<div class="
-w-20
-h-20
-mx-auto
-rounded-2xl
-bg-blue-100
-flex
-items-center
-justify-center
-">
-
-<i data-lucide="mail-open"
-class="
-w-10
-h-10
-text-blue-600
-">
-</i>
-
-</div>
-
-<h2 class="text-2xl font-bold mt-5">
-Tidak ada surat
-</h2>
-
-<p class="text-slate-500 mt-2">
-Belum ada data surat.
-</p>
-
-</div>
-
-@endforelse
-
-
-</div>
-
-<div class="mt-8 flex justify-center">
-    {{ $surat->links() }}
-</div>
 
 <script>
-const form = document.getElementById('searchForm');
-const search = document.getElementById('searchInput');
-const status = document.getElementById('statusFilter');
 
-let timer;
+document.addEventListener('DOMContentLoaded', function () {
 
-search.addEventListener('input', function () {
+    /*====================================================
+    COUNTER
+    ====================================================*/
 
-    clearTimeout(timer);
+    document.querySelectorAll('.counter').forEach(counter => {
 
-    timer = setTimeout(function () {
-        form.submit();
-    }, 500);
+        const target = Number(counter.dataset.target);
+
+        let current = 0;
+
+        const step = Math.max(1, Math.ceil(target / 60));
+
+        const timer = setInterval(() => {
+
+            current += step;
+
+            if(current >= target){
+
+                current = target;
+
+                clearInterval(timer);
+
+            }
+
+            counter.innerText = current.toLocaleString('id-ID');
+
+        },20);
+
+    });
+
+
+    /*====================================================
+    FILTER DATABASE
+    ====================================================*/
+
+    const btnFilter = document.getElementById('btnFilter');
+
+    if(btnFilter){
+
+        btnFilter.addEventListener('click',applyFilter);
+
+    }
+
+    document.getElementById('searchInput')
+
+    ?.addEventListener('keypress',function(e){
+
+        if(e.key==="Enter"){
+
+            applyFilter();
+
+        }
+
+    });
+
+    function applyFilter(){
+
+        const search = document.getElementById('searchInput').value;
+
+        const status = document.getElementById('statusFilter').value;
+
+        const sort = document.getElementById('sortFilter').value;
+
+        const params = new URLSearchParams();
+
+        if(search){
+
+            params.append('search',search);
+
+        }
+
+        if(status){
+
+            params.append('status',status);
+
+        }
+
+        if(sort){
+
+            params.append('sort',sort);
+
+        }
+
+        loadPage(
+
+            "{{ route('surat.inbox') }}?"+params.toString()
+
+        );
+
+    }
+
+
+    /*====================================================
+    INIT EVENT
+    ====================================================*/
+
+    function initEvents(){
+
+        // Hover Row
+
+        document.querySelectorAll('.surat-row').forEach(function(row){
+
+            row.onmouseenter=function(){
+
+                this.classList.add('shadow-sm');
+
+            };
+
+            row.onmouseleave=function(){
+
+                this.classList.remove('shadow-sm');
+
+            };
+
+        });
+
+
+        // Pagination
+
+        document.querySelectorAll('.pagination-link').forEach(function(link){
+
+            link.onclick=function(e){
+
+                e.preventDefault();
+
+                loadPage(this.href);
+
+            };
+
+        });
+
+    }
+
+    /*====================================================
+    DOWNLOAD LOADING
+    ====================================================*/
+
+    document.querySelectorAll('.download-btn').forEach(function(btn){
+
+        btn.onclick=function(){
+
+            const icon=this.querySelector('i');
+
+            icon.className='bi bi-arrow-repeat animate-spin';
+
+        };
+
+    });
+
+    /*====================================================
+    AJAX LOAD PAGE
+    ====================================================*/
+
+    function loadPage(url){
+
+        const container=document.getElementById('tableContainer');
+
+        container.style.transition='all .35s ease';
+
+        container.style.opacity='.25';
+
+        container.style.transform='translateX(35px)';
+
+        fetch(url,{
+
+            headers:{
+
+                'X-Requested-With':'XMLHttpRequest'
+
+            }
+
+        })
+
+        .then(res=>res.text())
+
+        .then(html=>{
+
+            container.innerHTML=html;
+
+            container.style.opacity='1';
+
+            container.style.transform='translateX(0)';
+
+            history.pushState({},'',url);
+
+            initEvents();
+
+        })
+
+        .catch(err=>{
+
+            console.error(err);
+
+        });
+
+    }
+
+
+    /*====================================================
+    BACK BUTTON
+    ====================================================*/
+
+    window.addEventListener('popstate',function(){
+
+        loadPage(location.href);
+
+    });
+
+
+    /*====================================================
+    START
+    ====================================================*/
+
+    initEvents();
 
 });
 
-status.addEventListener('change', function () {
-    form.submit();
-});
 </script>
-
 
 @endsection

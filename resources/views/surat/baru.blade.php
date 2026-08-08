@@ -426,10 +426,9 @@ Masukkan File
 </p>
 
 
-
 <input
     type="file"
-    name="lampiran"
+    name="file_surat"
     accept="
         .pdf,
         .doc,

@@ -24,7 +24,7 @@ use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GrafikController;
 
-use App\Http\Controllers\Auth\PasswordController; 
+
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\TerkirimController;
 
@@ -999,11 +999,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
     ->middleware('otp.verified')
     ->name('password.reset');
 
-Route::get('/change-password', [PasswordController::class, 'showChangePassword'])
-    ->name('password.change');
-
-Route::post('/change-password', [PasswordController::class, 'updatePassword'])
-    ->name('password.change.update');
 
 
 Route::prefix('surat')->group(function () {
