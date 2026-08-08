@@ -170,4 +170,169 @@ MERPATI TVRI NTB",
 
         return redirect()->route('password.verify');
     }
+
+    /**
+ * Tampilkan halaman verifikasi OTP
+ */
+public function showVerifyOtp()
+{
+    return view('auth.verify-otp');
+}
+public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'otp' => [
+            'required',
+            'digits:6'
+        ],
+    ]);
+
+
+    $email = session('reset_email');
+
+
+    if (!$email) {
+
+        return redirect()
+            ->route('password.request')
+            ->withErrors([
+                'email' => 'Sesi reset password sudah habis.'
+            ]);
+
+    }
+
+
+    $otpData = PasswordResetOtp::where('email', $email)
+        ->first();
+
+
+    if (!$otpData) {
+
+        return back()->withErrors([
+            'otp' => 'OTP tidak ditemukan.'
+        ]);
+
+    }
+
+
+
+    // cek expired
+
+    if (Carbon::now()->greaterThan($otpData->expired_at)) {
+
+        return back()->withErrors([
+            'otp' => 'Kode OTP sudah kadaluarsa.'
+        ]);
+
+    }
+
+
+
+    // cek OTP
+
+    if (!Hash::check($request->otp, $otpData->otp)) {
+
+
+        $otpData->increment('attempts');
+
+
+        return back()->withErrors([
+            'otp' => 'Kode OTP salah.'
+        ]);
+
+    }
+
+
+
+    // OTP benar
+
+    session([
+        'otp_verified' => true
+    ]);
+
+
+    return redirect()
+        ->route('password.reset.form');
+
+}
+/**
+ * Tampilkan halaman reset password
+ */
+public function showResetForm()
+{
+    return view('auth.reset-password');
+}
+/**
+ * Simpan password baru
+ */
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'password' => [
+            'required',
+            'confirmed',
+            'min:8'
+        ],
+    ]);
+
+
+    $email = session('reset_email');
+
+
+    if (!$email) {
+
+        return redirect()
+            ->route('password.request')
+            ->withErrors([
+                'email' => 'Sesi reset password sudah habis.'
+            ]);
+
+    }
+
+
+    $user = User::where('email', $email)->first();
+
+
+    if (!$user) {
+
+        return redirect()
+            ->route('password.request')
+            ->withErrors([
+                'email' => 'User tidak ditemukan.'
+            ]);
+
+    }
+
+
+    // Update password
+
+    $user->update([
+        'password' => Hash::make($request->password),
+    ]);
+
+
+
+    // Hapus OTP setelah berhasil
+
+    PasswordResetOtp::where('email', $email)->delete();
+
+
+
+    // Bersihkan session reset
+
+    session()->forget([
+        'reset_email',
+        'otp_verified'
+    ]);
+
+
+
+    return redirect()
+        ->route('login')
+        ->with(
+            'success',
+            'Password berhasil diubah. Silakan login dengan password baru.'
+        );
+
+}
 }

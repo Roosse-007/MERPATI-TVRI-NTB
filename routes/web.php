@@ -11,7 +11,6 @@ use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PengesahanController;
-
 use App\Http\Controllers\BalasanSuratController;
 use App\Http\Controllers\LampiranController;
 use App\Http\Controllers\TemplateSuratController;
@@ -24,16 +23,8 @@ use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GrafikController;
 
-
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\TerkirimController;
-
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -180,6 +171,16 @@ Route::get(
 )
 ->middleware('auth')
 ->name('admin.laporan');
+
+Route::get(
+    '/admin/laporan/export',
+    [
+        LaporanController::class,
+        'export'
+    ]
+)
+->middleware('auth')
+->name('admin.laporan.export');
 /*
 |--------------------------------------------------------------------------
 | ADMIN

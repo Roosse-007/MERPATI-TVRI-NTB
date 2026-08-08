@@ -539,103 +539,149 @@ class SuratController extends Controller
     */
 
 
-    public function update(
-        Request $request,
-        $id
-    )
-    {
+public function update(Request $request, $id)
+{
+    $surat = Surat::findOrFail($id);
 
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDASI
+    |--------------------------------------------------------------------------
+    */
 
-        $surat = Surat::findOrFail($id);
+    $request->validate([
+        'perihal' => 'required|string|max:255',
 
+        'isi_surat' => 'nullable|string',
 
+        'file_surat' => [
+            'nullable',
+            'file',
+            'mimes:pdf,doc,docx',
+            'max:10240',
+        ],
 
+        'lampiran' => [
+            'nullable',
+            'file',
+            'max:10240',
+        ],
+    ]);
 
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE DATA DASAR
+    |--------------------------------------------------------------------------
+    */
 
-        $request->validate([
+    $surat->perihal = $request->perihal;
 
-
-            'perihal'
-
-                =>
-
-            'required',
-
-
-
-            'isi_surat'
-
-                =>
-
-            'required',
-
-
-
-            'file_surat'
-
-                =>
-
-            'nullable|file|max:10240'
-
-
-        ]);
-
-
-
-
-
-
-
-
-        $file = $surat->file_surat;
-
-            $namaFileAsli = $surat->nama_file_asli;
-
-            if($request->hasFile('file_surat'))
-            {
-
-                if($file){
-
-                    Storage::disk('public')->delete($file);
-
-                }
-
-                $upload = $request->file('file_surat');
-
-                $file = $upload->store('surat','public');
-
-                $namaFileAsli = $upload->getClientOriginalName();
-
-        }
-
-        $surat->update([
-
-            'perihal' => $request->perihal,
-
-            'isi_surat' => $request->isi_surat,
-
-            'file_surat' => $file,
-
-            'nama_file_asli' => $namaFileAsli,
-
-        ]);
-
-        return redirect()
-
-            ->route('surat.draft')
-
-            ->with(
-
-                'success',
-
-                'Draft berhasil diperbarui.'
-
-            );
-
-
+    if ($request->has('isi_surat')) {
+        $surat->isi_surat = $request->isi_surat;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FILE SURAT UTAMA
+    |--------------------------------------------------------------------------
+    */
 
+    if ($request->hasFile('file_surat')) {
+
+        $upload = $request->file('file_surat');
+
+        /*
+        | Hapus file surat lama
+        */
+
+        if (
+            $surat->file_surat &&
+            Storage::disk('public')->exists($surat->file_surat)
+        ) {
+            Storage::disk('public')->delete(
+                $surat->file_surat
+            );
+        }
+
+        /*
+        | Simpan file baru
+        */
+
+        $path = $upload->store(
+            'surat',
+            'public'
+        );
+
+        /*
+        | Simpan path dan nama asli
+        */
+
+        $surat->file_surat = $path;
+
+        $surat->nama_file_asli =
+            $upload->getClientOriginalName();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN SURAT
+    |--------------------------------------------------------------------------
+    */
+
+    $surat->save();
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAMPIRAN
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->hasFile('lampiran')) {
+
+        $fileLampiran = $request->file('lampiran');
+
+        /*
+        | Simpan lampiran
+        */
+
+        $pathLampiran = $fileLampiran->store(
+            'lampiran',
+            'public'
+        );
+
+        Lampiran::create([
+
+            'surat_id' => $surat->id,
+
+            'nama_file' =>
+                $fileLampiran->getClientOriginalName(),
+
+            'path_file' => $pathLampiran,
+
+            'mime_type' =>
+                $fileLampiran->getMimeType(),
+
+            'ukuran_file' =>
+                $fileLampiran->getSize(),
+
+            'uploaded_by' => Auth::id(),
+
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SELESAI
+    |--------------------------------------------------------------------------
+    */
+
+    return redirect()
+        ->route('surat.draft')
+        ->with(
+            'success',
+            'Draft berhasil diperbarui.'
+        );
+}
     /*
     |--------------------------------------------------------------------------
     | HAPUS SURAT

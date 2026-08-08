@@ -27,14 +27,15 @@ Rekapitulasi laporan surat MERPATI TVRI NTB
 <div class="flex gap-3">
 
 
-<button
-onclick="exportExcel()"
-class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg shadow">
+<a
+href="{{ route('admin.laporan.export', request()->query()) }}"
+class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg shadow"
+>
 
 <i class="bi bi-file-earmark-excel-fill me-2"></i>
 Export Excel
 
-</button>
+</a>
 
 
 
@@ -594,94 +595,6 @@ SCRIPT EXPORT
 
 
 <script>
-
-
-function exportExcel(){
-
-
-let table =
-document.querySelector('table');
-
-
-
-let rows =
-table.querySelectorAll('tr');
-
-
-
-let csv = [];
-
-
-
-rows.forEach(row=>{
-
-
-let cols =
-row.querySelectorAll('th,td');
-
-
-let data=[];
-
-
-cols.forEach(col=>{
-
-
-data.push(
-'"'+col.innerText.trim()+'"'
-);
-
-
-});
-
-
-csv.push(data.join(','));
-
-
-});
-
-
-
-
-let blob =
-new Blob(
-[csv.join('\n')],
-{
-type:'text/csv'
-}
-);
-
-
-
-
-let url =
-window.URL.createObjectURL(blob);
-
-
-
-let a =
-document.createElement('a');
-
-
-
-a.href=url;
-
-
-
-a.download =
-'laporan-surat.csv';
-
-
-
-a.click();
-
-
-
-window.URL.revokeObjectURL(url);
-
-
-
-}
-
 
 
 
