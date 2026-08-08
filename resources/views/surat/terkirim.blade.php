@@ -301,7 +301,8 @@
 
 <!-- TABEL -->
 
-<div class="bg-white rounded-2xl shadow overflow-hidden">
+<div id="tableContainer"
+     class="bg-white rounded-2xl shadow overflow-hidden transition-all duration-300">
 
 <div class="overflow-x-auto">
 
@@ -352,9 +353,7 @@
         @if($item->jenisSurat)
 
             <div class="text-xs text-gray-500 mt-1">
-
-                {{ $item->jenisSurat->nama }}
-
+                {{ $item->jenisSurat->nama_jenis ?? '-' }}
             </div>
 
         @endif
@@ -375,8 +374,14 @@
             <div class="text-xs text-gray-500 mt-1">
 
                 Sifat :
-                {{ $item->sifatSurat->nama }}
+                {{ $item->sifatSurat->nama_sifat ?? '-' }}
 
+            </div>
+
+        @else
+
+            <div class="text-xs text-gray-400 mt-1">
+                Sifat : -
             </div>
 
         @endif
@@ -470,7 +475,7 @@
 
         <div class="text-xs text-gray-500">
 
-            {{ $item->created_at->format('H:i') }} WIB
+            {{ $item->created_at->format('H:i') }} WITA
 
         </div>
 
@@ -611,5 +616,221 @@
 </div>
 
 </div>
+<div id="paginationLoading"
+     class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] z-20 items-center justify-center">
 
+    <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-lg border border-slate-200">
+
+        <div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+
+        <span class="text-sm font-medium text-slate-600">
+            Memuat data...
+        </span>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const tableContainer = document.getElementById('tableContainer');
+
+    if (!tableContainer) return;
+
+
+    function initPagination() {
+
+        tableContainer
+            .querySelectorAll('a[href*="page="]')
+            .forEach(function (link) {
+
+                if (link.dataset.paginationReady) {
+                    return;
+                }
+
+                link.dataset.paginationReady = 'true';
+
+                link.addEventListener('click', function (e) {
+
+                    e.preventDefault();
+
+                    loadPage(this.href);
+
+                });
+
+            });
+
+    }
+
+
+    function loadPage(url) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANIMASI KELUAR
+        |--------------------------------------------------------------------------
+        */
+
+        tableContainer.style.transition =
+            'opacity 0.25s ease, transform 0.25s ease';
+
+        tableContainer.style.opacity = '0.35';
+
+        tableContainer.style.transform =
+            'translateX(30px)';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL HALAMAN BARU
+        |--------------------------------------------------------------------------
+        */
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+
+        .then(function (response) {
+
+            if (!response.ok) {
+                throw new Error('Gagal memuat halaman.');
+            }
+
+            return response.text();
+
+        })
+
+        .then(function (html) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | PARSE HALAMAN
+            |--------------------------------------------------------------------------
+            */
+
+            const parser = new DOMParser();
+
+            const doc = parser.parseFromString(
+                html,
+                'text/html'
+            );
+
+            const newTable =
+                doc.getElementById('tableContainer');
+
+
+            if (!newTable) {
+
+                throw new Error(
+                    'tableContainer tidak ditemukan.'
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GANTI ISI TABEL
+            |--------------------------------------------------------------------------
+            */
+
+            tableContainer.innerHTML =
+                newTable.innerHTML;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE URL
+            |--------------------------------------------------------------------------
+            */
+
+            window.history.pushState(
+                {},
+                '',
+                url
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ANIMASI MASUK
+            |--------------------------------------------------------------------------
+            */
+
+            tableContainer.style.opacity = '0';
+
+            tableContainer.style.transform =
+                'translateX(-30px)';
+
+
+            requestAnimationFrame(function () {
+
+                tableContainer.style.opacity = '1';
+
+                tableContainer.style.transform =
+                    'translateX(0)';
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | AKTIFKAN PAGINATION BARU
+            |--------------------------------------------------------------------------
+            */
+
+            initPagination();
+
+        })
+
+        .catch(function (error) {
+
+            console.error(
+                'Pagination error:',
+                error
+            );
+
+            /*
+            | Kalau AJAX gagal,
+            | jangan biarkan tabel transparan.
+            */
+
+            tableContainer.style.opacity = '1';
+
+            tableContainer.style.transform =
+                'translateX(0)';
+
+        });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BACK / FORWARD BROWSER
+    |--------------------------------------------------------------------------
+    */
+
+    window.addEventListener('popstate', function () {
+
+        loadPage(
+            window.location.href
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INIT
+    |--------------------------------------------------------------------------
+    */
+
+    initPagination();
+
+});
+</script>
 @endsection
