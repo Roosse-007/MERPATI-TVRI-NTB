@@ -37,6 +37,8 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.m
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 
 
 {{-- Chart JS --}}
@@ -511,15 +513,6 @@ Grafik
 
 
 
-
-
-<a href="/admin/monitoring">
-
-<i class="bi bi-activity fs-5"></i>
-
-Monitoring
-
-</a>
 
 
 

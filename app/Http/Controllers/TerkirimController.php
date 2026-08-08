@@ -69,16 +69,13 @@ class TerkirimController extends Controller
     $surat = Surat::with([
         'pengirim',
         'jenisSurat',
+        'jenisSurat.approvalWorkflows.jabatan',
         'sifatSurat',
-        //'prioritasSurat',
         'tujuan.user',
-
         'approval.approver',
         'approval.workflow.jabatan',
-
         'arsip',
         'disposisi',
-
     ])
     ->where('id', $id)
     ->where('pengirim_id', auth()->id())
@@ -120,54 +117,133 @@ class TerkirimController extends Controller
         }
 
        /*
+/*
 |--------------------------------------------------------------------------
-| Approval
+| Approval Workflow (Dinamis)
 |--------------------------------------------------------------------------
 */
 
-        foreach ($surat->approval as $approval) {
+$workflows = $surat->jenisSurat
+    ->approvalWorkflows;
 
-            $timeline[] = [
+foreach ($workflows as $workflow) {
 
-                'judul'    => $approval->jabatan,
+    $approval = $surat->approval
+        ->firstWhere(
+            'approval_workflow_id',
+            $workflow->id
+        );
 
-                'status'   => $approval->status,
+    /*
+    |--------------------------------------------------------------------------
+    | Jabatan Pengirim
+    |--------------------------------------------------------------------------
+    */
 
-                'icon'     => $approval->icon,
+    if (
+        $workflow->jabatan_id ==
+        $surat->pengirim->jabatan_id
+    ) {
 
-                'warna'    => $approval->badge_color,
+        $timeline[] = [
 
-                'waktu'    => $approval->approved_at,
+            'judul'   => $workflow->jabatan->nama_jabatan,
 
-                'catatan'  => $approval->catatan,
+            'status'  => 'Disetujui',
 
-            ];
+            'icon'    => 'check',
 
-        }
-        /*
-        |--------------------------------------------------------------------------
-        | Surat Disetujui
-        |--------------------------------------------------------------------------
-        */
+            'warna'   => 'green',
 
-        if ($surat->status === 'Disetujui') {
+            'waktu'   => $surat->tanggal_kirim,
 
-            $timeline[] = [
+            'catatan' => 'Membuat dan mengirim surat',
 
-                'judul' => 'Surat Disetujui',
+        ];
 
-                'status' => 'Selesai',
+        continue;
 
-                'icon' => 'flag',
+    }
 
-                'warna' => 'green',
+    /*
+    |--------------------------------------------------------------------------
+    | Approval Ada
+    |--------------------------------------------------------------------------
+    */
 
-                'waktu' => $surat->tanggal_selesai,
+    if ($approval) {
 
-                'catatan' => null,
+        $timeline[] = [
 
-            ];
-        }
+            'judul'   => $workflow->jabatan->nama_jabatan,
+
+            'status'  => $approval->status,
+
+            'icon'    => $approval->icon,
+
+            'warna'   => $approval->badge_color,
+
+            'waktu'   => $approval->approved_at,
+
+            'catatan' => $approval->catatan,
+
+        ];
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Belum Diproses
+    |--------------------------------------------------------------------------
+    */
+
+    else {
+
+        $timeline[] = [
+
+            'judul'   => $workflow->jabatan->nama_jabatan,
+
+            'status'  => 'Belum Diproses',
+
+            'icon'    => 'circle',
+
+            'warna'   => 'gray',
+
+            'waktu'   => null,
+
+            'catatan' => null,
+
+        ];
+
+    }
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Surat Disetujui
+|--------------------------------------------------------------------------
+*/
+
+if ($surat->status === 'Disetujui') {
+
+    $timeline[] = [
+
+        'judul'   => 'Surat Disetujui',
+
+        'status'  => 'Disetujui',
+
+        'icon'    => 'flag',
+
+        'warna'   => 'green',
+
+        'waktu'   => $surat->tanggal_selesai,
+
+        'catatan' => null,
+
+    ];
+
+}
 
         /*
         |--------------------------------------------------------------------------

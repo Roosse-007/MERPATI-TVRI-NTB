@@ -11,7 +11,6 @@ use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PengesahanController;
-
 use App\Http\Controllers\BalasanSuratController;
 use App\Http\Controllers\LampiranController;
 use App\Http\Controllers\TemplateSuratController;
@@ -23,16 +22,9 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GrafikController;
-
 use App\Http\Controllers\Auth\PasswordController; 
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\TerkirimController;
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -179,12 +171,21 @@ Route::get(
 )
 ->middleware('auth')
 ->name('admin.laporan');
+
+Route::get(
+    '/admin/laporan/export',
+    [
+        LaporanController::class,
+        'export'
+    ]
+)
+->middleware('auth')
+->name('admin.laporan.export');
 /*
 |--------------------------------------------------------------------------
 | ADMIN
 |--------------------------------------------------------------------------
 */
-
 
 Route::prefix('admin')
 ->middleware('auth')
@@ -213,7 +214,6 @@ Route::prefix('admin')
 
 
 
-
     Route::get(
         '/grafik',
         [
@@ -222,6 +222,8 @@ Route::prefix('admin')
         ]
     )
     ->name('admin.grafik');
+
+
 
 
 
@@ -458,7 +460,32 @@ Route::get('/surat/draft',
 ->middleware('auth')
 ->name('surat.draft');
 
+// PREVIEW FILE SURAT
 
+
+Route::get('/surat/{id}/preview',
+[
+    SuratController::class,
+    'preview'
+
+])
+->middleware('auth')
+->whereNumber('id')
+->name('surat.preview');
+
+
+
+// Detail surat
+
+Route::get('/surat/{id}',
+[
+    SuratController::class,
+    'show'
+
+])
+->middleware('auth')
+->whereNumber('id')
+->name('surat.show');
 // Edit draft
 
 Route::get('/surat/{id}/edit',
@@ -595,28 +622,29 @@ Route::get('/surat/arsip',
 ])
 ->middleware('auth')
 ->name('surat.arsip');
-// ==========================
-// APPROVAL ACTION
-// ==========================
-Route::post(
-    '/approval/{surat}/approve',
-    [ApprovalController::class,'approve']
-)->name('approval.approve');
 
-Route::post(
-    '/approval/{surat}/reject',
-    [ApprovalController::class,'reject']
-)->name('approval.reject');
 // ==========================
 // HALAMAN APPROVAL
 // ==========================
 
 Route::get('/surat/approval', [
-    SuratController::class,
-    'approval'
+    ApprovalController::class,
+    'index'
 ])
 ->middleware('auth')
 ->name('surat.approval');
+
+Route::post('/surat/{surat}/approve', [
+    ApprovalController::class,
+    'approve'
+])->middleware('auth')
+->name('approval.approve');
+
+Route::post('/surat/{surat}/reject', [
+    ApprovalController::class,
+    'reject'
+])->middleware('auth')
+->name('approval.reject');
 
 // Route::post('/surat/draft', [SuratController::class, 'storeDraft'])
 //     ->middleware('auth')

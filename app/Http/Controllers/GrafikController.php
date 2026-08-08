@@ -72,69 +72,44 @@ $statusSurat = [
 
 $kategoriSurat = Surat::selectRaw('jenis_surat_id, COUNT(*) jumlah')
     ->groupBy('jenis_surat_id')
-    ->pluck('jumlah','jenis_surat_id');
+    ->pluck('jumlah', 'jenis_surat_id');
 
 
-        return view('admin.grafik',[
+return view('admin.grafik', compact(
+    'suratMasuk',
+    'suratKeluar',
+    'approval',
+    'arsip',
+    'grafikSurat',
+    'statusSurat',
+    'kategoriSurat'
+))->with([
+    'chartData' => [
+        'grafik' => array_values($grafikSurat ?? []),
 
-    'suratMasuk'=>$suratMasuk,
-
-    'suratKeluar'=>$suratKeluar,
-
-    'approval'=>$approval,
-
-    'arsip'=>$arsip,
-
-
-    'grafikSurat'=>$grafikSurat,
-
-
-    'statusSurat'=>$statusSurat,
-
-
-    'kategoriSurat'=>$kategoriSurat,
-
-
-    'chartData'=>[
-
-        'grafik'=>array_values($grafikSurat ?? []),
-
-
-        'compare'=>[
-
+        'compare' => [
             $suratMasuk ?? 0,
-
             $suratKeluar ?? 0
-
         ],
 
-
-        'status'=>[
-
+        'status' => [
             $statusSurat['Disetujui'] ?? 0,
-
             $statusSurat['Diproses'] ?? 0,
-
             $statusSurat['Ditolak'] ?? 0
-
         ],
-
 
         'kategori'=>[
 
-            $kategoriSurat[1] ?? 0,
+    $kategoriSurat[1] ?? 0, // Surat Masuk
+    $kategoriSurat[2] ?? 0, // Surat Keluar
+    $kategoriSurat[3] ?? 0, // Surat Internal
+    $kategoriSurat[4] ?? 0, // Nota Dinas
+    $kategoriSurat[5] ?? 0, // Surat Produksi
+    $kategoriSurat[6] ?? 0, // Surat Undangan
+    $kategoriSurat[7] ?? 0  // Surat Tugas
 
-            $kategoriSurat[2] ?? 0,
-
-            $kategoriSurat[3] ?? 0,
-
-            $kategoriSurat[4] ?? 0
-
-        ]
-
+]
     ]
-
 ]);
-
-}
+    }
 }

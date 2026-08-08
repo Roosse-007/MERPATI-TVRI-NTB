@@ -51,21 +51,33 @@
 
                 <p class="mt-1">
 
-                    @if($surat->status=='Disetujui')
+                    @if($surat->status == 'Draft')
 
-                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
-                            Disetujui
+                        <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold">
+                            Draft
                         </span>
 
-                    @elseif($surat->status=='Ditolak')
+                    @elseif(Str::contains($surat->status, 'Menunggu'))
+
+                        <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold">
+                            {{ $surat->status }}
+                        </span>
+
+                    @elseif($surat->status == 'Ditolak')
 
                         <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm font-semibold">
                             Ditolak
                         </span>
 
+                    @elseif($surat->status == 'Disetujui')
+
+                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+                            Disetujui
+                        </span>
+
                     @else
 
-                        <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold">
+                        <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
                             {{ $surat->status }}
                         </span>
 
@@ -188,6 +200,10 @@
                                 <i class="bi bi-flag-fill text-white"></i>
                                 @break
 
+                            @case('circle')
+                                <i class="bi bi-circle text-white"></i>
+                            @break
+
                             @default
                                 <i class="bi bi-circle-fill text-white"></i>
 
@@ -203,27 +219,39 @@
                     {{-- Status --}}
                     <div class="mt-2">
 
-                        @if($item['status'] == 'Disetujui')
+                        @if($item['status'] === 'Disetujui')
 
-                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                                 Disetujui
                             </span>
 
-                        @elseif($item['status'] == 'Ditolak')
+                        @elseif($item['status'] === 'Ditolak')
 
-                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold rounded-full">
                                 Ditolak
                             </span>
 
-                        @elseif($item['status'] == 'Menunggu')
+                        @elseif($item['status'] === 'Menunggu')
 
-                            <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+                            <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
                                 Menunggu Approval
+                            </span>
+
+                        @elseif($item['status'] === 'Belum Diproses')
+
+                            <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold rounded-full">
+                                Belum Diproses
+                            </span>
+
+                        @elseif($item['status'] === 'Selesai')
+
+                            <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                                Selesai
                             </span>
 
                         @else
 
-                            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
+                            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
                                 {{ $item['status'] }}
                             </span>
 
@@ -236,20 +264,38 @@
 
                         @if($item['waktu'])
 
-                            {{ $item['waktu']->format('d M Y • H:i') }}
+                            {{ $item['waktu']->translatedFormat('d F Y • H:i') }}
+
+                        @elseif($item['status'] === 'Belum Diproses')
+
+                            <span class="text-slate-400 italic">
+                                Menunggu proses approval
+                            </span>
 
                         @else
 
-                            Belum diproses
+                            <span class="text-slate-400 italic">
+                                -
+                            </span>
 
                         @endif
 
                     </p>
 
-                    {{-- Catatan --}}
-                    @if(!empty($item['catatan']))
+                    {{-- Catatan (Hanya tampil jika benar-benar diperlukan) --}}
+                    @if(
+                        !empty($item['catatan']) &&
+                        !in_array($item['catatan'], [
+                            'Disetujui',
+                            'Membuat dan mengirim surat'
+                        ])
+                    )
 
-                        <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-gray-700">
+                        <div class="mt-3 rounded-lg border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-sm text-gray-700">
+
+                            <span class="font-semibold text-amber-700">
+                                Catatan :
+                            </span>
 
                             {{ $item['catatan'] }}
 
@@ -262,35 +308,6 @@
             @endforeach
 
         </div>
-
-    </div>
-
-    {{-- Catatan --}}
-    <div class="bg-white rounded-2xl shadow-md p-6 mt-8">
-
-        <h2 class="text-xl font-bold mb-4">
-
-            Catatan
-
-        </h2>
-
-        @if($surat->catatan)
-
-            <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
-
-                {{ $surat->catatan }}
-
-            </div>
-
-        @else
-
-            <div class="text-gray-500">
-
-                Tidak ada catatan.
-
-            </div>
-
-        @endif
 
     </div>
 

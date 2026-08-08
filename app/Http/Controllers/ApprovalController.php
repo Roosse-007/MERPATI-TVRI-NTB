@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Approval;
 use App\Models\Surat;
 use App\Services\ApprovalWorkflowService;
 use Illuminate\Http\Request;
@@ -22,15 +23,24 @@ class ApprovalController extends Controller
     public function index(Request $request)
     {
         $query = Surat::with([
+
             'pengirim.jabatan',
+
             'tujuan.user',
+
+            'jenisSurat',
+
+            'jenisSurat.approvalWorkflows.jabatan',
+
             'approval.workflow.jabatan',
+
             'approval.approver',
+
         ])
         ->whereHas('approval', function ($query) {
 
             $query->where('approver_id', auth()->id())
-                  ->where('status', 'Menunggu');
+                ->where('status', 'Menunggu');
 
         });
 
@@ -80,28 +90,46 @@ class ApprovalController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Statistik
+        | Statistik Approval User Login
         |--------------------------------------------------------------------------
         */
 
-        $totalSurat = $surat->count();
+        $totalSurat = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->distinct('surat_id')
+        ->count('surat_id');
 
-        $menunggu = $surat->filter(function ($item) {
+        $menunggu = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Menunggu'
+        )
+        ->count();
 
-            return $item->approval
-                ->where('approver_id', auth()->id())
-                ->where('status', 'Menunggu')
-                ->isNotEmpty();
+        $disetujui = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Disetujui'
+        )
+        ->count();
 
-        })->count();
-
-        $disetujui = $surat
-            ->where('status', 'Disetujui')
-            ->count();
-
-        $ditolak = $surat
-            ->where('status', 'Ditolak')
-            ->count();
+        $ditolak = Approval::where(
+            'approver_id',
+            auth()->id()
+        )
+        ->where(
+            'status',
+            'Ditolak'
+        )
+        ->count();
 
         return view(
             'surat.approval',
@@ -118,8 +146,9 @@ class ApprovalController extends Controller
     /**
      * Approve Surat
      */
-    public function approve(Surat $surat)
-    {
+    public function approve(
+        Surat $surat
+    ) {
         $this->workflowService->approve(
             $surat,
             auth()->user()
@@ -141,17 +170,23 @@ class ApprovalController extends Controller
         Surat $surat
     ) {
         $request->validate([
+
             'catatan' => [
                 'nullable',
                 'string',
                 'max:500',
             ],
+
         ]);
 
         $this->workflowService->reject(
+
             $surat,
+
             auth()->user(),
+
             $request->catatan
+
         );
 
         return redirect()

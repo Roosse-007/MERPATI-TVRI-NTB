@@ -189,11 +189,13 @@ if(!$isAdmin){
 
     $menus[] = [
 
+
         'icon'=>'file-text',
         'name'=>'Template Surat',
         'route'=>'template.user'
 
     ];
+
 
 }
 
@@ -239,13 +241,6 @@ if($isAdmin){
         ],
 
 
-        [
-
-            'icon'=>'monitor',
-            'name'=>'Monitoring',
-            'route'=>'admin.monitoring'
-
-        ],
 
 
         [

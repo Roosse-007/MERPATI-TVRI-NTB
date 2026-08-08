@@ -168,10 +168,10 @@
 
         <form method="GET" action="{{ route('surat.approval') }}">
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2  ">
 
                 {{-- SEARCH --}}
-                <div class="lg:col-span-5">
+                <div class="lg:col-span-4">
 
                     <div class="relative">
 
@@ -345,112 +345,182 @@ switch ($status) {
                             <div>
 
                                 <p class="text-slate-400 text-sm">
-                                    Status
-                                </p>
+                                        Status
+                                    </p>
 
-                                <span
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold {{ $badgeColor }}">
+                                    @php
 
-                                    <i data-lucide="{{ $badgeIcon }}" class="w-4 h-4"></i>
+                                    $currentApproval = $item->approval
+                                        ->where('status', 'Menunggu')
+                                        ->sortBy('urutan')
+                                        ->first();
 
-                                    {{ $status }}
+                                    $statusLabel = $status;
 
-                                </span>
+                                    if ($currentApproval) {
+
+                                        $statusLabel = 'Menunggu ' .
+                                        (
+                                            $currentApproval->workflow?->jabatan?->nama_jabatan
+                                            ?? '-'
+                                        );
+                                    }
+
+                                    @endphp
+
+                                    <span
+                                        class="inline-flex items-center
+                                            gap-2
+                                            px-3 py-2
+                                            rounded-full
+                                            text-sm
+                                            font-semibold
+                                            max-w-[240px]
+                                            truncate
+                                            {{ $badgeColor }}">
+
+                                        <i
+                                            data-lucide="{{ $badgeIcon }}"
+                                            class="w-4 h-4 shrink-0">
+                                        </i>
+
+                                        <span class="truncate">
+                                            {{ $statusLabel }}
+                                        </span>
+
+                                    </span>
 
                             </div>
 
                         </div>
 
                     </div>
-{{-- PROGRESS APPROVAL --}}
+
+                    <div class="mt-10 pt-8 border-t border-slate-200">
+
+    <h4 class="font-bold text-slate-700 mb-6">
+        Progress Approval
+    </h4>
+    
+<div class="flex items-center">
 
 @php
 
-    $approvedCount = $item->approval
-        ->where('status', 'Disetujui')
-        ->count();
-
-    $step = $approvedCount;
-
-    if ($item->status === 'Disetujui') {
-        $step = 4;
-    }
+$workflows = $item->jenisSurat?->approvalWorkflows ?? collect();
 
 @endphp
 
-<div class="mt-10 pt-8 border-t border-slate-200">
+@foreach($workflows as $workflow)
 
-    <h4 class="font-bold text-slate-700 mb-4">
-        Progress Approval
-    </h4>
+    @php
 
-    <div class="grid grid-cols-4 gap-3">
+$approval = $item->approval->firstWhere(
+    'approval_workflow_id',
+    $workflow->id
+);
 
-        {{-- KPP --}}
-        <div class="text-center">
+$iconBg = 'bg-slate-200 text-slate-500';
+$icon   = 'circle';
 
-            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                {{ $step >= 1 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+/*
+|--------------------------------------------------------------------------
+| Jabatan pengirim dianggap otomatis selesai
+|--------------------------------------------------------------------------
+*/
 
-                <i data-lucide="check"></i>
+if (
+    $workflow->jabatan_id == $item->pengirim->jabatan_id
+) {
 
-            </div>
+    $iconBg = 'bg-green-500 text-white';
+    $icon   = 'check';
 
-            <p class="text-sm mt-2 font-semibold">
-                KPP
-            </p>
+}
 
+/*
+|--------------------------------------------------------------------------
+| Approval yang benar-benar ada
+|--------------------------------------------------------------------------
+*/
+
+elseif ($approval) {
+
+    if ($approval->status == 'Disetujui') {
+
+        $iconBg = 'bg-green-500 text-white';
+        $icon = 'check';
+
+    } elseif ($approval->status == 'Ditolak') {
+
+        $iconBg = 'bg-red-500 text-white';
+        $icon = 'x';
+
+    } elseif ($approval->status == 'Menunggu') {
+
+        $iconBg = 'bg-amber-400 text-white';
+        $icon = 'hourglass';
+
+    }
+
+}   
+
+    @endphp
+
+    <div class="flex flex-col items-center">
+
+        <div class="w-9 h-9 rounded-full flex items-center justify-center {{ $iconBg }}">
+            <i data-lucide="{{ $icon }}" class="w-4 h-4"></i>
         </div>
 
-        {{-- KTU --}}
-        <div class="text-center">
+        <span class="mt-2 text-[10px] font-medium text-slate-600 text-center max-w-[70px] leading-tight">
 
-            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                {{ $step >= 2 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
+            {{ Str::words($workflow->jabatan?->nama_jabatan ?? '-', 2, '') }}
 
-                <i data-lucide="file-pen-line"></i>
-
-            </div>
-
-            <p class="text-sm mt-2 font-semibold">
-                KTU
-            </p>
-
-        </div>
-
-        {{-- Kepala Stasiun --}}
-        <div class="text-center">
-
-            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                {{ $step >= 3 ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500' }}">
-
-                <i data-lucide="badge-check"></i>
-
-            </div>
-
-            <p class="text-sm mt-2 font-semibold">
-                Kepala
-            </p>
-
-        </div>
-
-        {{-- Final --}}
-        <div class="text-center">
-
-            <div class="w-12 h-12 mx-auto rounded-full flex items-center justify-center
-                {{ $step >= 4 ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-500' }}">
-
-                <i data-lucide="circle-check-big"></i>
-
-            </div>
-
-            <p class="text-sm mt-2 font-semibold">
-                Final
-            </p>
-
-        </div>
+        </span>
 
     </div>
+
+    @if(!$loop->last)
+        <div class="w-6 h-0.5 bg-slate-300 mx-2"></div>
+    @endif
+
+@endforeach
+
+@if($workflows->isNotEmpty())
+
+    <div class="w-6 h-0.5 bg-slate-300 mx-2"></div>
+
+@endif
+<div class="flex flex-col items-center">
+
+    <div
+        class="w-9 h-9 rounded-full
+               flex items-center justify-center
+
+               {{ $item->status=='Disetujui'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-slate-200 text-slate-500' }}">
+
+        <i
+            data-lucide="badge-check"
+            class="w-4 h-4">
+        </i>
+
+    </div>
+
+    <span
+        class="mt-2
+               text-[10px]
+               font-medium
+               text-slate-600">
+
+        Final
+
+    </span>
+
+</div>
+
+</div>
 
 </div>
 
